@@ -8,7 +8,7 @@ require("./db");
 const port = process.env.PORT;
 
 app.get("/", (req, res) => {
-  console.log("test");
+  console.log("test1");
 });
 
 app.use(cors());
