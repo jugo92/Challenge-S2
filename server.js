@@ -7,7 +7,7 @@ require("./db");
 
 const port = process.env.PORT;
 
-app.get("/", (req, res) => {
+app.get("/", () => {
   console.log("test1");
 });
 
