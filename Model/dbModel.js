@@ -1,4 +1,5 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
+const Marque = require("../Marque/dbMarque");
 const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
     host: "mysqldb",
     dialect: "mysql",
@@ -11,8 +12,8 @@ try {
     console.error('Unable to connect to the database:', error);
 }
 
-class Marque extends Model { }
-Marque.init({
+class Modele extends Model { }
+Modele.init({
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -25,10 +26,16 @@ Marque.init({
     description: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    idMarque: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 }, {
     sequelize,
-    modelName: 'marque'
+    modelName: 'modele'
 })
 
-module.exports = Marque;
+Modele.belongsTo(Marque, { foreignKey: 'idMarque' });
+
+module.exports = Modele;
