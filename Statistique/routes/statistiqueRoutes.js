@@ -1,10 +1,10 @@
 const router = require("express").Router();
 
-const marqueController = require("../controller/statistiqueController");
+const statistiqueController = require("../controller/statistiqueController");
 
-router.get("/", marqueController.getStatistiques);
-router.get("/:year/:month?", marqueController.getStatistiqueByYearAndMonth);
-router.delete("/:id", marqueController.deleteStatistiqueById);
-router.post("/", marqueController.postStatistique);
+router.get("/", statistiqueController.getStatistiques);
+router.get("/:year/:month?", statistiqueController.getStatistiqueByYearAndMonth);
+router.delete("/:id", statistiqueController.deleteStatistiqueById);
+router.post("/", statistiqueController.postStatistique);
 
 module.exports = router;

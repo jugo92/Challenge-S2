@@ -8,6 +8,9 @@ const port = process.env.PORT;
 require("./db");
 require("./Statistique/dbStatistique");
 
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
@@ -26,9 +29,6 @@ app.get("/", (req, res) => {
 });
 console.log("test")
 
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
   console.log(`Port d'écoute: ${port}`);

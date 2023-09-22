@@ -40,24 +40,8 @@ module.exports.deleteStatistiqueById = async (req, res) => {
 
 module.exports.postStatistique= async (req, res) => {
     try {
-        //todo implement post statistique
-
-        // console.log(req.body);
-        // const {month, year, nbUser, nbNewUsers, nbCommand, nbSalesProduct, mostSoldProduct} = req.body;
-        // console.log(month, year, nbUser, nbNewUsers, nbCommand, nbSalesProduct, mostSoldProduct);
-        // const statistique = await StatistiqueTable.create(req.body);
-        // const statistique = await StatistiqueTable.insertMany([
-        //     {
-        //         month: req.body.month,
-        //         year: req.body.year,
-        //         nbUser: req.body.nbUser,
-        //         nbNewUsers: req.body.nbNewUsers,
-        //         nbCommand: req.body.nbCommand,
-        //         nbSalesProduct: req.body.nbSalesProduct,
-        //         mostSoldProduct: req.body.mostSoldProduct
-        //     }
-        // ]);
-        //res.status(201).json(req.body);
+        const statistique = await StatistiqueTable.create(req.body);
+        res.status(201).json(statistique);
     } catch (err) {
         console.error('Erreur lors de la création de la statistique :', err);
         res.status(500).json({ message: 'Erreur lors de la création de la statistique' });
