@@ -15,20 +15,16 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+const routePrefix = "/api";
+
 const marqueRoutes = require("./Marque/routes/marqueRoutes");
-app.use("/marques", marqueRoutes);
+app.use(routePrefix + "/marques", marqueRoutes);
 
 const modelRoutes = require("./Model/routes/modelRoutes");
-app.use("/models", modelRoutes);
+app.use(routePrefix + "/models", modelRoutes);
 
 const statistiqueRoutes = require("./Statistique/routes/statistiqueRoutes");
-app.use("/statistiques", statistiqueRoutes);
-
-app.get("/", (req, res) => {
-  console.log("d");
-});
-console.log("test")
-
+app.use(routePrefix + "/statistiques", statistiqueRoutes);
 
 app.listen(port, () => {
   console.log(`Port d'écoute: ${port}`);
