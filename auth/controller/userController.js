@@ -52,7 +52,7 @@ module.exports.deleteUser = async (req, res) => {
 module.exports.registerUser = async (req, res) => {
    
   const {
-    body : {password, name, adresse, city, zip, email, phone, dateofbirth, role}
+    body : { password, name, adresse, city, zip, email, phone, dateofbirth, role}
 
 }= req;
 
@@ -134,7 +134,7 @@ module.exports.loginUser = async (req, res) => {
     }
 
 
-    
+
 module.exports.logoutUser = async (req, res) => {
     try {
         const user = await User.findOne({ where: { id: req.params.id } });
@@ -143,3 +143,5 @@ module.exports.logoutUser = async (req, res) => {
         res.status(400).json("error de la deconnexion de l'utilisateur", error);
     }
     }
+
+   

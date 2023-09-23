@@ -7,6 +7,10 @@ require("./db");
 
 const port = process.env.PORT;
 
+const userRoute = require("./auth/routes/userRoute");
+app.use("/api", userRoute);
+
+
 app.get("/", () => {
   console.log("test2");
 });

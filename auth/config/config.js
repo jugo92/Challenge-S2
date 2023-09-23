@@ -1,16 +1,16 @@
-require("dotenv").config({ path: ".env" });
 
-export default {
+
+module.exports ={
 
     security: {
         password: {
-          pepper: process.env.SECURITY_PASSWORD_PEPPER || "pepper",
+          pepper: "pepper",
           interation: 1000,
           Keylen: 128,
           digest: "sha512",
         },
         session: {
-          secret: SECRET_SESSION_KEY || "secret",
+          secret:  "secret",
           expiresIn: "1h",
         },
        
