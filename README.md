@@ -17,3 +17,10 @@ Effectuer des tests unitaires sur les routes et les modèles.
 
 - Mongoose: https://mongoosejs.com/docs/guide.html
 - Sequelize: https://sequelize.org/master/manual/getting-started.html
+
+### Fausses données 
+
+- dummyjson: https://dummyjson.com/docs
+- jsonplaceholder: https://jsonplaceholder.typicode.com/
+- dummy-json: https://www.npmjs.com/package/dummy-json
+- fake-schema: https://www.npmjs.com/package/fake-schema
