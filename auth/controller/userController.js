@@ -78,8 +78,8 @@ module.exports.deleteUser = async (req, res) => {
         const [passwordHash, passwordSalt] = hashPassword(password);
     
         const users = await User.create({
-            passwordSalt,
             passwordHash,
+            passwordSalt,
             adresse,
             name,
             city,
@@ -96,13 +96,12 @@ module.exports.deleteUser = async (req, res) => {
 module.exports.loginUser = async (req, res) => {
     const {
         body: { email, password },
-    } = req.body;
+    } = req;
 
-    if(!email || !password){
+    if (!email || !password) {
         res.status(400).send({ error: "Missing fields" });
         return;
     }
-
     const user = await User.findOne({ where: { email: email } });
 
     if(!user){
@@ -111,6 +110,10 @@ module.exports.loginUser = async (req, res) => {
     }
 
     const [passwordHash] = hashPassword(password, user.passwordSalt);
+        if (passwordHash !== user.passwordHash) {
+            res.status(401).send({ error: "Invalid password" });
+            return;
+        }
 
     if(passwordHash !== user.passwordHash){
         res.status(400).send({ error: "Wrong password" });
@@ -136,7 +139,7 @@ module.exports.loginUser = async (req, res) => {
             },
         })
 
-    }
+   }
 
 
 

@@ -17,6 +17,7 @@ User.init(
   {
     name: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     lastname: {
       type: DataTypes.STRING,
@@ -26,6 +27,7 @@ User.init(
     },
     adress: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     city: {
       type: DataTypes.STRING,
@@ -35,16 +37,20 @@ User.init(
     },
     email: {
       type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
     },
+    
     phone: {
       type: DataTypes.STRING,
+      unique: true,
     },
     passwordHash: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
 
     },
     passwordSalt: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(255),
     },
     dateofbirth: {
       type: DataTypes.STRING,
