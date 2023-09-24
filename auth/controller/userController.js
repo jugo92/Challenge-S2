@@ -6,6 +6,7 @@ const jsonwebtoken = require("jsonwebtoken");
 module.exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll();
+    console.log(users);
     res.status(200).json({ users });
   } catch (error) {
     res.status(400).json("error de la reception des users", error);
@@ -52,7 +53,7 @@ module.exports.deleteUser = async (req, res) => {
     module.exports.registerUser = async (req, res) => {
    
        const {
-        body: { email, password, adresse, name, city, zip, phone, dateofbirth, role },
+        body: { email, password, adress, name, city, zip, phone, dateofbirth, role },
 
        }= req;
         
@@ -80,7 +81,7 @@ module.exports.deleteUser = async (req, res) => {
         const users = await User.create({
             passwordHash,
             passwordSalt,
-            adresse,
+            adress,
             name,
             city,
             zip,
@@ -102,44 +103,44 @@ module.exports.loginUser = async (req, res) => {
         res.status(400).send({ error: "Missing fields" });
         return;
     }
-    const user = await User.findOne({ where: { email: email } });
 
-    if(!user){
+    const user = await User.findOne({ where: { email: email } });
+    console.log(user.passwordSalt);
+
+    if (!user) {
         res.status(400).send({ error: "User doesn't exist" });
         return;
     }
 
     const [passwordHash] = hashPassword(password, user.passwordSalt);
-        if (passwordHash !== user.passwordHash) {
-            res.status(401).send({ error: "Invalid password" });
-            return;
-        }
 
-    if(passwordHash !== user.passwordHash){
-        res.status(400).send({ error: "Wrong password" });
+
+    if (passwordHash !== user.passwordHash) {
+        res.status(401).send({ error: "Invalid password" });
         return;
     }
 
     const security = config.security.session.secret;
     const jwt = jsonwebtoken.sign(
         {
-             id: user.id
-             },
-              security, {
-                 expiresIn:
-                  config.security.session.expiresIn 
-                }
-            );
-        res.send({
-            token: jwt,
-            user: {
-                id: user.id,
-                email: user.email,
-                role: user.role,
-            },
-        })
+            id: user.id
+        },
+        security,
+        {
+            expiresIn: config.security.session.expiresIn
+        }
+    );
 
-   }
+    res.send({
+        token: jwt,
+        user: {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        },
+    });
+}
+
 
 
 
