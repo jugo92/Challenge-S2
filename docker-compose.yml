@@ -1,7 +1,8 @@
 version: '3'
 services:
   mysqldb:
-    image: arm64v8/mysql
+    image: mysql:5.7
+#    image: arm64v8/mysql
     container_name: mysqldb
     restart: always
     environment:
@@ -15,19 +16,13 @@ services:
       - ./mysql:/var/lib/mysql
 
   phpmyadmin:
-    image: arm64v8/phpmyadmin
+    image: phpmyadmin/phpmyadmin
+#    image: arm64v8/phpmyadmin
     container_name: phpmyadmin
     restart: always
     environment:
       PMA_HOST: mysqldb
       PMA_PORT: 3306
-    ports:
-      - 8081:81
-
-  adminer:
-    image: adminer:latest
-    container_name: adminer
-    restart: always
     ports:
       - 8080:8080
 
@@ -41,28 +36,3 @@ services:
     command: sh -c "npm install && npm start"
     ports:
       - 3000:3000
-
-#  mongodb:
-#    image: mongo
-#    container_name: mongodb
-#    restart: always
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: root
-#      MONGO_INITDB_ROOT_PASSWORD: root
-#    ports:
-#      - 27017:27017
-#    volumes:
-#      - ./mongo:/data/db
-#
-#  mongodb-express:
-#    image: mongo-express
-#    container_name: mongodb-express
-#    restart: always
-#    environment:
-#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-#      ME_CONFIG_MONGODB_ADMINPASSWORD: root
-#      ME_CONFIG_MONGODB_SERVER: mongodb
-#    ports:
-#      - 8081:8081
-#    depends_on:
-#      - mongodb
