@@ -49,49 +49,54 @@ module.exports.deleteUser = async (req, res) => {
     }
     }
 
-module.exports.registerUser = async (req, res) => {
+    module.exports.registerUser = async (req, res) => {
    
-  const {
-    body : { password, name, adresse, city, zip, email, phone, dateofbirth, role}
+       const {
+        body: { email, password, adresse, name, city, zip, phone, dateofbirth, role },
 
-}= req;
+       }= req;
+        
+    
+        if (!email || !phone ) {
+            res.status(400).send({ error: "Missing fields" });
+            return;
+        }
+    
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            res.status(400).send({ error: "Invalid email" });
+            return;
+        }
 
-    if(!email || !phone){
-        res.status(400).send({ error: "Missing fields" });
-        return;
-    }
+        const userExist = await User.findOne({ where: { email: email } });
 
-    const userExist = await User.findOne({ where: { email: email } });
-    if (userExist) {
-        res.status(400).send({ error: "User already exist" });
-        return;
-    }
-    const user = await User.create({
-        password,
-        passwordHash,
-        passwordSalt,
-        name,
-        adresse,
-        city,
-        zip,
-        email,
-        phone,
-        dateofbirth,
-        role
-    });
-
-    const [passwordHash, passwordSalt] = hashPassword(password);
-
-},
-
-
-
-
+        if (userExist) {
+            res.status(400).send({ error: "User already exists" });
+            return;
+        }
+    
+        const [passwordHash, passwordSalt] = hashPassword(password);
+    
+        const users = await User.create({
+            passwordSalt,
+            passwordHash,
+            adresse,
+            name,
+            city,
+            zip,
+            email,
+            phone,
+            dateofbirth,
+            role
+        });
+     res.send(users);
+};
+    
 
 module.exports.loginUser = async (req, res) => {
     const {
         body: { email, password },
-    } = req;
+    } = req.body;
 
     if(!email || !password){
         res.status(400).send({ error: "Missing fields" });

@@ -4,12 +4,13 @@ const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
   dialect: "mysql",
 });
 
-try {
-  sequelize.authenticate();
-  console.log("Connection has been established successfully.");
-} catch (error) {
-  console.error("Unable to connect to the database:", error);
-}
+sequelize.authenticate()
+  .then(() => {
+    console.log("La connexion à la base de données a été établie avec succès.");
+  })
+  .catch((error) => {
+    console.error("Impossible de se connecter à la base de données :", error);
+  });
 
 class User extends Model {}
 User.init(
@@ -38,11 +39,9 @@ User.init(
     phone: {
       type: DataTypes.STRING,
     },
-    password: {
-      type: DataTypes.STRING,
-    },
     passwordHash: {
       type: DataTypes.STRING,
+
     },
     passwordSalt: {
       type: DataTypes.STRING,
@@ -57,7 +56,7 @@ User.init(
   
   {
     sequelize,
-    modelName: "user",
+    modelName: "users",
   }
 );
 

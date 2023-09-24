@@ -22,7 +22,14 @@ services:
       PMA_HOST: mysqldb
       PMA_PORT: 3306
     ports:
-      - 8080:80
+      - 8081:81
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: always
+    ports:
+      - 8080:8080
 
   api:
     image: node:latest
