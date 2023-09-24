@@ -1,6 +1,8 @@
 <template>
-  <a :href="linkAction" :class="color">
-    {{text}}
+  <a :href="linkAction"  class="mt-20">
+    <button :class="color" class="text-white">
+      {{text}}
+    </button>
   </a>
 </template>
 

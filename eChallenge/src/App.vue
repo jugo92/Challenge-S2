@@ -13,7 +13,7 @@ import Button from './components/Button.vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
-  <Button text="Click me!" color="text-red-500" linkAction="http://localhost:5173/" />
+  <Button text="Mon bouton" color="button-valid" linkAction="http://localhost:5173/" />
 </template>
 
 <style scoped>
