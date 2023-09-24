@@ -1,5 +1,4 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const Marque = require("../Marque/dbMarque");
 const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
     host: "mysqldb",
     dialect: "mysql",
@@ -35,7 +34,5 @@ Modele.init({
     sequelize,
     modelName: 'modele'
 })
-
-Modele.belongsTo(Marque, { foreignKey: 'idMarque' });
 
 module.exports = Modele;
