@@ -5,8 +5,8 @@ module.exports ={
     security: {
         password: {
           pepper: "pepper",
-          interation: 1000,
-          Keylen: 128,
+          iteration: 1000,
+          keylen: 128,
           digest: "sha512",
         },
         session: {

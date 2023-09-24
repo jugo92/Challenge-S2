@@ -46,11 +46,11 @@ User.init(
       unique: true,
     },
     passwordHash: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
 
     },
     passwordSalt: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
     },
     dateofbirth: {
       type: DataTypes.STRING,

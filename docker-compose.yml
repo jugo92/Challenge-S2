@@ -1,8 +1,8 @@
 version: '3'
 services:
   mysqldb:
-    image: mysql:5.7
-#    image: arm64v8/mysql
+    # image: mysql:5.7
+    image: arm64v8/mysql
     container_name: mysqldb
     restart: always
     environment:
@@ -16,13 +16,20 @@ services:
       - ./mysql:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-#    image: arm64v8/phpmyadmin
+    # image: phpmyadmin/phpmyadmin
+    image: arm64v8/phpmyadmin
     container_name: phpmyadmin
     restart: always
     environment:
       PMA_HOST: mysqldb
       PMA_PORT: 3306
+    ports:
+      - 8081:8081
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: always
     ports:
       - 8080:8080
 

@@ -1,5 +1,5 @@
 const User = require("../dbUser");
-const hashPassword = require("../hashPassword");
+const {hashPassword,comparePassword} = require("../passwordHelper/passwordHelper");
 const config = require("../config/config");
 const jsonwebtoken = require("jsonwebtoken");
 
@@ -77,7 +77,7 @@ module.exports.deleteUser = async (req, res) => {
         }
     
         const [passwordHash, passwordSalt] = hashPassword(password);
-    
+     console.log(passwordHash)
         const users = await User.create({
             passwordHash,
             passwordSalt,
@@ -103,9 +103,10 @@ module.exports.loginUser = async (req, res) => {
         res.status(400).send({ error: "Missing fields" });
         return;
     }
+    console.log(password)
 
     const user = await User.findOne({ where: { email: email } });
-    console.log(user.passwordSalt);
+    // console.log(user.passwordSalt);
 
     if (!user) {
         res.status(400).send({ error: "User doesn't exist" });
