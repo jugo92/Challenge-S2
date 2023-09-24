@@ -11,6 +11,8 @@ router.get("/logout", userController.logoutUser)
 
 router.get("/users", userController.getAllUsers)
 
+router.delete("/user/:id", userController.deleteUser)
+
 router.get("/user/:id", userController.getUserById)
 
 router.post("/user", userController.createUser)
