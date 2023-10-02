@@ -3,6 +3,7 @@ const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
   host: "mysqldb", 
   dialect: "mysql",
 });
+const User = require("./dbUser");
 
 sequelize.authenticate()
   .then(() => {
@@ -12,21 +13,12 @@ sequelize.authenticate()
     console.error("Impossible de se connecter à la base de données :", error);
   });
 
-class User extends Model {}
-User.init(
+class DeletedUserArchive extends Model {}
+DeletedUserArchive.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true, 
-    },
     name: {
       type: DataTypes.STRING,
       allowNull: true,
-    },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
     lastname: {
       type: DataTypes.STRING,
@@ -36,7 +28,7 @@ User.init(
     },
     adress: {
       type: DataTypes.STRING,
-      allowNull: true, 
+      allowNull: true,
     },
     city: {
       type: DataTypes.STRING,
@@ -46,18 +38,13 @@ User.init(
     },
     email: {
       type: DataTypes.STRING,
-      primaryKey: true,
-      unique: true,
       allowNull: false,
     },
-    
     phone: {
       type: DataTypes.STRING,
-      unique: true,
     },
     passwordHash: {
       type: DataTypes.TEXT,
-
     },
     passwordSalt: {
       type: DataTypes.TEXT,
@@ -70,16 +57,22 @@ User.init(
     },
     createdAt: {
       type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
     },
-    
+    deletedUserId: {
+      type: DataTypes.INTEGER, 
+      references: {
+        model: User, 
+        key: "id", 
+      },
+    },
   },
-  
   {
     sequelize,
-    modelName: "users",
+    modelName: "deleted_user_archives",
+    timestamps: false,
   }
 );
 
-module.exports = User;
 
+module.exports = DeletedUserArchive;
