@@ -2,6 +2,7 @@ const User = require("../dbUser");
 const {hashPassword,comparePassword} = require("../passwordHelper/passwordHelper");
 const config = require("../config/config");
 const jsonwebtoken = require("jsonwebtoken");
+const {sendMail} = require("../../Mailing/mailController");
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -77,7 +78,7 @@ module.exports.deleteUser = async (req, res) => {
         }
     
         const [passwordHash, passwordSalt] = hashPassword(password);
-     console.log(passwordHash)
+        console.log(passwordHash)
         const users = await User.create({
             passwordHash,
             passwordSalt,
@@ -90,7 +91,16 @@ module.exports.deleteUser = async (req, res) => {
             dateofbirth,
             role
         });
-     res.send(users);
+
+        await sendMail(users, "validateUserAccount")
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+        res.send(users);
 };
     
 

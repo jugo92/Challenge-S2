@@ -9,3 +9,12 @@ module.exports.verifyRequestAttributes = (table, req) => {
     const keysFromBody = Object.keys(req.body);
     return keysFromBody.every(key => keysFromTable.includes(key));
 }
+
+// Prototypes
+Object.defineProperty(String.prototype, 'capitalize', {
+    value: function() {
+        return this.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    },
+    enumerable: false
+});
