@@ -1,8 +1,9 @@
 const User = require("../dbUser");
-const DeletedUserArchive = require("../dbArchiveUser");
 const {hashPassword,comparePassword} = require("../passwordHelper/passwordHelper");
 const config = require("../config/config");
 const jsonwebtoken = require("jsonwebtoken");
+const { createHash } = require('crypto');
+
 
 module.exports.getAllUsers = async (req, res) => {
   try {
@@ -43,41 +44,30 @@ module.exports.updateUser = async (req, res) => {
     }
 
 
-module.exports.deleteUser = async (req, res) => {
-        try {
-            const userId = req.params.id;
-            const user = await User.findOne({ where: { id: userId } });
+
+    module.exports.deleteUser = async (req, res) => {
+      try {
+        const userId = req.params.id;
+        const user = await User.findOne({ where: { id: userId } });
     
-            if (!user) {
-                return res.status(404).json({ error: "Utilisateur non trouvé" });
-            }
-            const archivedUserData = {
-                id: user.id,
-                name: user.name,
-                lastname: user.lastname,
-                gender: user.gender,
-                adress: user.adress,
-                city: user.city,
-                zip: user.zip,
-                email: user.email,
-                phone: user.phone,
-                passwordHash: user.passwordHash,
-                passwordSalt: user.passwordSalt,
-                dateofbirth: user.dateofbirth,
-                role: user.role,
-            };
+        if (!user) {
+          return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+        const hashedEmail = createHash('sha256').update(user.email).digest('hex');
+        const hashePhone = createHash('sha256').update(user.phone).digest('hex');
+
+        user.email = hashedEmail;
+        user.phone = hashePhone;
+
+        user.isDeleted = true;
     
-            await user.destroy();
+        await user.save();
     
-            await DeletedUserArchive.create(archivedUserData);
-    
-            res.status(200).json({ message: "Utilisateur marqué comme supprimé et archivé avec succès" });
-        } catch (error) {
-            console.error("Erreur lors de la suppression et de l'archivage de l'utilisateur :", error);
-            res.status(500).json({ error: "Erreur lors de la suppression et de l'archivage de l'utilisateur" });
+        res.status(200).json({ message: "Utilisateur supprimer avec succés" });
+      } catch (error) {
+        res.status(400).json({ error: "Erreur de la suppression de l'utilisateur", message: error.message });
+      }
     }
-}
-    
     
 
 module.exports.registerUser = async (req, res) => {
@@ -90,31 +80,13 @@ module.exports.registerUser = async (req, res) => {
         return;
     }
 
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         res.status(400).send({ error: "Invalid email" });
         return;
     }
 
-    const deletedUser = await User.findOne({ where: { email: email + "_deleted", isDeleted: true } });
-
-    if (deletedUser) {
-        deletedUser.email = email;
-        deletedUser.isDeleted = false; 
-
-
-        deletedUser.adress = adress;
-        deletedUser.name = name;
-        deletedUser.city = city;
-        deletedUser.zip = zip;
-        deletedUser.phone = phone;
-        deletedUser.dateofbirth = dateofbirth;
-        deletedUser.role = role;
-
-        await deletedUser.save();
-
-        res.status(200).json({ message: "User recreated successfully" });
-    } else {
         const [passwordHash, passwordSalt] = hashPassword(password);
 
         const newUser = await User.create({
@@ -131,7 +103,7 @@ module.exports.registerUser = async (req, res) => {
         });
 
         res.status(200).json({ message: "User created successfully", user: newUser });
-    }
+    
 };
 
 
