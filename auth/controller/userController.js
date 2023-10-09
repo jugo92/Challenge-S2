@@ -78,12 +78,10 @@ module.exports.deleteUser = async (req, res) => {
 
     res.status(200).json({ message: "Utilisateur supprimer avec succés" });
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        error: "Erreur de la suppression de l'utilisateur",
-        message: error.message,
-      });
+    res.status(400).json({
+      error: "Erreur de la suppression de l'utilisateur",
+      message: error.message,
+    });
   }
 };
 
@@ -143,6 +141,20 @@ module.exports.loginUser = async (req, res) => {
   const {
     body: { email, password },
   } = req;
+  module.exports.verifyUser = async (req, res) => {
+    const { token } = req.params;
+    const user = await User.findOne({ where: { token: token } });
+    if (!user) {
+      res.status(200).send({ error: "Invalid token" });
+      return;
+    } else if (user.isVerified) {
+      res.status(200).send({ error: "User already verified" });
+      return;
+    }
+    user.isVerified = true;
+    await user.save();
+    res.send({ message: "User verified" });
+  };
 
   if (!email || !password) {
     res.status(400).send({ error: "Missing fields" });

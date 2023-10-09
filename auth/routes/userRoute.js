@@ -19,5 +19,6 @@ router.post("/user", userController.createUser)
 
 router.put("/user/:id", userController.updateUser)
 
+router.get("/verify/:token", userController.verifyUser)
 
 module.exports = router
