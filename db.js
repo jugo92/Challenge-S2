@@ -17,5 +17,12 @@ syncModel(Marque, "dbMarque sync ok");
 const Model = require("./Model/dbModel");
 syncModel(Model, "dbModel sync ok");
 
+const Tva = require("./Tva/dbTva");
+syncModel(Tva, "dbTva sync ok");
+
+const Product = require("./Product/dbProduct");
+syncModel(Product, "dbProduct sync ok");
+
+
 require("./Statistique/dbStatistique");
 
