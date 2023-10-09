@@ -59,6 +59,14 @@ User.init(
     role: {
       type: DataTypes.STRING,
     },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+    token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    }
   },
   
   {

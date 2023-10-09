@@ -1,10 +1,11 @@
 const nodemailer = require('nodemailer');
 require("dotenv").config({ path: ".env" });
-const mailOwner = process.env.MAIL_USER;
+const mailCompany = process.env.MAIL_USER;
 const password = process.env.MAIL_PASSWORD;
 const port = process.env.MAIL_PORT;
 const host = process.env.MAIL_HOST;
 const fs = require('fs');
+const verifyRoute = "http://localhost:3000/api/verify/";
 
 const htmlResources = "./Mailing/htmlResources.json";
 let htmlData = null;
@@ -21,7 +22,7 @@ const transporter = nodemailer.createTransport({
     host: host,
     port: port,
     auth: {
-        user: mailOwner,
+        user: mailCompany,
         pass: password,
     },
 });
@@ -34,15 +35,15 @@ module.exports.sendMail = async (user, type) => {
             case 'validateUserAccount':
                 content = content
                     .replace('{{name}}', user.name.capitalize())
-                    .replace('{{confirmLink}}', "#")
-                    .replace('{{emailSupport}}', mailOwner);
+                    .replace('{{confirmLink}}', verifyRoute + user.token)
+                    .replace('{{emailSupport}}', mailCompany);
                 break;
             default:
                 break;
         }
 
         const mailOptions = {
-            from: mailOwner,
+            from: mailCompany,
             to: user.email,
             subject: subject,
             html: content,

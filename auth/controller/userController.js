@@ -2,6 +2,7 @@ const User = require("../dbUser");
 const {hashPassword,comparePassword} = require("../passwordHelper/passwordHelper");
 const config = require("../config/config");
 const jsonwebtoken = require("jsonwebtoken");
+const crypto = require('crypto');
 const {sendMail} = require("../../Mailing/mailController");
 
 module.exports.getAllUsers = async (req, res) => {
@@ -31,7 +32,7 @@ module.exports.createUser = async (req, res) => {
     } catch (error) {
         res.status(400).json("error de la creation de l'utilisateur", error);
     }
-    }
+}
 
 module.exports.updateUser = async (req, res) => {
     try {
@@ -70,27 +71,31 @@ module.exports.deleteUser = async (req, res) => {
             return;
         }
 
-        const userExist = await User.findOne({ where: { email: email } });
+        let users = await User.findOne({ where: { email: email } });
 
-        if (userExist) {
-            res.status(400).send({ error: "User already exists" });
+        if (users && !users.isVerified) {
+            res.status(200).send({ error: "User already exists with this email address, please checks your box mail. You will receive an email to confirm your email adrdress." });
+        }else if(users && users.isVerified){
+            res.status(200).send({ error: "User already exists" });
             return;
+        }else{
+            const [passwordHash, passwordSalt] = hashPassword(password);
+            console.log(passwordHash)
+            users = await User.create({
+                passwordHash,
+                passwordSalt,
+                adress,
+                name,
+                city,
+                zip,
+                email,
+                phone,
+                dateofbirth,
+                role,
+                token: crypto.randomUUID(),
+            });
         }
-    
-        const [passwordHash, passwordSalt] = hashPassword(password);
-        console.log(passwordHash)
-        const users = await User.create({
-            passwordHash,
-            passwordSalt,
-            adress,
-            name,
-            city,
-            zip,
-            email,
-            phone,
-            dateofbirth,
-            role
-        });
+
 
         await sendMail(users, "validateUserAccount")
             .then((response) => {
@@ -99,7 +104,6 @@ module.exports.deleteUser = async (req, res) => {
             .catch((error) => {
                 console.log(error);
             });
-
         res.send(users);
 };
     
@@ -152,7 +156,20 @@ module.exports.loginUser = async (req, res) => {
     });
 }
 
-
+module.exports.verifyUser = async (req, res) => {
+    const { token } = req.params;
+    const user = await User.findOne({ where: { token: token } });
+    if (!user) {
+        res.status(200).send({ error: "Invalid token" });
+        return;
+    }else if(user.isVerified){
+        res.status(200).send({ error: "User already verified" });
+        return;
+    }
+    user.isVerified = true;
+    await user.save();
+    res.send({ message: "User verified" });
+}
 
 
 module.exports.logoutUser = async (req, res) => {
