@@ -11,7 +11,6 @@ function syncModel(model, message) {
 const User = require("./auth/dbUser");
 syncModel(User, "dbUser sync ok");
 
-
 const Marque = require("./Marque/dbMarque");
 syncModel(Marque, "dbMarque sync ok");
 

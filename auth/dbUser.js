@@ -24,10 +24,6 @@ User.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    isDeleted: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
     lastname: {
       type: DataTypes.STRING,
     },

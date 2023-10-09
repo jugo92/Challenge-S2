@@ -58,8 +58,6 @@ module.exports.updateUser = async (req, res) => {
 
         user.email = hashedEmail;
         user.phone = hashePhone;
-
-        user.isDeleted = true;
     
         await user.save();
     
