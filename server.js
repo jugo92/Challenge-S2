@@ -29,7 +29,7 @@ const userRoute = require("./auth/routes/userRoute");
 app.use(routePrefix, userRoute);
 
 const caractRoute = require("./caracteristique/routes/caractRoutes");
-app.use(routePrefix + "caracteristique", caractRoute);
+app.use(routePrefix, caractRoute);
 
 const marqueRoutes = require("./Marque/routes/marqueRoutes");
 app.use(routePrefix + "/marques", marqueRoutes);

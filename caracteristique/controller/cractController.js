@@ -50,16 +50,21 @@ module.exports.updateCaract = async (req, res) => {
         });
     }
 }
-
 module.exports.deleteCaract = async (req, res) => {
     try {
         const caract = await dbCaract.destroy({
             where: { id: req.params.id },
         });
-        res.send(caract);
+
+        if (caract) {
+            res.send("The item has been deleted successfully.");
+        } else {
+            res.status(404).send("The item was not found.");
+        }
     } catch (err) {
+        console.error(err); 
         res.status(500).send({
-            error: "The caract could not be deleted.",
+            error: "An error occurred while deleting the item.",
         });
     }
 }
