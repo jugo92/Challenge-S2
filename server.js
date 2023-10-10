@@ -28,6 +28,9 @@ app.get("/failed", async (req, res) => {
 const userRoute = require("./auth/routes/userRoute");
 app.use(routePrefix, userRoute);
 
+const caractRoute = require("./caracteristique/routes/caractRoutes");
+app.use(routePrefix + "caracteristique", caractRoute);
+
 const marqueRoutes = require("./Marque/routes/marqueRoutes");
 app.use(routePrefix + "/marques", marqueRoutes);
 
