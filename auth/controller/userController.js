@@ -55,9 +55,22 @@ module.exports.updateUser = async (req, res) => {
         }
         const hashedEmail = createHash('sha256').update(user.email).digest('hex');
         const hashePhone = createHash('sha256').update(user.phone).digest('hex');
+        const hasheName =createHash('sha256').update(user.name).digest('hex');
+        const hasheAdress = createHash('sha256').update(user.adress).digest('hex');
+        const hasheCity = createHash('sha256').update(user.city).digest('hex');
+        const hasheZip = createHash('sha256').update(user.zip).digest('hex');
+        const hasheDateofbirth = createHash('sha256').update(user.dateofbirth).digest('hex');
+        const hasheRole = createHash('sha256').update(user.role).digest('hex');
 
         user.email = hashedEmail;
         user.phone = hashePhone;
+        user.name = hasheName;
+        user.adress = hasheAdress;
+        user.city = hasheCity;
+        user.zip = hasheZip;
+        user.dateofbirth = hasheDateofbirth;
+        user.role = hasheRole;
+
     
         await user.save();
     
