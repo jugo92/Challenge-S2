@@ -1,26 +1,54 @@
-const userController = require("../controller/userController");
-const User = require("../dbUser"); 
+const request = require('supertest');
+const express = require('express');
+const mongoose = require('mongoose');
+const dbTestAuth = require('./dbTestAuth');
+const userRoute = require('../routes/userRoute'); 
 
-describe("User Controller Tests", () => {
+const app = express();
+app.use('/api/users', userRoute);
 
-  beforeEach(() => {
-    jest.clearAllMocks();
+describe('User API Route Tests', () => {
+  beforeAll(async () => {
+    await dbTestAuth.connect(); 
   });
 
-  it("should get all users from the database", async () => {
-    const req = {};
-    const res = {
-      status: jest.fn(() => res),
-      json: jest.fn(),
+  afterAll(async () => {
+    await dbTestAuth.disconnect(); 
+  });
+
+  it('should create a new user', async () => {
+    const userData = {
+      name: 'John Doe',
+      email: 'test@tes.fr',
+      password: 'test1234',
+      adress: '123 rue test',
+      city: 'test city',
+      zip: '123456',
+      phone: 'test',
+      dateofbirth: 'test',
+      role: 'test',
     };
-  
-    await userController.getAllUsers(req, res);
-    
-  
-    console.log(res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ users: expect.arrayContaining() });
+    const response = await request(app)
+      .post('/api/users/register')
+      .send(userData);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty('_id');
   });
-  
+
+ it("should connected a user", async () => {
+    const userData = {
+      email: "test@tes.fr",
+      password: "test1234",
+    };
+
+    const response = await request(app)
+      .post("/api/users/login")
+      .send(userData);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("greatens");
+  }
+  );
 });
