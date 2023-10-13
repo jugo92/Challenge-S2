@@ -1,0 +1,36 @@
+name: Jest CI
+
+on:
+  push:
+    branches:
+      - auth 
+
+  pull_request:
+    branches:
+      - auth
+
+
+jobs:
+  test:
+    runs-on: macos-latest 
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14  
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Jest tests
+      run: npm test
+
+    - name: Upload test coverage
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage
+        path: coverage
