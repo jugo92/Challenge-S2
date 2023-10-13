@@ -3,11 +3,7 @@ name: Jest CI
 on:
   push:
     branches:
-      - auth 
-
-  pull_request:
-    branches:
-      - auth
+      - develop
 
 
 jobs:
