@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-//@import "tailwindcss";
 @import "colors.scss";
 @import "font.scss";
 
@@ -22,16 +21,16 @@
   -webkit-text-size-adjust: 100%;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+//a {
+//  font-weight: 500;
+//  color: #646cff;
+//  text-decoration: inherit;
+//}
+//a:hover {
+//  color: #535bf2;
+//}
 
-body {
+main {
   margin: 0;
   display: flex;
   place-items: center;
@@ -55,55 +54,45 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
-}
+//button:hover {
+//  border-color: #646cff;
+//}
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
 .card {
-  padding: 2em;
+  @apply p-8 bg-white rounded shadow-md;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.input{
+  @apply bg-transparent outline-none border border-gray-300 text-gray-400 text-sm rounded-lg p-2.5 w-full;
 }
 
 .button {
-  @apply rounded-md text-center py-2 px-4 text-white text-lg;
   &-details {
-    @apply px-6 flex items-center justify-center;
-    background-color: $color-p-3;
-
+    @apply bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300;
     &:hover {
-      background-color: $color-p-5;
+      @apply bg-blue-800;
     }
   }
-
   &-valid {
-    @apply bg-green-400;
+    @apply bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300;
     &:hover {
-      @apply bg-green-500;
+      @apply bg-green-800;
     }
   }
-
   &-invalid {
-    @apply bg-red-400;
+    @apply bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300;
     &:hover {
-      @apply bg-red-600;
+      @apply bg-red-800;
     }
   }
-
-  &-edit {
-    background-color: $color-p-1;
-
+  &-disabled {
+    @apply bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:outline-none focus:ring-gray-300;
     &:hover {
-      background-color: #0f2c38;
+      @apply bg-gray-800;
     }
   }
 }

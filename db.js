@@ -2,7 +2,7 @@
 
 function syncModel(model, message) {
   model.sync({
-    // force: true
+    force: true
   }).then(() => {
     console.log(message);
   });
@@ -16,6 +16,9 @@ syncModel(Marque, "dbMarque sync ok");
 
 const Model = require("./Model/dbModel");
 syncModel(Model, "dbModel sync ok");
+
+const Menu = require("./Menu/dbMenu");
+syncModel(Menu, "dbMenu sync ok");
 
 require("./Statistique/dbStatistique");
 

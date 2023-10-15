@@ -1,6 +1,6 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "mysqldb", 
+  host: "localhost",
   dialect: "mysql",
 });
 

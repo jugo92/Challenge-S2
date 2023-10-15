@@ -5,7 +5,6 @@ const password = process.env.MAIL_PASSWORD;
 const port = process.env.MAIL_PORT;
 const host = process.env.MAIL_HOST;
 const fs = require('fs');
-const verifyRoute = "http://localhost:3000/api/verify/";
 
 const htmlResources = "./Mailing/htmlResources.json";
 let htmlData = null;
@@ -35,7 +34,7 @@ module.exports.sendMail = async (user, type) => {
             case 'validateUserAccount':
                 content = content
                     .replace('{{name}}', user.name.capitalize())
-                    .replace('{{confirmLink}}', verifyRoute + user.token)
+                    .replace('{{confirmLink}}', process.env.API_SERVER_URL + "/verify/" + user.token)
                     .replace('{{emailSupport}}', mailCompany);
                 break;
             default:

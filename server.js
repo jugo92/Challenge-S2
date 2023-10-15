@@ -26,6 +26,9 @@ app.use(routePrefix + "/marques", marqueRoutes);
 const modelRoutes = require("./Model/routes/modelRoutes");
 app.use(routePrefix + "/models", modelRoutes);
 
+const menuRoutes = require("./Menu/routes/menuRoutes");
+app.use(routePrefix + "/menus", menuRoutes);
+
 const statistiqueRoutes = require("./Statistique/routes/statistiqueRoutes");
 app.use(routePrefix + "/statistiques", statistiqueRoutes);
 

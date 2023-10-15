@@ -1,22 +1,29 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import Button from './components/Button.vue'
+import Navbar from './components/Navbar.vue'
+import Search from './components/Search.vue'
+
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="mb-5">
+    <Navbar />
+    <Search />
   </div>
-  <HelloWorld msg="Vite + Vue" />
-  <Button text="Mon bouton" color="button-valid" linkAction="http://localhost:5173/" />
+  <div id="main-content">
+    <router-view />
+  </div>
 </template>
 
 <style scoped>
+
+#main-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
