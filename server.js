@@ -1,5 +1,5 @@
 const express = require("express");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -9,13 +9,21 @@ require("./db");
 // require("./Statistique/dbStatistique");
 
 app.use(cors());
+const routePrefix = "/api";
+
+const stripeRoutes = require("./Stripe/routes/stripeRoutes");
+app.use(routePrefix + "/stripe", stripeRoutes);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 // mongoose.connect(process.env.MONGO_URI)
 //     .then(() => console.log('Connexion à MongoDB réussie !'))
 //     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-const routePrefix = "/api";
+app.get("/failed", async (req, res) => {
+  console.log("FAILED");
+});
 
 const userRoute = require("./auth/routes/userRoute");
 app.use(routePrefix, userRoute);
@@ -35,8 +43,13 @@ app.use(routePrefix + "/products", productRoutes);
 const statistiqueRoutes = require("./Statistique/routes/statistiqueRoutes");
 app.use(routePrefix + "/statistiques", statistiqueRoutes);
 
-const stripeRoutes = require("./Stripe/routes/stripeRoutes");
-app.use(routePrefix + "/stripe", stripeRoutes);
+const orderRoutes = require("./Order/routes/orderRoutes");
+app.use(routePrefix + "/order", orderRoutes);
+
+app.get("/success", async (req, res) => {
+  console.log("SUCCESS");
+  res.status(200).json({ message: "gg" });
+});
 
 app.listen(port, () => {
   console.log(`Port d'écoute: ${port}`);

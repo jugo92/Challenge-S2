@@ -1,11 +1,11 @@
-
-
 function syncModel(model, message) {
-  model.sync({
-    // force: true
-  }).then(() => {
-    console.log(message);
-  });
+  model
+    .sync({
+      // force: true,
+    })
+    .then(() => {
+      console.log(message);
+    });
 }
 
 const User = require("./auth/dbUser");
@@ -23,6 +23,10 @@ syncModel(Tva, "dbTva sync ok");
 const Product = require("./Product/dbProduct");
 syncModel(Product, "dbProduct sync ok");
 
+const Order = require("./Order/dbOrder");
+syncModel(Order, "dbOrder sync ok");
+
+const ProductOrder = require("./Order/dbProductOrder");
+syncModel(ProductOrder, "dbProductOrder sync ok");
 
 require("./Statistique/dbStatistique");
-
