@@ -11,27 +11,23 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
-class Marque extends Model {}
-Marque.init(
+class Tva extends Model {}
+Tva.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING,
+    taux: {
+      type: DataTypes.FLOAT,
       allowNull: false,
     },
   },
   {
     sequelize,
-    modelName: "marque",
+    modelName: "tva",
   }
 );
 
-module.exports = Marque;
+module.exports = Tva;

@@ -4,6 +4,9 @@ const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
   dialect: "mysql",
 });
 
+const Order = require("./dbOrder");
+const Product = require("../Product/dbProduct");
+
 try {
   sequelize.authenticate();
   console.log("Connection has been established successfully.");
@@ -11,31 +14,41 @@ try {
   console.error("Unable to connect to the database:", error);
 }
 
-class Modele extends Model {}
-Modele.init(
+class ProductOrder extends Model {}
+ProductOrder.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    name: {
+    email: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    idMarque: {
+    idOrder: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "orders",
+        key: "id",
+      },
+    },
+    idProduct: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "products",
+        key: "id",
+      },
     },
   },
   {
     sequelize,
-    modelName: "modele",
+    modelName: "productorder",
   }
 );
+ProductOrder.belongsTo(Order, { foreignKey: "idOrder" });
+ProductOrder.belongsTo(Product, { foreignKey: "idProduct" });
 
-module.exports = Modele;
+module.exports = ProductOrder;
