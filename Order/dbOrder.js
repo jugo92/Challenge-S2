@@ -1,4 +1,5 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
+const OrderStatus = require("./orderStatus");
 const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
   host: "localhost",
   dialect: "mysql",
@@ -31,6 +32,11 @@ Order.init(
     },
     deliveryType: {
       type: DataTypes.STRING,
+      allowNull: false,
+    },
+    state: {
+      type: DataTypes.STRING,
+      defaultValue: OrderStatus.PENDING,
       allowNull: false,
     },
     idTVA: {

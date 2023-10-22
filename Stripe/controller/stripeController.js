@@ -1,6 +1,7 @@
 const Product = require("../../Product/dbProduct");
 const Order = require("../../Order/dbOrder");
 const ProductOrder = require("../../Order/dbProductOrder");
+const OrderStatus = require("../../Order/orderStatus");
 
 module.exports.initPayment = async (req, res) => {
   try {
@@ -78,6 +79,11 @@ module.exports.getEventPayment = async (req, res) => {
     const session = event.data.object;
     const detailsOrder = JSON.parse(session.client_reference_id);
     const email = session.customer_details.email;
+
+    await Order.update(
+      { state: OrderStatus.VALIDATE },
+      { where: { id: detailsOrder.orderId } }
+    );
 
     await Promise.all(
       detailsOrder.items.map(async item => {
