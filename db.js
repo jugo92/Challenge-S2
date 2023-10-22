@@ -30,3 +30,5 @@ const ProductOrder = require("./Order/dbProductOrder");
 syncModel(ProductOrder, "dbProductOrder sync ok");
 
 require("./Statistique/dbStatistique");
+const Caracteristique = require("./caracteristique/dbCaract");
+syncModel(Caracteristique, "dbCaract sync ok");
