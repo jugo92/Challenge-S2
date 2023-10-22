@@ -19,7 +19,7 @@ User.init(
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
-      autoIncrement: true, 
+      autoIncrement: true,
     },
     name: {
       type: DataTypes.STRING,
@@ -33,7 +33,7 @@ User.init(
     },
     adress: {
       type: DataTypes.STRING,
-      allowNull: true, 
+      allowNull: true,
     },
     city: {
       type: DataTypes.STRING,
@@ -63,11 +63,14 @@ User.init(
     role: {
       type: DataTypes.STRING,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
-    
+    token: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
 
   {
@@ -77,4 +80,3 @@ User.init(
 );
 
 module.exports = User;
-
