@@ -19,6 +19,10 @@ syncModel(Model, "dbModel sync ok");
 
 const Tva = require("./Tva/dbTva");
 syncModel(Tva, "dbTva sync ok");
+// const Generated = require("./generateFacture/dbGenerated");
+// syncModel(Generated, "dbGenerated sync ok");
+
+require("./Statistique/dbStatistique");
 
 const Product = require("./Product/dbProduct");
 syncModel(Product, "dbProduct sync ok");

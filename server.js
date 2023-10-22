@@ -30,6 +30,8 @@ app.use(routePrefix, userRoute);
 
 const caractRoute = require("./caracteristique/routes/caractRoutes");
 app.use(routePrefix, caractRoute);
+const factureRoute = require("./generateFacture/routes/genereFactureRoute");
+app.use(routePrefix, factureRoute);
 
 const marqueRoutes = require("./Marque/routes/marqueRoutes");
 app.use(routePrefix + "/marques", marqueRoutes);
