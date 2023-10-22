@@ -141,20 +141,6 @@ module.exports.loginUser = async (req, res) => {
   const {
     body: { email, password },
   } = req;
-  module.exports.verifyUser = async (req, res) => {
-    const { token } = req.params;
-    const user = await User.findOne({ where: { token: token } });
-    if (!user) {
-      res.status(200).send({ error: "Invalid token" });
-      return;
-    } else if (user.isVerified) {
-      res.status(200).send({ error: "User already verified" });
-      return;
-    }
-    user.isVerified = true;
-    await user.save();
-    res.send({ message: "User verified" });
-  };
 
   if (!email || !password) {
     res.status(400).send({ error: "Missing fields" });
@@ -196,6 +182,21 @@ module.exports.loginUser = async (req, res) => {
       role: user.role,
     },
   });
+};
+
+module.exports.verifyUser = async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({ where: { token: token } });
+  if (!user) {
+    res.status(200).send({ error: "Invalid token" });
+    return;
+  } else if (user.isVerified) {
+    res.status(200).send({ error: "User already verified" });
+    return;
+  }
+  user.isVerified = true;
+  await user.save();
+  res.send({ message: "User verified" });
 };
 
 module.exports.logoutUser = async (req, res) => {
