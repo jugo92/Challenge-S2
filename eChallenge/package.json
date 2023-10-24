@@ -5,11 +5,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview",
-    "dev":"vite"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.4"
+    "vue": "^3.3.4",
+    "vuelidate": "^0.7.7"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
