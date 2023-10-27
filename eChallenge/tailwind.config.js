@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [],
+  content: [
+    './vueform.config.js',
+      './node_modules/@vueform/vueform/themes/tailwind/**/*.vue',
+      './node_modules/@vueform/vueform/themes/tailwind/**/*.js',
+  ],
   darkMode: false,
   theme: {
     extend: {},
@@ -9,6 +13,8 @@ module.exports = {
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('@vueform/vueform/tailwind')
+  ],
 }
 
