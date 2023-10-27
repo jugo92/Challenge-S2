@@ -94,15 +94,17 @@
 
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import { useRouter } from "vue-router";
 import { z } from "zod";
 import Button from "./Button.vue";
 import { useToast } from "vue-toast-notification";
+
 const router = useRouter();
 const toast = useToast();
 
 const api = 'http://localhost:3000/api';
+
 const user = reactive({
   gender: 'H',
   firstname: '',
@@ -184,22 +186,23 @@ const submitForm = async () => {
         phone: user.phone,
         dateofbirth: user.birthdate,
       })
-    }).then((res) => res.json())
-      .then((data) => {
-        if (!data.hasOwnProperty('error')) {
-          router.push('/login');
-          toast.success('Un email de confirmation vous a été envoyé');
-        } else {
-          toast.error('Une erreur est survenue');
-          console.log(data);
-        }
-      });
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (!data.hasOwnProperty('error')) {
+        router.push('/login');
+        toast.success('Un email de confirmation vous a été envoyé');
+      } else {
+        toast.error('Une erreur est survenue');
+        console.error('Erreur côté serveur :', data.error);
+      }
+    } else {
+      toast.error('Une erreur est survenue lors de la requête');
+      console.error('Erreur HTTP :', response.status, response.statusText);
+    }
   } catch (error) {
-    console.error(error);
+    console.error('Erreur lors de la requête POST :', error);
   }
 };
 </script>
-
-<style scoped>
-/* Add any custom styles here */
-</style>
