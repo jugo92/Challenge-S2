@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Icon } from '@iconify/vue';
-import { RouterLink } from 'vue-router';
 import {onMounted, ref} from "vue";
 
 const isOpen = ref(false);
@@ -17,9 +16,6 @@ onMounted(async () => {
 });
 
 
-const preventClose = (e: Event) => {
-  e.stopPropagation(); // Empêche la propagation du clic
-};
 
 document.addEventListener("click", (e) => {
   const navbar = document.querySelector("nav");

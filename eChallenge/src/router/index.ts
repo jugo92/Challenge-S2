@@ -1,30 +1,17 @@
     /** src/router/index.js **/
 import { createRouter, createWebHistory } from "vue-router";
+import RegisterVue from "../components/Register.vue";
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {
-            path: "/notfound",
-            name: "notfound",
-            component: () => import("./../components/NotFound.vue"),
-        },
-        {
-            path: "/login",
-            name: "login",
-            component: () => import("../components/Login.vue"),
-        },
+
         {
             path: "/register",
-            name: "register",
-            component: () => import("../components/Register.vue"),
+            name: "Register",
+            component: RegisterVue,
         },
-        {
-            path: "/dashboard",
-            name: "hello",
-            // params: { msg: "World" },
-            component: () => import("./../components/HelloWorld.vue"),
-        },
+   
     ],
 });
 
