@@ -1,6 +1,6 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
 const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "localhost",
+  host: "mysqldb", 
   dialect: "mysql",
 });
 
@@ -15,6 +15,11 @@ sequelize.authenticate()
 class User extends Model {}
 User.init(
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true, 
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -27,7 +32,7 @@ User.init(
     },
     adress: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true, 
     },
     city: {
       type: DataTypes.STRING,
@@ -37,7 +42,6 @@ User.init(
     },
     email: {
       type: DataTypes.STRING,
-      primaryKey: true,
       unique: true,
       allowNull: false,
     },
@@ -59,14 +63,11 @@ User.init(
     role: {
       type: DataTypes.STRING,
     },
-    isVerified: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     },
-    token: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    }
+    
   },
   
   {

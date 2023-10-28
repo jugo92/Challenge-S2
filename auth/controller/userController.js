@@ -54,13 +54,40 @@ module.exports.updateUser = async (req, res) => {
 }
 
 module.exports.deleteUser = async (req, res) => {
-    try {
-        const user = await User.destroy({ where: { id: req.params.id } });
-        res.status(200).json({ user });
-    } catch (error) {
-        res.status(400).json("error de la suppression de l'utilisateur", error);
+  try {
+    const userId = req.params.id;
+    const user = await User.findOne({ where: { id: userId } });
+
+    if (!user) {
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
+    const hashedEmail = createHash('sha256').update(user.email).digest('hex');
+    const hashePhone = createHash('sha256').update(user.phone).digest('hex');
+    const hasheName =createHash('sha256').update(user.name).digest('hex');
+    const hasheAdress = createHash('sha256').update(user.adress).digest('hex');
+    const hasheCity = createHash('sha256').update(user.city).digest('hex');
+    const hasheZip = createHash('sha256').update(user.zip).digest('hex');
+    const hasheDateofbirth = createHash('sha256').update(user.dateofbirth).digest('hex');
+    const hasheRole = createHash('sha256').update(user.role).digest('hex');
+
+    user.email = hashedEmail;
+    user.phone = hashePhone;
+    user.name = hasheName;
+    user.adress = hasheAdress;
+    user.city = hasheCity;
+    user.zip = hasheZip;
+    user.dateofbirth = hasheDateofbirth;
+    user.role = hasheRole;
+
+
+    await user.save();
+
+    res.status(200).json({ message: "Utilisateur supprimer avec succés" });
+  } catch (error) {
+    res.status(400).json({ error: "Erreur de la suppression de l'utilisateur", message: error.message });
+  }
 }
+
 
 module.exports.registerUser = async (req, res) => {
 
@@ -182,7 +209,6 @@ module.exports.verifyUser = async (req, res) => {
 
     res.redirect(process.env.APP_SERVER_URL + "/login");
 }
-
 
 
 module.exports.logoutUser = async (req, res) => {
