@@ -1,5 +1,5 @@
 function syncModel(model, message) {
-  model
+  return model
     .sync({
       // force: true,
     })
@@ -9,30 +9,27 @@ function syncModel(model, message) {
 }
 
 const User = require("./Models/dbUser");
-syncModel(User, "dbUser sync ok");
-
 const Marque = require("./Models/dbMarque");
-syncModel(Marque, "dbMarque sync ok");
-
 const Model = require("./Models/dbModel");
-syncModel(Model, "dbModel sync ok");
-
 const Tva = require("./Models/dbTva");
-syncModel(Tva, "dbTva sync ok");
 // const Generated = require("./generateFacture/dbGenerated");
-// syncModel(Generated, "dbGenerated sync ok");
-
-require("./Models/dbStatistique");
-
 const Product = require("./Models/dbProduct");
-syncModel(Product, "dbProduct sync ok");
-
 const Order = require("./Models/dbOrder");
-syncModel(Order, "dbOrder sync ok");
-
 const ProductOrder = require("./Models/dbProductOrder");
-syncModel(ProductOrder, "dbProductOrder sync ok");
-
-require("./Models/dbStatistique");
 const Caracteristique = require("./Models/dbCaract");
-syncModel(Caracteristique, "dbCaract sync ok");
+
+Promise.all([
+  syncModel(User, "dbUser sync ok"),
+  syncModel(Marque, "dbMarque sync ok"),
+  syncModel(Model, "dbModel sync ok"),
+  syncModel(Tva, "dbTva sync ok"),
+  // syncModel(Generated, "dbGenerated sync ok"),
+  syncModel(Product, "dbProduct sync ok"),
+  syncModel(Order, "dbOrder sync ok"),
+  syncModel(ProductOrder, "dbProductOrder sync ok"),
+  syncModel(Caracteristique, "dbCaract sync ok"),
+])
+  .then(() => {})
+  .catch(error => {
+    console.error("Erreur lors de la synchronisation des modèles :", error);
+  });
