@@ -11,7 +11,7 @@ const router = createRouter({
             name: "Register",
             component: RegisterVue,
         },
-   
+        
     ],
 });
 
