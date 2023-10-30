@@ -18,9 +18,7 @@ onMounted(async () => {
 document.addEventListener('click', (e) => {
   const navbar = document.querySelector('nav');
   if (navbar && navbar.contains(e.target as Node)) {
-    // Clic à l'intérieur de la navbar, ne rien faire
   } else {
-    // Clic en dehors de la navbar, fermer la navbar
     navbar?.classList.remove('active');
   }
 });
@@ -32,7 +30,7 @@ document.addEventListener('click', (e) => {
   <nav class="bg-blue-500 text-white">
     <div class="container mx-auto flex justify-between items-center py-4">
       <div class="flex items-center">
-        <a href="#" class="text-2xl font-bold">Mon Logo</a>
+       <img src="https://zupimages.net/up/23/43/1nb2.png" alt="Logo" class="w-13 h-10">
       </div>
       <div class="hidden md:flex space-x-4">
         <a href="#" class="hover:text-blue-300">Accueil</a>
