@@ -22,7 +22,7 @@
           </div>
           <button type="submit" class="w-full p-2 rounded bg-blue-600 text-white mb-4">Inscription</button>
         </form>
-        <small class="mt-4">Pas encore de compte ? <router-link to="/login" class="text-blue-600 hover:underline">Inscription</router-link></small>
+        <small class="mt-4">Pas encore de compte ? <router-link to="/register" class="text-blue-600 hover:underline">Inscription</router-link></small>
       </div>
     </div>
   </div>
@@ -46,7 +46,6 @@ const password = ref('');
 
 const submitForm = async () => {
   try {
-    // Perform login form submission logic here
     console.log(`Username: ${username.value}`);
     console.log(`Password: ${password.value}`);
 
