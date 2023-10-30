@@ -10,8 +10,8 @@
         </div>
       </div>
       <!-- Deuxième carte (formulaire) -->
-      <div class="w-full sm:w-1/2 p-8 mt-12 sm:mt-0">
-        <form @submit.prevent="submitForm" type="submit" class="mb-4">
+      <div class="w-full sm:w-1/2 p-8  sm:mt-0">
+        <form @submit.prevent="submitForm" type="submit" class="mb-4 mt-12">
           <div class="mb-4">
             <label class="text-sm font-bold mb-1" for="username">Nom d'utilisateur <span class="text-red-600">*</span></label>
             <input class="w-full p-2 rounded bg-gray-100 text-black" type="text" id="username" v-model="username" placeholder="Identifiant" required autofocus>
@@ -22,7 +22,7 @@
           </div>
           <button type="submit" class="w-full p-2 rounded bg-blue-600 text-white mb-4">Inscription</button>
         </form>
-        <small class="mt-4">Déjà un compte ? <router-link to="/login" class="text-blue-600 hover:underline">Connexion</router-link></small>
+        <small class="mt-4">Pas encore de compte ? <router-link to="/login" class="text-blue-600 hover:underline">Inscription</router-link></small>
       </div>
     </div>
   </div>
