@@ -10,60 +10,55 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div class="mb-4">
             <label class="text-sm font-bold mb-1" for="firstname">Prénom <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="firstname" type="text" v-model="user.firstname" required autofocus>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="firstname" type="text"  placeholder="votre prénom" v-model="user.firstname" required autofocus>
           </div>
           <div class="mb-4">
             <label class="text-sm font-bold mb-1" for="lastname">Nom <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="lastname" type="text" v-model="user.lastname" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="lastname" type="text" placeholder="votre nom" v-model="user.lastname" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="email">Email <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" v-model="user.usermail" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email" placeholder="exemple@echallenge.com" type="email" v-model="user.usermail" required>
             <p class="text-red-600 text-xs italic" v-if="emailError">{{ emailError }}</p>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="email-confirmation">Confirmer l'email <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email-confirmation" type="email" v-model="user.confirm_usermail" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email-confirmation" placeholder="exemple@echallenge.com" type="email" v-model="user.confirm_usermail" required>
             <p class="text-red-600 text-xs italic" v-if="emailConfirmationError">{{ emailConfirmationError }}</p>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="password">Mot de passe <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" v-model="user.password" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="votre mot de passe" v-model="user.password" required>
             <p class="text-sm text-start" :class="passwordError ? 'text-red-500' : 'text-green-500'" v-if="passwordError">{{ passwordError ? 'Invalide ' + passwordError : 'Valide' }}</p>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="password-confirmation">Confirmer le mot de passe <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password-confirmation" type="password" v-model="user.confirm_password" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password-confirmation" type="password" placeholder="confirmer votre mot de passe" v-model="user.confirm_password" required>
             <p class="text-red-600 text-xs italic" v-if="passwordConfirmationError">{{ passwordConfirmationError }}</p>
           </div>
           <div class="mb-3">
-              <label class="text-sm font-bold mb-1">Civilité <span class="text-red-600">*</span></label>
-              <div class="flex items-center space-x-4">
-                <input type="checkbox" id="male" v-model="user.gender">
-                <label for="male">Homme</label>
-                <input type="checkbox" id="female" v-model="user.gender">
-                <label for="female">Femme</label>
-              </div>
-            </div>
+            <label class="text-sm font-bold mb-1" for="gender">Civilité <span class="text-red-600">*</span></label>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="gender" placeholder="ex. Homme" type="text" v-model="user.gender" required>
+          </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="birthdate">Date de naissance</label>
             <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="birthdate" type="date" v-model="user.birthdate">
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="phone">Téléphone <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="phone" type="tel" v-model="user.phone" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="phone" placeholder="Votre numéro de téléphone" type="tel" v-model="user.phone" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="address">Adresse <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="address" type="text" v-model="user.address" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="address" placeholder="00 avenue de l'exemple" type="text" v-model="user.address" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="zip">Code postal <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="zip" type="text" v-model="user.zip" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="zip" placeholder="75000" type="text" v-model="user.zip" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="city">Ville <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="city" type="text" v-model="user.city" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="city" placeholder="ex. Paris" type="text" v-model="user.city" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="country">Pays <span class="text-red-600">*</span></label>
@@ -73,10 +68,10 @@
           </div>
         </div>
         <div class="mb-4 flex items-center">
-            <input id="link-checkbox" type="checkbox" value="" class="w-4 h-4 border border-gray-300 focus:ring-3 focus:ring-blue-300">
-            <label for="link-checkbox" class="ml-2 text-sm font-medium text-gray-900">
-              J'accepte les <a href="#" class="text-blue-600 hover:underline">conditions générales d'utilisation</a> et la <a href="#" class="text-blue-600 hover:underline">politique de confidentialité</a>.
-            </label>
+          <input id="link-checkbox" name="accept-terms" type="checkbox" value="" class="w-4 h-4 border border-gray-300 focus:ring-3 focus:ring-blue-300">
+          <label for="link-checkbox" class="ml-2 text-sm font-medium text-gray-900">
+            J'accepte les <a href="#" class="text-blue-600 hover:underline">conditions générales d'utilisation</a> et la <a href="#" class="text-blue-600 hover:underline">politique de confidentialité</a>.
+          </label>
         </div>
         <div class="text-center">
           <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">VALIDER MON INSCRIPTION</button>
@@ -84,8 +79,9 @@
       </form>
     </div>
   </div>
-<FooterVue/>
+  <FooterVue/>
 </template>
+
 
 
 
@@ -103,7 +99,7 @@ const toast = useToast();
 const api = 'http://localhost:3000/api';
 
 const user = reactive({
-  gender: 'Homme',
+  gender: '',
   firstname: '',
   lastname: '',
   usermail: '',
@@ -117,6 +113,7 @@ const user = reactive({
   zip: '',
   city: ''
 });
+
 
 const emailSchema = z.string().email({
   message: "Email invalide"

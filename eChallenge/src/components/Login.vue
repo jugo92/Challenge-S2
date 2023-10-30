@@ -25,6 +25,7 @@
         <small class="mt-4">Pas encore de compte ? <router-link to="/register" class="text-blue-600 hover:underline">Inscription</router-link></small>
       </div>
     </div>
+
   </div>
   <Footer/>
 </template>
