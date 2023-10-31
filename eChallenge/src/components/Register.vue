@@ -50,11 +50,11 @@
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="address">Adresse <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="address" placeholder="00 avenue de l'exemple" type="text" v-model="user.address" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="address" placeholder="ex. 00 avenue de l'exemple" type="text" v-model="user.address" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="zip">Code postal <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="zip" placeholder="75000" type="text" v-model="user.zip" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="zip" placeholder="ex. 75000" type="text" v-model="user.zip" required>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="city">Ville <span class="text-red-600">*</span></label>
