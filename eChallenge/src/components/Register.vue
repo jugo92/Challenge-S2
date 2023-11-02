@@ -36,9 +36,19 @@
             <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="password-confirmation" type="password" placeholder="confirmer votre mot de passe" v-model="user.confirm_password" required>
             <p class="text-red-600 text-xs italic" v-if="passwordConfirmationError">{{ passwordConfirmationError }}</p>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 relative">
             <label class="text-sm font-bold mb-1" for="gender">Civilité <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="gender" placeholder="ex. Homme" type="text" v-model="user.gender" required>
+            <div class="relative">
+              <select class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="gender" v-model="user.gender" required>
+                <option value="Homme">Homme</option>
+                <option value="Femme">Femme</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-600">
+                <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </div>
+            </div>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="birthdate">Date de naissance</label>
@@ -68,13 +78,17 @@
           </div>
         </div>
         <div class="mb-4 flex items-center">
-          <input id="link-checkbox" name="accept-terms" type="checkbox" value="" class="w-4 h-4 border border-gray-300 focus:ring-3 focus:ring-blue-300">
+          <input id="link-checkbox" name="accept-terms" type="checkbox" value="" class="w-4 h-4 border border-gray-300 focus:ring-3 focus:ring-blue-300" v-model="acceptTerms">
+
           <label for="link-checkbox" class="ml-2 text-sm font-medium text-gray-900">
             J'accepte les <a href="#" class="text-blue-600 hover:underline">conditions générales d'utilisation</a> et la <a href="#" class="text-blue-600 hover:underline">politique de confidentialité</a>.
           </label>
         </div>
         <div class="text-center">
-          <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">VALIDER MON INSCRIPTION</button>
+          <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" :disabled="!acceptTerms">VALIDER MON INSCRIPTION</button>
+        </div>
+        <div class="text-center mt-4">
+          <p class="text-sm">Déjà un compte ? <a href="/login" class="text-blue-600 hover:underline">Se connecter</a></p>
         </div>
       </form>
     </div>
@@ -86,7 +100,7 @@
 
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useRouter } from "vue-router";
 import { z } from "zod";
 import Button from "./Button.vue";
@@ -99,7 +113,7 @@ const toast = useToast();
 const api = 'http://localhost:3000/api';
 
 const user = reactive({
-  gender: '',
+  gender: 'Homme',
   firstname: '',
   lastname: '',
   usermail: '',
@@ -160,6 +174,8 @@ const passwordConfirmationError = computed(() => {
   }
   return "";
 });
+
+const acceptTerms = ref(false);
 
 const submitForm = async () => {
   try {
