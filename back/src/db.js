@@ -19,10 +19,10 @@ const ProductOrder = require("./Models/dbProductOrder");
 const Caracteristique = require("./Models/dbCaract");
 
 Promise.all([
+  syncModel(Tva, "dbTva sync ok"),
   syncModel(User, "dbUser sync ok"),
   syncModel(Marque, "dbMarque sync ok"),
   syncModel(Model, "dbModel sync ok"),
-  syncModel(Tva, "dbTva sync ok"),
   // syncModel(Generated, "dbGenerated sync ok"),
   syncModel(Product, "dbProduct sync ok"),
   syncModel(Order, "dbOrder sync ok"),
