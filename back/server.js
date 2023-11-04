@@ -1,11 +1,11 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 const port = process.env.PORT;
 require("./src/db");
+
 const mainRoutes = require("./src/Routes");
 // require("./Statistique/dbStatistique");
 
@@ -19,10 +19,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(mainRoutes);
-
-// mongoose.connect(process.env.MONGO_URI)
-//     .then(() => console.log('Connexion à MongoDB réussie !'))
-//     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 app.get("/failed", async (req, res) => {
   console.log("FAILED");

@@ -33,3 +33,11 @@ Promise.all([
   .catch(error => {
     console.error("Erreur lors de la synchronisation des modèles :", error);
   });
+
+const mongoose = require("mongoose");
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.error("Connexion à MongoDB réussie !"))
+  .catch(() => console.error("Connexion à MongoDB échouée !"));
+
+require("./Models/dbProductVersionning");

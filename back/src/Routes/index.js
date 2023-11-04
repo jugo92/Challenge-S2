@@ -27,7 +27,7 @@ router.use(routePrefix + "/models", modelRoutes);
 router.use(routePrefix + "/tvas", tvaRoutes);
 
 router.use(routePrefix + "/products", productRoutes);
-core.generateCrud(models.Product, "products", router);
+core.generateCrud(models.Product, "products", router, true, true);
 
 router.use(routePrefix + "/statistiques", statistiqueRoutes);
 
