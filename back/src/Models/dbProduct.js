@@ -65,6 +65,10 @@ Product.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    visible: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
     idTVA: {
       type: DataTypes.INTEGER,
       allowNull: false,
