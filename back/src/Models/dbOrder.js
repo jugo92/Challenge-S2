@@ -47,13 +47,17 @@ Order.init(
         key: "id",
       },
     },
-    email: {
-      type: DataTypes.STRING,
+    userId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: "users",
-        key: "email",
+        key: "id",
       },
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
   },
   {
@@ -62,6 +66,6 @@ Order.init(
   }
 );
 Order.belongsTo(TVA, { foreignKey: "idTVA" });
-Order.belongsTo(User, { foreignKey: "email" });
+Order.belongsTo(User, { foreignKey: "id" });
 
 module.exports = Order;

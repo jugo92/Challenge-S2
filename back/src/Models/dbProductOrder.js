@@ -22,10 +22,6 @@ ProductOrder.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     idOrder: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -41,6 +37,9 @@ ProductOrder.init(
         model: "products",
         key: "id",
       },
+    },
+    quantity: {
+      type: DataTypes.INTEGER,
     },
   },
   {
