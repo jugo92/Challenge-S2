@@ -14,8 +14,7 @@ module.exports.getTva = async (req, res) => {
 
 module.exports.createTva = async (req, res) => {
   try {
-    const { taux } = req.body;
-    const tva = await Tva.create({ taux });
+    const tva = await Tva.create(req.body);
     res.status(201).json(tva);
   } catch (err) {
     console.error("Erreur lors de la création de la tva :", err);

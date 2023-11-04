@@ -66,6 +66,6 @@ Order.init(
   }
 );
 Order.belongsTo(TVA, { foreignKey: "idTVA" });
-Order.belongsTo(User, { foreignKey: "id" });
+Order.belongsTo(User, { foreignKey: "userId" });
 
 module.exports = Order;
