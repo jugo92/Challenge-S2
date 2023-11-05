@@ -21,13 +21,15 @@ router.use(routePrefix, caractRoute);
 
 // router.use(routePrefix, factureRoute);
 router.use(routePrefix + "/marques", marqueRoutes);
+core.generateCrud(models.Marque, "marques", router);
 
-router.use(routePrefix + "/models", modelRoutes);
+router.use(routePrefix + "/modeles", modelRoutes);
+core.generateCrud(models.Modele, "modeles", router);
 
 router.use(routePrefix + "/tvas", tvaRoutes);
 
 router.use(routePrefix + "/products", productRoutes);
-core.generateCrud(models.Product, "products", router, true, true);
+core.generateCrud(models.Product, "products", router);
 
 router.use(routePrefix + "/statistiques", statistiqueRoutes);
 
