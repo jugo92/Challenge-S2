@@ -10,13 +10,21 @@ const productSchema = new mongoose.Schema(
     dateLivraison: Date,
     quantite: Number,
     image: String,
-    marque: String,
-    modele: String,
+    modele: {
+      id: Number,
+      name: String,
+      description: String,
+      marque: {
+        id: Number,
+        name: String,
+        description: String,
+      },
+    },
     etat: String,
     promotion: Boolean,
-    numeroVersion: String,
+    version: String,
     visible: Boolean,
-    idTva: Number,
+    tva: Number,
   },
   { timestamps: true }
 );

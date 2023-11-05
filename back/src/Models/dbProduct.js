@@ -3,7 +3,9 @@ const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
   host: "localhost",
   dialect: "mysql",
 });
+const StateStatus = require("../Enum/stateStatus");
 const TVA = require("./dbTva");
+const Modele = require("./dbModel");
 
 try {
   sequelize.authenticate();
@@ -44,36 +46,33 @@ Product.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    marque: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    modele: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     etat: {
       type: DataTypes.STRING,
-      allowNull: true,
+      defaultValue: StateStatus.NEUF,
+      allowNull: false,
     },
     promotion: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
     },
-    numeroVersion: {
+    version: {
       type: DataTypes.STRING,
       allowNull: true,
-    },
-    visible: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
     },
     idTVA: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: "tvas",
+        key: "id",
+      },
+    },
+    idModel: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "modeles",
         key: "id",
       },
     },
@@ -84,5 +83,6 @@ Product.init(
   }
 );
 Product.belongsTo(TVA, { foreignKey: "idTVA" });
+Product.belongsTo(Modele, { foreignKey: "idModel" });
 
 module.exports = Product;

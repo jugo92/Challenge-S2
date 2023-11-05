@@ -4,6 +4,7 @@ const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
   dialect: "mysql",
 });
 
+const Marque = require("./dbMarque");
 try {
   sequelize.authenticate();
   console.log("Connection has been established successfully.");
@@ -30,6 +31,10 @@ Modele.init(
     idMarque: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: "marques",
+        key: "id",
+      },
     },
   },
   {
@@ -37,5 +42,7 @@ Modele.init(
     modelName: "modele",
   }
 );
+
+Modele.belongsTo(Marque, { foreignKey: "idMarque" });
 
 module.exports = Modele;
