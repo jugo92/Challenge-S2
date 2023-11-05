@@ -41,6 +41,9 @@ ProductOrder.init(
     quantity: {
       type: DataTypes.INTEGER,
     },
+    version: {
+      type: DataTypes.INTEGER,
+    },
   },
   {
     sequelize,

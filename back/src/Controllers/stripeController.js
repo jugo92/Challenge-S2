@@ -15,7 +15,6 @@ module.exports.initPayment = async (req, res) => {
         isActive: true,
       },
     });
-    console.log(tva);
     const order = await Order.create({
       HT: 1,
       deliveryAddress: req.body.deliveryAddress,
@@ -27,15 +26,7 @@ module.exports.initPayment = async (req, res) => {
 
     await Promise.all(
       req.body.items.map(async item => {
-        console.log("ICI");
-        console.log(tva.taux);
         const product = await Product.findByPk(item.id);
-        console.log(product.dataValues.prix);
-        console.log(
-          "price : ",
-          product.dataValues.prix * 100 +
-            product.dataValues.prix * 100 * tva.dataValues.taux
-        );
         storeItems.set(product.dataValues.id, {
           priceInCents:
             product.dataValues.prix * 100 +
@@ -68,7 +59,6 @@ module.exports.initPayment = async (req, res) => {
         items: req.body.items,
       }),
     });
-    console.log(session);
     res.json({ url: session.url });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -108,6 +98,7 @@ module.exports.getEventPayment = async (req, res) => {
           quantity: item.quantity,
           idProduct: item.id,
           idOrder: detailsOrder.orderId,
+          version: item.version,
         });
       })
     );
