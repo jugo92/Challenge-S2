@@ -25,28 +25,11 @@ Object.defineProperty(String.prototype, "capitalize", {
 });
 
 const routePrefix = "/api";
-
-const mongoose = require("mongoose");
-module.exports.generateCrud = (
-  model,
-  modelName,
-  router,
-  hasPropertyVisible,
-  hasVersionnings
-) => {
+module.exports.generateCrud = (model, modelName, router) => {
   router.get(routePrefix + "/" + modelName, async (req, res) => {
     try {
-      if (hasPropertyVisible) {
-        const entities = await model.findAll({
-          where: {
-            visible: true,
-          },
-        });
-        res.status(200).json(entities);
-      } else {
-        const entities = await model.findAll();
-        res.status(200).json(entities);
-      }
+      const entities = await model.findAll();
+      res.status(200).json(entities);
     } catch (err) {
       console.error(`Erreur lors de la récupération des ${modelName} : ${err}`);
       res
@@ -70,21 +53,8 @@ module.exports.generateCrud = (
 
   router.post(routePrefix + "/" + modelName, async (req, res) => {
     try {
-      if (hasVersionnings) {
-        const newEntity = await model.create({
-          ...req.body,
-          numeroVersion: 1,
-        });
-        await mongoose.models[modelName].create({
-          id: newEntity.dataValues.id.toString(),
-          version: 1,
-          ...req.body,
-        });
-        res.status(201).json(newEntity);
-      } else {
-        const newEntity = await model.create(req.body);
-        res.status(201).json(newEntity);
-      }
+      const newEntity = await model.create(req.body);
+      res.status(201).json(newEntity);
     } catch (err) {
       console.error(`Erreur lors de la création de ${modelName} : ${err}`);
       res
@@ -102,31 +72,8 @@ module.exports.generateCrud = (
         res.status(404).json({ message: `Entité ${modelName} non trouvée` });
         return;
       }
-
-      if (hasVersionnings) {
-        const mongoModel = await mongoose.models[modelName]
-          .findOne({
-            id: modelId,
-          })
-          .sort({ version: -1 })
-          .exec();
-        console.log(mongoModel);
-        const { _id, ...modeleExistant } = mongoModel._doc;
-        await mongoose.models[modelName].create({
-          ...modeleExistant,
-          ...req.body,
-          version: mongoModel.version + 1,
-        });
-
-        await entityToUpdate.update({
-          ...req.body,
-          numeroVersion: parseInt(entityToUpdate.numeroVersion) + 1,
-        });
-        res.status(200).json(entityToUpdate);
-      } else {
-        await entityToUpdate.update(req.body);
-        res.status(200).json(entityToUpdate);
-      }
+      await entityToUpdate.update(req.body);
+      res.status(200).json(entityToUpdate);
     } catch (err) {
       console.error(`Erreur lors de la mise à jour de ${modelName} : ${err}`);
       res
@@ -144,20 +91,8 @@ module.exports.generateCrud = (
         res.status(404).json({ message: `Entité ${modelName} non trouvée` });
         return;
       }
-      if (hasPropertyVisible) {
-        await entityToDelete.update(
-          { visible: false },
-          {
-            where: {
-              id: modelId,
-            },
-          }
-        );
-        res.status(200).send();
-      } else {
-        await entityToDelete.destroy();
-        res.status(204).send();
-      }
+      await entityToDelete.destroy();
+      res.status(204).send();
     } catch (err) {
       console.error(`Erreur lors de la suppression de ${modelName} : ${err}`);
       res
