@@ -2,10 +2,10 @@
   <div class="bg-white">
     <div class="container mx-auto py-8">
       <div class="flex items-center justify-center">
-        <img src="https://zupimages.net/up/23/43/1nb2.png" alt="Logo" class="w-12 h-12">
+        <!-- <img src="https://zupimages.net/up/23/43/1nb2.png" alt="Logo" class="w-12 h-12"> -->
       </div>
 
-      <form class="shadow-md rounded-lg p-4 sm:p-8 md:p-12 lg:p-16" @submit.prevent="submitForm" type="submit">
+      <form class="rounded-lg p-4 sm:p-8 md:p-12 lg:p-16" @submit.prevent="submitForm" type="submit">
         <h2 class="text-center text-2xl mb-4">Inscription</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div class="mb-4">
@@ -93,7 +93,6 @@
       </form>
     </div>
   </div>
-  <FooterVue/>
 </template>
 
 
@@ -105,7 +104,7 @@ import { useRouter } from "vue-router";
 import { z } from "zod";
 import Button from "./Button.vue";
 import { useToast } from "vue-toast-notification";
-import FooterVue from './Footer.vue';
+
 
 const router = useRouter();
 const toast = useToast();
