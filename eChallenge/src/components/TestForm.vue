@@ -35,6 +35,7 @@
   
   
   const onSubmit = (formData: Record<string, any>) => {
+    //on crée un objet formData qui contient les données du formulaire 
     console.log(formData);
   };
   </script>
