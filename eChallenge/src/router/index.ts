@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import RegisterVue from "../components/Register.vue";
 import LoginVue from "../components/Login.vue";
+import TestVue from "../components/testForm.vue";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -18,6 +19,12 @@ const router = createRouter({
             name: "Login",
             component: LoginVue,
         },
+            
+            {
+                path: "/test",
+                name: "Test",
+                component: TestVue,
+            },
         
     ],
 });

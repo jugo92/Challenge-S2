@@ -1,18 +1,21 @@
 <script setup lang="ts">
-defineProps<{
-  name: string,
-  contant: string,
-  color: string,
-  action: string
-}>()
+import { defineProps } from 'vue';
 
-const buttons = {
-  // exemple de bouton
-  // "buttonName" : {
-  //   "content" : "Contenu du bouton",
-  //   "color" : "Couleur du bouton (classe tailwindcss)",
-  //   "action" : "Lien du bouton"
-  // },
+interface Button {
+  content: string;
+  color: string;
+  action: string;
+}
+
+const props = defineProps<{
+  name: string;
+  contant: string;
+  color: string;
+  action: string;
+}>();
+
+
+const buttons: Record<string, Button> = {
   "login" : {
     "content" : "SE CONNECTER",
     "color" : "button-details",
@@ -33,7 +36,11 @@ const buttons = {
     "color" : "button-details",
     "action" : "http://localhost:5173/"
   },
-}
+};
+
+const name = props.name;
+const contant = props.contant;
+const color = props.color;
 
 </script>
 
@@ -44,10 +51,6 @@ const buttons = {
     </button>
   </router-link>
 </template>
-<!--  Example of button:-->
-<!--  <Button name="buttonName" />-->
-<!--  <Button content="Contenu du bouton" color="Couleur du bouton (tailwindcss)" action="/route" />-->
 
 <style scoped>
-
 </style>

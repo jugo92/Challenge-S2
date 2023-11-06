@@ -27,7 +27,7 @@ document.addEventListener('click', (e) => {
 
 
 <template>
-  <nav class="bg-blue-500 text-white">
+  <nav class="bg-blue-900 text-white">
     <div class="container mx-auto flex justify-between items-center py-4">
       <div class="flex items-center">
        <img src="https://zupimages.net/up/23/43/1nb2.png" alt="Logo" class="w-13 h-10">

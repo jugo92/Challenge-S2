@@ -1,7 +1,6 @@
 <template>
   <div class="flex items-center justify-center min-h-screen">
     <div class="w-full sm:w-11/12 md:w-10/12 lg:w-9/12 xl:w-8/12 bg-white rounded overflow-hidden shadow-lg flex flex-col sm:flex-row">
-      <!-- Première carte (image) -->
       <div class="w-full sm:w-1/2 relative">
         <img src="https://zupimages.net/up/23/43/6rxn.png" alt="Image" class="w-full h-48rem sm:h-auto object-cover">
         <div class="absolute inset-0 bg-opacity-80 bg-gray-800"></div>
@@ -9,7 +8,6 @@
           <h2 class="text-2xl font-semibold text-white">Connexion</h2>
         </div>
       </div>
-      <!-- Deuxième carte (formulaire) -->
       <div class="w-full sm:w-1/2 p-8  sm:mt-0">
         <form @submit.prevent="submitForm" type="submit" class="mb-4 mt-12">
           <div class="mb-4">
@@ -27,7 +25,7 @@
     </div>
 
   </div>
-  <Footer/>
+  <Footer />
 </template>
 
 

@@ -10,10 +10,13 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.0.18",
+    "@ncform/ncform": "^1.7.9",
+    "@ncform/ncform-common": "^1.7.9",
     "@vee-validate/zod": "^4.11.8",
     "@vueform/vueform": "^1.5.3",
     "dotenv": "^16.3.1",
     "vue": "^3.3.4",
+    "vue-form-generator": "^2.3.4",
     "vue-router": "^4.2.5",
     "vue-toast-notification": "3.0",
     "zod": "^3.22.4"
