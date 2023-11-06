@@ -5,6 +5,7 @@
         <input
           :type="field.type"
           :name="field.name"
+          :placeholder="field.placeholder"
           :required="field.required"
           v-model="formData[field.name]"
           class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"

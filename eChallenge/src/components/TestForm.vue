@@ -16,20 +16,21 @@
       type: 'text',
       label: 'Nom',
       name: 'name',
+      placeholder: 'Entrez votre nom',
       required: true,
     },
 
-    {
-      type: 'select',
-      label: 'Rôle',
-      name: 'role',
-      required: true,
-      apiOptions: {
-        //can be implemented with the correct url
-        url: ``,
-        method: 'GET',
-      },
-    },
+    // {
+    //   type: 'select',
+    //   label: 'Rôle',
+    //   name: 'role',
+    //   required: true,
+    //   apiOptions: {
+    //     //can be implemented with the correct url
+    //     url: ``,
+    //     method: 'GET',
+    //   },
+    // },
 
   ];
   
