@@ -20,11 +20,7 @@ Tva.init(
       autoIncrement: true,
     },
     taux: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

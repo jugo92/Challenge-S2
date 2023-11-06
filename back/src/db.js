@@ -38,6 +38,6 @@ const mongoose = require("mongoose");
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.error("Connexion à MongoDB réussie !"))
-  .catch(() => console.error("Connexion à MongoDB échouée !"));
+  .catch(err => console.error("Connexion à MongoDB échouée ! ", err));
 
 require("./Models/dbProductVersionning");

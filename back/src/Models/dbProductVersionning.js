@@ -23,7 +23,6 @@ const productSchema = new mongoose.Schema(
     etat: String,
     promotion: Boolean,
     version: String,
-    visible: Boolean,
     tva: Number,
   },
   { timestamps: true }
