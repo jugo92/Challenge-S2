@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import RegisterVue from "../components/Register.vue";
 import LoginVue from "../components/Login.vue";
 import TestVue from "../components/testForm.vue";
+import unauthorized from "../pages/unauthorized-page.vue";
+
 
 const router = createRouter({
     history: createWebHistory(),
@@ -25,6 +27,12 @@ const router = createRouter({
                 name: "Test",
                 component: TestVue,
             },
+
+        {
+            path: "/unauthorized",
+            name: "Unauthorized",
+            component: unauthorized,
+        },
         
     ],
 });
