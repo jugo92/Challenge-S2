@@ -3,6 +3,7 @@ const { hashPassword, comparePassword } = require("../Helper/passwordHelper");
 const config = require("../../config");
 const jsonwebtoken = require("jsonwebtoken");
 const { createHash } = require("crypto");
+const crypto = require('crypto');
 
 const { sendMail } = require("./mailController");
 
@@ -121,6 +122,7 @@ module.exports.registerUser = async (req, res) => {
     phone,
     dateofbirth,
     role,
+    token: crypto.randomUUID(),
   });
 
   await sendMail(users, "validateUserAccount")
@@ -193,7 +195,8 @@ module.exports.verifyUser = async (req, res) => {
   }
   user.isVerified = true;
   await user.save();
-  res.send({ message: "User verified" });
+  // res.send({ message: "User verified" });
+  res.redirect(process.env.APP_SERVER_URL + "/login");
 };
 
 module.exports.logoutUser = async (req, res) => {
