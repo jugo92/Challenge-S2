@@ -18,6 +18,7 @@
       name: 'name',
       placeholder: 'Entrez votre nom',
       required: true,
+
     },
 
     // {

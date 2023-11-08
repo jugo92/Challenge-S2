@@ -43,13 +43,13 @@ User.init(
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
+      // unique: true,
       allowNull: false,
     },
 
     phone: {
       type: DataTypes.STRING,
-      unique: true,
+      // unique: true,
     },
     passwordHash: {
       type: DataTypes.TEXT,

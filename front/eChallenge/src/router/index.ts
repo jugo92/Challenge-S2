@@ -1,9 +1,10 @@
-    /** src/router/index.js **/
+/** src/router/index.js **/
 import { createRouter, createWebHistory } from "vue-router";
 import RegisterVue from "../components/Register.vue";
 import LoginVue from "../components/Login.vue";
 import TestVue from "../components/TestForm.vue";
 import unauthorized from "../pages/unauthorized-page.vue";
+import Products from "../components/Products.vue";
 
 
 const router = createRouter({
@@ -21,19 +22,25 @@ const router = createRouter({
             name: "Login",
             component: LoginVue,
         },
-            
-            {
-                path: "/test",
-                name: "Test",
-                component: TestVue,
-            },
+
+        {
+            path: "/test",
+            name: "Test",
+            component: TestVue,
+        },
 
         {
             path: "/unauthorized",
             name: "Unauthorized",
             component: unauthorized,
         },
-        
+
+        {
+            path: "/products",
+            name: "Products",
+            component: Products,
+        }
+
     ],
 });
 
