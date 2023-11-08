@@ -20,24 +20,20 @@
       required: true,
     },
 
-    // {
-    //   type: 'select',
-    //   label: 'Rôle',
-    //   name: 'role',
-    //   required: true,
-    //   apiOptions: {
-    //     //can be implemented with the correct url
-    //     url: ``,
-    //     method: 'GET',
-    //   },
-    // },
-
   ];
   
   
   const onSubmit = (formData: Record<string, any>) => {
-    //on crée un objet formData qui contient les données du formulaire 
-    console.log(formData);
+    fetch(`localhost:3000/api/produit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
   };
   </script>
   
