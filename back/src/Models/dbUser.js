@@ -33,7 +33,7 @@ User.init(
     },
     adress: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true, 
     },
     city: {
       type: DataTypes.STRING,

@@ -5,3 +5,6 @@ docker-compose.yml
 package-lock.json
 /mysql
 /mongo
+.docker-compose.yml
+/.infisical.json
+back
