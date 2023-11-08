@@ -12,16 +12,24 @@
 
   
   const formConfig = [
-    {
-      type: 'text',
-      label: 'Nom',
-      name: 'name',
-      placeholder: 'Entrez votre nom',
-      required: true,
-
-    },
-
-  ];
+  {
+    type: 'text',
+    label: 'Nom',
+    name: 'name',
+    placeholder: 'Entrez votre nom',
+    required: true,
+  },
+  {
+    type: 'select',
+    label: 'Choix',
+    name: 'choice',
+    required: true,
+    options: [
+      { label: 'Option 1', value: 'option1' },
+      { label: 'Option 2', value: 'option2' },
+    ],
+  },
+];
   
   
   const onSubmit = (formData: Record<string, any>) => {

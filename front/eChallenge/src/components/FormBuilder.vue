@@ -1,21 +1,38 @@
 <template>
-    <form @submit.prevent="onSubmit" class="max-w-md mx-auto">
-      <div v-for="(field, index) in formConfig" :key="index" class="mb-4">
-        <label :for="field.name" class="block text-gray-600">{{ field.label }}</label>
-        <input
-          :type="field.type"
-          :name="field.name"
-          :placeholder="field.placeholder"
-          :required="field.required"
-          v-model="formData[field.name]"
-          class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"
-        />
-      </div>
-      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
-        Envoyer
-      </button>
-    </form>
-  </template>
+  <form @submit.prevent="onSubmit" class="max-w-md mx-auto">
+    <div v-for="(field, index) in formConfig" :key="index" class="mb-4">
+      <label :for="field.name" class="block text-gray-600">{{ field.label }}</label>
+      <input
+        v-if="field.type === 'text'"
+        :type="field.type"
+        :name="field.name"
+        :placeholder="field.placeholder"
+        :required="field.required"
+        v-model="formData[field.name]"
+        class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+      />
+
+      <select
+        v-if="field.type === 'select'"
+        :name="field.name"
+        :required="field.required"
+        v-model="formData[field.name]"
+        class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+      >
+        <option
+          v-for="(option, optionIndex) in field.options"
+          :key="optionIndex"
+          :value="option.value"
+        >{{ option.label }}</option>
+      </select>
+    </div>
+
+    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
+      Envoyer
+    </button>
+  </form>
+</template>
+
   
   
   
@@ -46,6 +63,7 @@ interface FormFieldConfig {
     url: string;
     method: string;
   };
+  options?: { label: string; value: any }[]; 
 }
 
 function isFieldValid(field: FormFieldConfig, value: any): boolean {
@@ -79,27 +97,36 @@ async function sendValidationRequest(field: FormFieldConfig) {
     }),
   });
 }
-
 async function onSubmit() {
   let isFormValid = true;
 
   for (const field of props.formConfig) {
-    const fieldValue = formData.value[field.name];
-    const isFieldValidLocally = isFieldValid(field, fieldValue);
-    
-    if (!isFieldValidLocally) {
-      isFormValid = false;
-      break;
-    }
+    if ('field' in field) {
 
-    if (field.apiOptions) {
-      isFormValid = await validateFieldWithApi(field);
-      if (!isFormValid) break;
+      const fieldValue = formData.value[field.name];
+      const isFieldValidLocally = isFieldValid(field, fieldValue);
+      
+      if (!isFieldValidLocally) {
+        isFormValid = false;
+        break;
+      }
+
+      if (field.apiOptions) {
+        isFormValid = await validateFieldWithApi(field);
+        if (!isFormValid) break;
+      }
+
+      if (field.type === 'select' && field.required && !fieldValue) {
+        isFormValid = false;
+        break;
+      }
     }
   }
 
   if (isFormValid) {
-    props.onSubmit();
+    props.onSubmit(formData.value);
   }
 }
+
+
 </script>
