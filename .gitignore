@@ -1,8 +1,0 @@
-.env
-/node_modules
-package-lock.json
-/mysql
-/mongo
-.docker-compose.yml
-/.infisical.json
-back
