@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue';
-import TopBar from './components/TopBar.vue';
+// import TopBar from './components/TopBar.vue';
 
 
 </script>
@@ -8,7 +8,7 @@ import TopBar from './components/TopBar.vue';
 <template>
   <div id="app">
     <Navbar />
-    <TopBar />
+<!--    <TopBar />-->
     <router-view></router-view>
   </div>
 </template>
