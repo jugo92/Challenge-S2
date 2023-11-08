@@ -20,57 +20,62 @@
   
   
   <script setup lang="ts">
-  import { ref, defineProps } from 'vue';
+import { ref, defineProps } from 'vue';
+import { Form } from 'vee-validate';
 
+const props = defineProps({
+  formConfig: {
+    type: Array as () => FormFieldConfig[],
+    required: true,
+  },
+  onSubmit: {
+    type: Function,
+    required: true,
+  },
+});
 
-  
-    const props = defineProps({
-        formConfig: {
-            type: Array as () => FormFieldConfig[],
-            required: true,
+const formData = ref<Record<string, any>>({});
 
-        },
-        onSubmit: {
-            type: Function, 
-            required: true,
+interface FormFieldConfig {
+  type: string;
+  label: string;
+  name: string;
+  placeholder?: string;
+  required: boolean;
+  apiOptions?: {
+    url: string;
+    method: string;
+  };
+}
 
-        },
-    });
-
-  const formData = ref<Record<string, any>>({});
-  
-    interface FormFieldConfig {
-        type: string;
-        label: string;
-        name: string;
-        placeholder?: string;
-        required: boolean;
-        apiOptions?: {
-        url: string;
-        method: string;
-        };
-    }
-  async function validateFieldWithApi(field: FormFieldConfig) {
-    try {
-      const response = await sendValidationRequest(field);
-      const data = await response.json();
-      return !data.hasOwnProperty('error');
-    } catch (error) {
-      console.error('Erreur de validation API', error);
-      return false;
-    }
+function isFieldValid(field: FormFieldConfig, value: any): boolean {
+  if (field.required && (!value || value.trim() === '')) {
+    return false; 
   }
-  
-  async function sendValidationRequest(field: FormFieldConfig) {
-    //must be implemented with the correct url
-  return await fetch(``, {
+
+  return true;
+}
+
+async function validateFieldWithApi(field: FormFieldConfig) {
+  try {
+    const response = await sendValidationRequest(field);
+    const data = await response.json();
+    return !data.hasOwnProperty('error');
+  } catch (error) {
+    console.error('Erreur de validation API', error);
+    return false;
+  }
+}
+
+async function sendValidationRequest(field: FormFieldConfig) {
+  return await fetch(`localhost:3000/api`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       field,
-      value: formData.value[field.name], 
+      value: formData.value[field.name],
     }),
   });
 }
@@ -79,9 +84,17 @@ async function onSubmit() {
   let isFormValid = true;
 
   for (const field of props.formConfig) {
+    const fieldValue = formData.value[field.name];
+    const isFieldValidLocally = isFieldValid(field, fieldValue);
+    
+    if (!isFieldValidLocally) {
+      isFormValid = false;
+      break;
+    }
+
     if (field.apiOptions) {
       isFormValid = await validateFieldWithApi(field);
-      if (!isFormValid) break; 
+      if (!isFormValid) break;
     }
   }
 
@@ -89,6 +102,4 @@ async function onSubmit() {
     props.onSubmit();
   }
 }
-
-  </script>
-  
+</script>
