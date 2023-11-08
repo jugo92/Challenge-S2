@@ -88,7 +88,7 @@
           <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" :disabled="!acceptTerms">VALIDER MON INSCRIPTION</button>
         </div>
         <div class="text-center mt-4">
-          <p class="text-sm">Déjà un compte ? <a href="/login" class="text-blue-600 hover:underline">Se connecter</a></p>
+          <p class="text-sm">Déjà un compte ? <a href="/" class="text-blue-600 hover:underline">Se connecter</a></p>
         </div>
       </form>
     </div>
