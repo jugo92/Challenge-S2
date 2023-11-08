@@ -4,11 +4,17 @@ import RegisterVue from "../components/Register.vue";
 import LoginVue from "../components/Login.vue";
 import TestVue from "../components/TestForm.vue";
 import unauthorized from "../pages/unauthorized-page.vue";
+import home from "../pages/home-page.vue";
 
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
+        {
+            path: "/",
+            name: "Home",
+            component: home,
+        },
 
         {
             path: "/register",
