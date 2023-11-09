@@ -41,3 +41,4 @@ mongoose
   .catch(err => console.error("Connexion à MongoDB échouée ! ", err));
 
 require("./Models/dbProductVersionning");
+require("./Models/dbMarqueMongo");

@@ -5,6 +5,7 @@ const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 const port = process.env.PORT;
 require("./src/db");
+const Marque = require("./src/Models/dbMarque");
 
 const mainRoutes = require("./src/Routes");
 // require("./Statistique/dbStatistique");
@@ -13,10 +14,41 @@ app.use(cors());
 const routePrefix = "/api";
 
 const stripeRoutes = require("./src/Routes/stripeRoutes");
+const GenericRouter = require("./src/Routes/genericRouter");
+const GenericController = require("./src/Controllers/genericController");
+const GenericService = require("./src/Services/genericService");
+const MongoService = require("./src/Services/mongoService");
+const MarqueMongo = require("./src/Models/dbMarqueMongo");
 app.use(routePrefix + "/stripe", stripeRoutes);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const genericService = new GenericService(Marque);
+
+const serviceProxy = new Proxy(genericService, {
+  get(target, prop, receiver) {
+    console.log(prop);
+    if (prop === "getAll") {
+      const ms = new MongoService(MarqueMongo);
+      return ms.getAll.bind(ms);
+    }
+    return Reflect.get(target, prop, receiver);
+  },
+});
+
+const genericController = new GenericController(serviceProxy);
+
+app.use(
+  routePrefix + "/marques",
+  new GenericRouter(genericController).getRouter()
+);
+// app.use(
+//   routePrefix + "/marques",
+//   new GenericRouter(
+//     new GenericController(new GenericService(Marque))
+//   ).getRouter()
+// );
 
 app.use(mainRoutes);
 

@@ -20,8 +20,8 @@ router.use(routePrefix, userRoute);
 router.use(routePrefix, caractRoute);
 
 // router.use(routePrefix, factureRoute);
-router.use(routePrefix + "/marques", marqueRoutes);
-core.generateCrud(models.Marque, "marques", router);
+// router.use(routePrefix + "/marques", marqueRoutes);
+// core.generateCrud(models.Marque, "marques", router);
 
 router.use(routePrefix + "/modeles", modelRoutes);
 core.generateCrud(models.Modele, "modeles", router);
