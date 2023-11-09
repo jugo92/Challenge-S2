@@ -1,132 +1,136 @@
+<!--<template>-->
+<!--    <form @submit.prevent="handleSubmit" class="mb-4 mt-12">-->
+<!--        <div v-for="(field, index) in fields" :key="index" class="mb-4">-->
+<!--            <label class="text-sm font-bold mb-1" :for="field.name">{{ field.label }} <span class="text-red-600" v-if="field.required">*</span></label>-->
+<!--            <component-->
+<!--                :is="field.type"-->
+<!--                :id="field.name"-->
+<!--                v-model="modelValue[field.name]"-->
+<!--                :placeholder="field.placeholder"-->
+<!--                :required="field.required"-->
+<!--                :api-options="field.apiOptions"-->
+<!--            />-->
+<!--        </div>-->
+<!--        <button type="submit" class="w-full p-2 rounded bg-blue-600 text-white mb-4">Inscription</button>-->
+<!--    </form>-->
+<!--</template>-->
+
+<!--<script setup lang="ts">-->
+<!--import { ref, PropType, defineProps } from 'vue';-->
+
+<!--interface Field {-->
+<!--    type: string;-->
+<!--    label: string;-->
+<!--    name: string;-->
+<!--    placeholder?: string;-->
+<!--    required: boolean;-->
+<!--    apiOptions?: {-->
+<!--        url: string;-->
+<!--        method: string;-->
+<!--    };-->
+<!--}-->
+
+<!--const fields = ref<Field[]>([]);-->
+<!--// const formData = ref<{ [key: string]: any }>({});-->
+<!--const emits = defineEmits();-->
+<!--const handleSubmit = () => {-->
+<!--    // if (props.submitForm) {-->
+<!--    //     props.submitForm(formData.value);-->
+<!--    // }-->
+<!--    if (props.modelValue) {-->
+<!--        emits('update:modelValue', props.modelValue);-->
+<!--    }-->
+<!--};-->
+
+
+<!--const props = defineProps({-->
+<!--    fields: {-->
+<!--        type: Array as PropType<Field[]>,-->
+<!--        required: true,-->
+<!--    },-->
+<!--    modelValue: {-->
+<!--        type: Object as PropType<{ [key: string]: any }>,-->
+<!--        required: true,-->
+<!--    },-->
+<!--    // submitForm: Function as PropType<(data: { [key: string]: any }) => void>,-->
+<!--});-->
+<!--</script>-->
+
 <template>
-  <form @submit.prevent="onSubmit" class="max-w-md mx-auto">
-    <div v-for="(field, index) in formConfig" :key="index" class="mb-4">
-      <label :for="field.name" class="block text-gray-600">{{ field.label }}</label>
-      <input
-        v-if="field.type === 'text'"
-        :type="field.type"
-        :name="field.name"
-        :placeholder="field.placeholder"
-        :required="field.required"
-        v-model="formData[field.name]"
-        class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"
-      />
-
-      <select
-        v-if="field.type === 'select'"
-        :name="field.name"
-        :required="field.required"
-        v-model="formData[field.name]"
-        class="w-full px-3 py-2 border rounded-lg focus:ring focus:ring-blue-300"
-      >
-        <option
-          v-for="(option, optionIndex) in field.options"
-          :key="optionIndex"
-          :value="option.value"
-        >{{ option.label }}</option>
-      </select>
-    </div>
-
-    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
-      Envoyer
-    </button>
-  </form>
+    <form @submit.prevent="handleSubmit" class="mb-4 mt-12">
+        <div v-for="(field, index) in fields" :key="index" class="mb-4">
+            <label class="text-sm font-bold mb-1" :for="field.name">{{ field.label }} <span class="text-red-600" v-if="field.required">*</span></label>
+            <component
+                :is="field.type"
+                :id="field.name"
+                v-model="modelValue[field.name]"
+                :placeholder="field.placeholder"
+                :required="field.required"
+                :api-options="field.apiOptions"
+                v-if="field.type !== 'select'"
+            />
+            <select
+                v-if="field.type === 'select'"
+                :id="field.name"
+                v-model="modelValue[field.name]"
+                :required="field.required"
+            >
+                <option value="" disabled>Choisissez une option</option>
+                <option v-for="option in field.apiOptions.data" :key="option.id" :value="option.id">{{ option.name }}</option>
+            </select>
+        </div>
+        <button type="submit" class="w-full p-2 rounded bg-blue-600 text-white mb-4">Inscription</button>
+    </form>
 </template>
 
-  
-  
-  
-  <script setup lang="ts">
-import { ref, defineProps } from 'vue';
-import { Form } from 'vee-validate';
+<script setup lang="ts">
+import {ref, PropType, defineProps, defineEmits, onMounted} from 'vue';
+
+interface Field {
+    type: string;
+    label: string;
+    name: string;
+    placeholder?: string;
+    required: boolean;
+    apiOptions?: {
+        url: string;
+        method: string;
+        data?: any[];
+    };
+}
 
 const props = defineProps({
-  formConfig: {
-    type: Array as () => FormFieldConfig[],
-    required: true,
-  },
-  onSubmit: {
-    type: Function,
-    required: true,
-  },
+    fields: {
+        type: Array as PropType<Field[]>,
+        required: true,
+    },
+    modelValue: {
+        type: Object as PropType<{ [key: string]: any }>,
+        required: true,
+    },
 });
 
-const formData = ref<Record<string, any>>({});
+const emits = defineEmits();
 
-interface FormFieldConfig {
-  type: string;
-  label: string;
-  name: string;
-  placeholder?: string;
-  required: boolean;
-  apiOptions?: {
-    url: string;
-    method: string;
-  };
-  options?: { label: string; value: any }[]; 
-}
-
-function isFieldValid(field: FormFieldConfig, value: any): boolean {
-  if (field.required && (!value || value.trim() === '')) {
-    return false; 
-  }
-
-  return true;
-}
-
-async function validateFieldWithApi(field: FormFieldConfig) {
-  try {
-    const response = await sendValidationRequest(field);
-    const data = await response.json();
-    return !data.hasOwnProperty('error');
-  } catch (error) {
-    console.error('Erreur de validation API', error);
-    return false;
-  }
-}
-
-async function sendValidationRequest(field: FormFieldConfig) {
-  return await fetch(`localhost:3000/api`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      field,
-      value: formData.value[field.name],
-    }),
-  });
-}
-async function onSubmit() {
-  let isFormValid = true;
-
-  for (const field of props.formConfig) {
-    if ('field' in field) {
-
-      const fieldValue = formData.value[field.name];
-      const isFieldValidLocally = isFieldValid(field, fieldValue);
-      
-      if (!isFieldValidLocally) {
-        isFormValid = false;
-        break;
-      }
-
-      if (field.apiOptions) {
-        isFormValid = await validateFieldWithApi(field);
-        if (!isFormValid) break;
-      }
-
-      if (field.type === 'select' && field.required && !fieldValue) {
-        isFormValid = false;
-        break;
-      }
+const handleSubmit = () => {
+    if (props.modelValue) {
+        emits('update:modelValue', props.modelValue);
     }
-  }
+};
 
-  if (isFormValid) {
-    props.onSubmit(formData.value);
-  }
-}
-
-
+onMounted(() => {
+    // Fetch data from the API and store it in apiOptions.data for select fields
+    for (const field of props.fields) {
+        if (field.type === 'select' && field.apiOptions) {
+            fetch(`http://localhost:3000/api/${field.apiOptions.url}`)
+                .then(response => response.json())
+                .then(data => {
+                    field.apiOptions.data = data;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }
+});
 </script>
