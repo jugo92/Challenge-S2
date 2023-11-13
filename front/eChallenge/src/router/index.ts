@@ -7,6 +7,9 @@ import unauthorized from "../pages/unauthorized-page.vue";
 import Products from "../components/Products.vue";
 import HomePage from "../pages/home-page.vue";
 import ShowAll from "../components/ShowAll.vue";
+import ProductDetailsVue from "../views/ProductDetails.vue";
+import ProductListVue from "../views/ProductList.vue";
+import homePageVue from "../pages/home-page.vue";
 
 
 const router = createRouter({
@@ -15,7 +18,19 @@ const router = createRouter({
         {
             path: "/",
             name: "Home",
-            component: HomePage,
+            component: homePageVue,
+        },
+        {
+            path: "/products",
+            name: "ProductList",
+            component: ProductListVue,
+        },
+
+        {
+            path: "/products/:id",
+            name: "ProductDetails",
+            component: ProductDetailsVue,
+
         },
         {
             path: "/register",
@@ -55,7 +70,14 @@ const router = createRouter({
             path: "/unauthorized",
             name: "Unauthorized",
             component: unauthorized,
-        }
+        },
+        // {
+        //     path: "/products/:id",
+        //     name: "ProductDetails",
+        //     component: ProductDetailsVue,
+        // },
+      
+        
     ],
 });
 

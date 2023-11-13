@@ -2,7 +2,7 @@
   <div class="top">
     <ul>
       <li v-for="category in categories" :key="category.id" class="font-bold relative category-item" @click="selectCategory(category)">
-        <div class="w-full h-full absolute inset-0 hover:bg-gray-600 hover:text-white transition-all duration-300">{{ category.name }}</div>
+      {{ category.name }}
       </li>
     </ul>
   </div>
@@ -17,7 +17,6 @@ const categories = ref([
   { id: 2, name: 'reconditionné' },
   { id: 3, name: 'neuf' },
   { id: 4, name: 'occasion' },
-  { id: 5, name: 'gratuit' },
 ]);
 
 const selectedCategory = ref<number | null>(null);
@@ -29,35 +28,97 @@ const selectCategory = (category: { id: number }) => {
 
 <style scoped>
 .top {
-  background-color: #f3f4f6;
-  border: solid 1px black;
+  border: solid 1px rgb(255, 255, 255);
+  background-color: rgb(248, 248, 248);
   padding: 1rem;
-}
-
-ul {
+  margin-bottom: 1rem;
+  box-shadow: 0px 0px 8px 0px rgb(160, 160, 160);
+  overflow-x: auto; 
+  white-space: nowrap; 
   display: flex;
-  justify-content: space-around;
-  list-style: none;
-  padding: 0;
+  text-align: center;
+  height: 50px;
+  margin-top: 6%;
+}
+
+li {
+  position: relative;
+  color: #000000;
+  text-decoration: none;
+  margin-right: 3.5rem; 
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+  display: inline-block; 
+  min-width: 50%; 
+  margin-top: -1rem;
+}
+
+li:after {
+  content: '';
+  justify-content: center;
+  display: block;
+  position: absolute;
+  bottom: 2px;
+  width: 0%;
+  left: 0px;
+  height: 2px;
+  transition: 0.50s cubic-bezier(0.72,-0.01, 0.19, 0.92);
+  background: #050505;
   cursor: pointer;
 }
 
-.category-item {
+li:hover:after {
+  width: 100%;
   cursor: pointer;
-  padding: 10px;
-  border-bottom: 1px solid transparent;
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
-  ul {
-    flex-direction: column; 
-    align-items: center;
-  }
+  .top {
+  border: solid 1px rgb(255, 255, 255);
+  background-color: rgb(248, 248, 248);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0px 0px 8px 0px rgb(160, 160, 160);
+  overflow-x: auto; 
+  white-space: nowrap; 
+  display: flex;
+  height: 50px;
+  margin-top: 22%;
 
-  .category-item {
-    width: 100%;
-    text-align: center; 
-    margin-bottom: 5px; 
-  }
+}
+
+li {
+  position: relative;
+  color: #000000;
+  text-decoration: none;
+  margin-right: 0.5rem; 
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.3rem 0.3rem 0.3rem 0.3rem;
+  display: inline-block; 
+  overflow: hidden;
+  margin-top: -1rem;
+ 
+}
+
+li:after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 2px;
+  width: 0%;
+  left: 0px;
+  height: 2px;
+  transition: 0.50s cubic-bezier(0.72,-0.01, 0.19, 0.92);
+  background: #050505;
+  cursor: pointer;
+}
+
+li:hover:after {
+  width: 100%;
+  cursor: pointer;
+}
 }
 </style>
