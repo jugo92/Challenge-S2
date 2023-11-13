@@ -121,4 +121,37 @@ li:hover:after {
   cursor: pointer;
 }
 }
+
+li {
+  position: relative;
+  color: #000000;
+  text-decoration: none;
+  margin-right: 0.5rem; 
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.3rem 0.3rem 0.3rem 0.3rem;
+  display: inline-block; 
+  overflow: hidden;
+  margin-top: -1rem;
+ 
+}
+
+li:after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 2px;
+  width: 0%;
+  left: 0px;
+  height: 2px;
+  transition: 0.50s cubic-bezier(0.72,-0.01, 0.19, 0.92);
+  background: #050505;
+  cursor: pointer;
+}
+
+li:hover:after {
+  width: 100%;
+  cursor: pointer;
+}
+}
 </style>

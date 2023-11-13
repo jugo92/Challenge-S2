@@ -152,5 +152,4 @@ const quantity = ref(1);
 
   }
 }
-
 </style>

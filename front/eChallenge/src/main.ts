@@ -10,5 +10,4 @@ app.use(ToastPlugin);
 app.use(router);
 app.use(store);
 
-
 app.mount('#app');
