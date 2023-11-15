@@ -7,7 +7,12 @@ const db = {};
 const files = fs.readdirSync(__dirname);
 files.forEach(file => {
   if (file === "db.js" || file === "index.js") return;
-  if (file == "dbUser.js") {
+  if (
+    file == "dbUser.js" ||
+    file == "dbMarque.js" ||
+    file == "dbTva.js" ||
+    file == "dbOrder.js"
+  ) {
     const model = require(path.join(__dirname, file))(connection);
     db[model.name] = model;
   }

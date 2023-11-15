@@ -1,37 +1,28 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "localhost",
-  dialect: "mysql",
-});
+const { Model, DataTypes } = require("sequelize");
 
-try {
-  sequelize.authenticate();
-  console.log("Connection has been established successfully.");
-} catch (error) {
-  console.error("Unable to connect to the database:", error);
-}
+module.exports = function (connection) {
+  class Marque extends Model {}
 
-class Marque extends Model {}
-Marque.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+  Marque.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    modelName: "marque",
-  }
-);
-
-module.exports = Marque;
+    {
+      sequelize: connection,
+      tableName: "marque",
+    }
+  );
+  return Marque;
+};
