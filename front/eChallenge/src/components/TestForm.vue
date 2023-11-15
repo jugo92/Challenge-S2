@@ -24,10 +24,10 @@
     label: 'Choix',
     name: 'choice',
     required: true,
-    options: [
-      { label: 'Option 1', value: 'option1' },
-      { label: 'Option 2', value: 'option2' },
-    ],
+    apiOptions: {
+      url: 'marques',
+      method: 'GET',
+    },
   },
 ];
   

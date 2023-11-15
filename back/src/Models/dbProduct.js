@@ -52,9 +52,8 @@ Product.init(
       allowNull: false,
     },
     promotion: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     version: {
       type: DataTypes.STRING,

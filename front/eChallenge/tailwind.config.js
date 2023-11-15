@@ -1,15 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './vueform.config.js',
-      './node_modules/@vueform/vueform/themes/tailwind/**/*.vue',
-      './node_modules/@vueform/vueform/themes/tailwind/**/*.js',
-  ],
-  darkMode: false,
+    './src/**/*.html',
+    './src/**/*.vue',
+    './src/**/*.jsx',
+    './src/**/*.js',
+    ],
   theme: {
     extend: {},
   },
-  purge: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   variants: {
     extend: {},
   },

@@ -5,6 +5,7 @@ import LoginVue from "../components/Login.vue";
 import TestVue from "../components/TestForm.vue";
 import unauthorized from "../pages/unauthorized-page.vue";
 import Products from "../components/Products.vue";
+import HomePage from "../pages/home-page.vue";
 
 
 const router = createRouter({
@@ -13,7 +14,7 @@ const router = createRouter({
         {
             path: "/",
             name: "Home",
-            component: home,
+            component: HomePage,
         },
 
         {

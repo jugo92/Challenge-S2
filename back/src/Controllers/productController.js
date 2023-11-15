@@ -21,10 +21,10 @@ module.exports.createProductAndVersion = async (req, res) => {
 
     res.status(201).json(product);
   } catch (err) {
-    console.error("Erreur lors de la récupération des produits :", err);
+    console.error("Erreur lors de l'enregistrement du produits :", err);
     res
       .status(500)
-      .json({ message: "Erreur lors de la récupération des produits" });
+      .json({ message: "Erreur lors de l'enregistrement du produits" });
   }
 };
 // module.exports.getProducts = async (req, res) => {

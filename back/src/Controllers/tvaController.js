@@ -2,7 +2,7 @@ const Tva = require("../Models/dbTva");
 
 module.exports.getTva = async (req, res) => {
   try {
-    const tva = await Tva.findOne();
+    const tva = await Tva.findAll();
     res.status(200).json(tva);
   } catch (err) {
     console.error("Erreur lors de la récupération de la TVA :", err);
