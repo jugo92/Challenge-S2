@@ -36,6 +36,7 @@ class GenericController {
       const newItem = await this.service.create(req.body);
       res.status(201).json(newItem);
     } catch (error) {
+      console.error(error);
       res
         .status(500)
         .json({ error: "Erreur lors de la création de l'élément" });

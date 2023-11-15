@@ -1,82 +1,104 @@
 const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "localhost",
-  dialect: "mysql",
-});
+const { sendMail } = require("../Controllers/mailController");
+module.exports = function (connection) {
+  class User extends Model {
+    static addHooks(db) {
+      User.addHook(
+        "afterCreate",
+        async user => {
+          console.log(user);
+          await sendMail(user.dataValues, "validateUserAccount").then(
+            response => {}
+          );
+        }
+        //userMongo(user.id, db.User, db.Article)
+      );
+      // User.addHook("afterUpdate", user =>
+      //   userMongo(user.id, {
+      //     User: db.User,
+      //     Article: db.Article,
+      //     onlyRemove: true,
+      //   })
+      // );
+    }
+  }
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("La connexion à la base de données a été établie avec succès.");
-  })
-  .catch(error => {
-    console.error("Impossible de se connecter à la base de données :", error);
+  User.init(
+    {
+      id: { type: DataTypes.UUID, primaryKey: true },
+      firstname: DataTypes.STRING(45),
+      lastname: DataTypes.STRING(45),
+      email: {
+        type: DataTypes.STRING(120), // ou toute longueur adéquate
+        unique: true,
+        allowNull: false,
+      },
+      password: {
+        type: DataTypes.TEXT,
+        validate: {
+          max: 320,
+          notNull: true,
+          //is: {
+          //  args: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i,
+          //  msg: "Password must be at least 8 characters long and contain at least one letter and one number",
+          //},
+        },
+        allowNull: false,
+      },
+      gender: {
+        type: DataTypes.STRING,
+      },
+      adress: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      city: {
+        type: DataTypes.STRING,
+      },
+      zip: {
+        type: DataTypes.STRING,
+      },
+      phone: {
+        type: DataTypes.STRING,
+        unique: true,
+      },
+      salt: {
+        type: DataTypes.TEXT,
+      },
+      dateofbirth: {
+        type: DataTypes.STRING,
+      },
+      role: {
+        type: DataTypes.STRING,
+      },
+      isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+    },
+    {
+      sequelize: connection,
+      tableName: "user",
+    }
+  );
+
+  User.addHook("beforeCreate", async function (user) {
+    const bcrypt = require("bcryptjs");
+    const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
+    user.password = hash;
   });
 
-class User extends Model {}
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    lastname: {
-      type: DataTypes.STRING,
-    },
-    gender: {
-      type: DataTypes.STRING,
-    },
-    adress: {
-      type: DataTypes.STRING,
-      allowNull: true, 
-    },
-    city: {
-      type: DataTypes.STRING,
-    },
-    zip: {
-      type: DataTypes.STRING,
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false,
-    },
+  User.addHook("beforeUpdate", async function (user, { fields }) {
+    if (fields.includes("password")) {
+      const bcrypt = require("bcryptjs");
+      const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
+      user.password = hash;
+    }
+  });
 
-    phone: {
-      type: DataTypes.STRING,
-      unique: true,
-    },
-    passwordHash: {
-      type: DataTypes.TEXT,
-    },
-    passwordSalt: {
-      type: DataTypes.TEXT,
-    },
-    dateofbirth: {
-      type: DataTypes.STRING,
-    },
-    role: {
-      type: DataTypes.STRING,
-    },
-    isVerified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    token: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-  },
-
-  {
-    sequelize,
-    modelName: "users",
-  }
-);
-
-module.exports = User;
+  return User;
+};

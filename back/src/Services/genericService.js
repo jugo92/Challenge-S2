@@ -1,3 +1,5 @@
+const { uuidv7 } = require("uuidv7");
+
 class GenericService {
   constructor(model) {
     this.Model = model;
@@ -19,7 +21,8 @@ class GenericService {
 
   async create(data) {
     try {
-      return this.Model.create({ ...data });
+      const id = uuidv7();
+      return this.Model.create({ id, ...data });
     } catch (error) {
       throw new Error("Erreur lors de la création");
     }
