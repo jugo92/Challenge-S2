@@ -5,7 +5,7 @@ class GenericController {
 
   async getAll(req, res) {
     try {
-      console.log(this.service.getAll);
+      console.log("JE SAIS PLUS  ", this.service.getAll);
       const items = await this.service.getAll(req.query);
       res.json(items);
     } catch (error) {
@@ -33,6 +33,7 @@ class GenericController {
 
   async create(req, res) {
     try {
+      console.log("ICI");
       const newItem = await this.service.create(req.body);
       res.status(201).json(newItem);
     } catch (error) {

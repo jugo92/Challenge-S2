@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
+const Security = require("./src/Routes/security");
 const port = process.env.PORT;
 const {
   User,
@@ -13,9 +14,6 @@ const {
   Product,
 } = require("./src/Models");
 
-// const mainRoutes = require("./src/Routes");
-// require("./Statistique/dbStatistique");
-
 app.use(cors());
 const routePrefix = "/api";
 
@@ -24,12 +22,14 @@ const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
-const MarqueMongo = require("./src/Models/dbMarqueMongo");
+// const MarqueMongo = require("./src/Models/dbMarqueMongo");
 
 app.use(routePrefix + "/stripe", stripeRoutes);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(routePrefix, Security);
 
 // const genericService = new GenericService(Marque);
 

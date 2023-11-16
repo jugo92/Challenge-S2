@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
+const crypto = require("crypto");
 module.exports = function (connection) {
   class User extends Model {
     static addHooks(db) {
@@ -89,7 +90,9 @@ module.exports = function (connection) {
   User.addHook("beforeCreate", async function (user) {
     const bcrypt = require("bcryptjs");
     const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
+    const token = crypto.randomBytes(30).toString("hex");
     user.password = hash;
+    user.token = token;
   });
 
   User.addHook("beforeUpdate", async function (user, { fields }) {
