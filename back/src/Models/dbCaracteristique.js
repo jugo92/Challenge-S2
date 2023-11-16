@@ -1,5 +1,3 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
-
 const { Model, DataTypes } = require("sequelize");
 
 module.exports = function (connection) {
@@ -7,11 +5,7 @@ module.exports = function (connection) {
 
   Caracteristique.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
+      id: { type: DataTypes.UUID, primaryKey: true },
       resolution: {
         type: DataTypes.STRING,
       },
@@ -64,7 +58,7 @@ module.exports = function (connection) {
     },
     {
       sequelize: connection,
-      tableName: "caracteristique",
+      tableName: "Caracteristique",
     }
   );
 

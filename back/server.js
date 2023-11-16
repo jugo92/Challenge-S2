@@ -4,9 +4,14 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 const port = process.env.PORT;
-// require("./src/db");
-// const Marque = require("./src/Models/dbMarque");
-const { User } = require("./src/Models");
+const {
+  User,
+  Tva,
+  Caracteristique,
+  Order,
+  Marque,
+  Product,
+} = require("./src/Models");
 
 // const mainRoutes = require("./src/Routes");
 // require("./Statistique/dbStatistique");
@@ -14,13 +19,14 @@ const { User } = require("./src/Models");
 app.use(cors());
 const routePrefix = "/api";
 
-// const stripeRoutes = require("./src/Routes/stripeRoutes");
+const stripeRoutes = require("./src/Routes/stripeRoutes");
 const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const MarqueMongo = require("./src/Models/dbMarqueMongo");
-// app.use(routePrefix + "/stripe", stripeRoutes);
+
+app.use(routePrefix + "/stripe", stripeRoutes);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -48,6 +54,39 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   routePrefix + "/users",
   new GenericRouter(new GenericController(new GenericService(User))).getRouter()
+);
+
+app.use(
+  routePrefix + "/tvas",
+  new GenericRouter(new GenericController(new GenericService(Tva))).getRouter()
+);
+
+app.use(
+  routePrefix + "/caracteristiques",
+  new GenericRouter(
+    new GenericController(new GenericService(Caracteristique))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/marques",
+  new GenericRouter(
+    new GenericController(new GenericService(Marque))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/orders",
+  new GenericRouter(
+    new GenericController(new GenericService(Order))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/products",
+  new GenericRouter(
+    new GenericController(new GenericService(Product))
+  ).getRouter()
 );
 
 // app.use(mainRoutes);

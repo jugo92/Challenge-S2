@@ -5,11 +5,7 @@ module.exports = function (connection) {
 
   Marque.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
+      id: { type: DataTypes.UUID, primaryKey: true },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -21,7 +17,7 @@ module.exports = function (connection) {
     },
     {
       sequelize: connection,
-      tableName: "marque",
+      tableName: "Marque",
     }
   );
   return Marque;

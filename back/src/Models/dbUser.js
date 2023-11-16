@@ -1,4 +1,4 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
+const { Model, DataTypes } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
 module.exports = function (connection) {
   class User extends Model {
@@ -82,7 +82,7 @@ module.exports = function (connection) {
     },
     {
       sequelize: connection,
-      tableName: "user",
+      tableName: "User",
     }
   );
 

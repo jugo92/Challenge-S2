@@ -24,11 +24,7 @@ module.exports = function (connection) {
 
   Order.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
+      id: { type: DataTypes.UUID, primaryKey: true },
       HT: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -53,7 +49,7 @@ module.exports = function (connection) {
     },
     {
       sequelize: connection,
-      tableName: "order",
+      tableName: "Order",
     }
   );
 
