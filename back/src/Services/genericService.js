@@ -6,72 +6,86 @@ class GenericService {
     this.Model = model;
   }
 
-  async getAll(query) {
-    return this.Model.findAll({
-      where: query,
+  async getAll(req, res) {
+    const models = await this.Model.findAll({
+      where: req.query,
     });
+    return res.status(200).json(models);
   }
 
-  async getById(id) {
-    return this.Model.findOne({
+  async getById(req, res) {
+    const id = req.params.id;
+    const model = await this.Model.findOne({
       where: {
         id,
       },
     });
+    if (model) return res.status(200).json(model);
+    return res.sendStatus(404);
   }
 
-  async create(data) {
+  async create(req, res, next) {
     try {
       const id = uuidv7();
-      return this.Model.create({ id, ...data });
+      const model = await this.Model.create({ id, ...req.body });
+      return res.status(201).json(model);
     } catch (error) {
-      throw new Error("Erreur lors de la création");
+      if (error.name === "SequelizeValidationError") {
+        error = ValidationError.fromSequelize(error);
+      }
+      next(error);
     }
   }
 
-  async update(id, data) {
+  async update(req, res, next) {
     try {
+      const id = req.params.id;
       const nbDeleted = await this.Model.destroy({ where: { id } });
-      const updatedItem = await this.Model.create({ id, ...data });
+      const updatedItem = await this.Model.create({ id, ...req.body });
 
       if (nbDeleted > 0) {
-        return { item: updatedItem, status: 200 };
+        return res.status(200).json(updatedItem);
       } else {
-        return { item: updatedItem, status: 201 };
+        return res.status(201).json(updatedItem);
       }
     } catch (error) {
-      throw new Error("Erreur lors de la mise à jour");
+      if (error.name === "SequelizeValidationError") {
+        error = ValidationError.fromSequelize(error);
+      }
+      next(error);
     }
   }
 
-  async patch(id, body) {
+  async patch(req, res, next) {
     try {
-      const [_, items] = await this.Model.update(body, {
+      const id = req.params.id;
+      const [_, items] = await this.Model.update(req.body, {
         where: { id },
         individualHooks: true,
       });
       console.log(items);
       if (!items.length) {
-        return { status: 404 };
+        return res.sendStatus(404);
       } else {
-        return { item: items[0], status: 200 };
+        return res.status(200).json(items[0]);
       }
     } catch (error) {
-      console.log("ERROR : ", error);
       if (error.name === "SequelizeValidationError") {
         error = ValidationError.fromSequelize(error);
       }
-      return error;
+      next(error);
     }
   }
 
-  async delete(id) {
+  async delete(req, res) {
+    const id = req.params.id;
     const nbDeleted = await this.Model.destroy({
       where: {
         id,
       },
     });
-    return nbDeleted;
+    if (nbDeleted) return res.sendStatus(204);
+    return res.sendStatus(404);
   }
 }
 

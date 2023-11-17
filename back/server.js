@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
+const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const port = process.env.PORT;
 const {
@@ -97,7 +98,6 @@ app.use(function (err, req, res, next) {
   } else if (err instanceof SyntaxError) {
     res.sendStatus(400);
   } else {
-    console.log("Middleware d'erreur");
     console.log(err);
     res.status(500).send(err.message);
   }
