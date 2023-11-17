@@ -231,7 +231,7 @@ module.exports = function (connection) {
       frontcamera: {
         type: DataTypes.STRING,
         allowNull: false,
-      },²
+      },
       weight: {
         type: DataTypes.STRING,
         allowNull: false,
