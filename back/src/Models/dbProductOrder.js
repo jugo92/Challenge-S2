@@ -1,56 +1,41 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "localhost",
-  dialect: "mysql",
-});
+const { Model, DataTypes } = require("sequelize");
 
-const Order = require("./dbOrder");
-const Product = require("./dbProduct");
-
-try {
-  sequelize.authenticate();
-  console.log("Connection has been established successfully.");
-} catch (error) {
-  console.error("Unable to connect to the database:", error);
-}
-
-class ProductOrder extends Model {}
-ProductOrder.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    idOrder: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "orders",
-        key: "id",
-      },
-    },
-    idProduct: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "products",
-        key: "id",
-      },
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
-    },
-    version: {
-      type: DataTypes.INTEGER,
-    },
-  },
-  {
-    sequelize,
-    modelName: "productorder",
+module.exports = function (connection) {
+  class ProductOrder extends Model {
+    static associate(db) {
+      ProductOrder.belongsTo(db.Order);
+      db.Order.hasMany(ProductOrder);
+      ProductOrder.belongsTo(db.Product);
+      db.Product.hasMany(ProductOrder);
+    }
+    // static addHooks(db) {
+    //   Article.addHook("afterCreate", (article) =>
+    //     userMongo(article.UserId, db.User, db.Article)
+    //   );
+    //   Article.addHook("afterUpdate", (article) =>
+    //     userMongo(article.UserId, db.User, db.Article)
+    //   );
+    //   Article.addHook("afterDestroy", (article) =>
+    //     userMongo(article.UserId, db.User, db.Article)
+    //   );
+    // }
   }
-);
-ProductOrder.belongsTo(Order, { foreignKey: "idOrder" });
-ProductOrder.belongsTo(Product, { foreignKey: "idProduct" });
 
-module.exports = ProductOrder;
+  ProductOrder.init(
+    {
+      id: { type: DataTypes.UUID, primaryKey: true },
+      quantity: {
+        type: DataTypes.INTEGER,
+      },
+      version: {
+        type: DataTypes.INTEGER,
+      },
+    },
+    {
+      sequelize: connection,
+      tableName: "ProductOrder",
+    }
+  );
+
+  return ProductOrder;
+};

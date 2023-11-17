@@ -1,33 +1,19 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
-const sequelize = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "localhost",
-  dialect: "mysql",
-});
+const { Model, DataTypes } = require("sequelize");
+module.exports = function (connection) {
+  class Tva extends Model {}
 
-try {
-  sequelize.authenticate();
-  console.log("Connection has been established successfully.");
-} catch (error) {
-  console.error("Unable to connect to the database:", error);
-}
-
-class Tva extends Model {}
-Tva.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+  Tva.init(
+    {
+      id: { type: DataTypes.UUID, primaryKey: true },
+      rate: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     },
-    taux: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    modelName: "tva",
-  }
-);
-
-module.exports = Tva;
+    {
+      sequelize: connection,
+      tableName: "Tva",
+    }
+  );
+  return Tva;
+};
