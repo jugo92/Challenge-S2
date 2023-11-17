@@ -1,4 +1,5 @@
 const { uuidv7 } = require("uuidv7");
+const ValidationError = require("../errors/ValidationError");
 
 class GenericService {
   constructor(model) {
@@ -42,8 +43,30 @@ class GenericService {
       throw new Error("Erreur lors de la mise à jour");
     }
   }
+
+  async patch(id, body) {
+    try {
+      const [_, items] = await this.Model.update(body, {
+        where: { id },
+        individualHooks: true,
+      });
+      console.log(items);
+      if (!items.length) {
+        return { status: 404 };
+      } else {
+        return { item: items[0], status: 200 };
+      }
+    } catch (error) {
+      console.log("ERROR : ", error);
+      if (error.name === "SequelizeValidationError") {
+        error = ValidationError.fromSequelize(error);
+      }
+      return error;
+    }
+  }
+
   async delete(id) {
-    const [nbDeleted] = await this.Model.destroy({
+    const nbDeleted = await this.Model.destroy({
       where: {
         id,
       },

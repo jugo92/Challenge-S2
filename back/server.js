@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 const Security = require("./src/Routes/security");
@@ -27,6 +28,7 @@ const MongoService = require("./src/Services/mongoService");
 app.use(routePrefix + "/stripe", stripeRoutes);
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
@@ -88,6 +90,18 @@ app.use(
     new GenericController(new GenericService(Product))
   ).getRouter()
 );
+
+app.use(function (err, req, res, next) {
+  if (err instanceof ValidationError) {
+    res.status(422).json(err.errors);
+  } else if (err instanceof SyntaxError) {
+    res.sendStatus(400);
+  } else {
+    console.log("Middleware d'erreur");
+    console.log(err);
+    res.status(500).send(err.message);
+  }
+});
 
 // app.use(mainRoutes);
 

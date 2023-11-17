@@ -16,10 +16,11 @@ class GenericRouter {
       this.controller.getById.bind(this.controller)
     );
     this.router.post("/", this.controller.create.bind(this.controller));
-    this.router.put(
+    this.router.put("/:id", this.controller.update.bind(this.controller));
+    this.router.patch(
       "/:id",
       checkAuth(),
-      this.controller.update.bind(this.controller)
+      this.controller.patch.bind(this.controller)
     );
     this.router.delete(
       "/:id",

@@ -5,7 +5,6 @@ class GenericController {
 
   async getAll(req, res) {
     try {
-      console.log("JE SAIS PLUS  ", this.service.getAll);
       const items = await this.service.getAll(req.query);
       res.json(items);
     } catch (error) {
@@ -48,6 +47,21 @@ class GenericController {
     try {
       const id = req.params.id;
       const { item, status } = await this.service.update(id, req.body);
+
+      if (item) {
+        res.status(status).json(item);
+      } else {
+        res.sendStatus(404);
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Erreur lors de la mise à jour" });
+    }
+  }
+
+  async patch(req, res) {
+    try {
+      const id = req.params.id;
+      const { item, status } = await this.service.patch(id, req.body);
 
       if (item) {
         res.status(status).json(item);
