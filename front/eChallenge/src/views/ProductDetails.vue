@@ -1,18 +1,11 @@
 
-<!-- <template>
-    <div class="mt-24">
-        <h2>Details : {{ post ? post.id : 'Loading' }}</h2>
-        <p>Post Title: {{ post ? post.title : 'Loading' }}</p>
-        <p>Post Body: {{ post ? post.body : 'Loading' }}</p>
-    </div>
-   
-    
-</template> -->
 
 <script setup>
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 import { ref, onMounted, watch } from 'vue';
 import TopBar from '../components/TopBar.vue';
+import Navbar from '../components/Navbar.vue';
 
 const route = useRoute();
 const postId = ref(Number(route.params.id));
@@ -48,9 +41,15 @@ const loadData = async () => {
 };
 
 onMounted(loadData);
+
+const store = useStore(); 
+const addToCart = (product) => {
+  store.commit('addToCart', product);
+};
 </script>
 
 <template>
+    <Navbar/>
     <TopBar />
     <section class="py-10 font-poppins">
 <div class="max-w-6xl px-4 mx-auto">
@@ -115,7 +114,7 @@ onMounted(loadData);
 </div>
 <div class="mb-6">
 <h2 class="mb-2 text-lg font-bold text-gray-700 dark:text-black">System Specs :</h2>
-<div class="bg-gray-100 dark:bg-gray-700 rounded-xl">
+<div class="bg-gray-100 dark:bg-black rounded-xl">
 <div class="p-3 lg:p-5 ">
 <div class="p-2 rounded-xl lg:p-6 dark:bg-gray-800 bg-gray-50">
 <div class="flex flex-wrap justify-center gap-x-10 gap-y-4">
@@ -197,34 +196,15 @@ Frequency
 <div class="mb-6 "></div>
 <div class="flex flex-wrap items-center mb-6">
 <div class="mb-4 mr-4 lg:mb-0">
-<div class="w-28">
-<div class="relative flex flex-row w-full h-10 bg-transparent rounded-lg">
-<button class="w-20 h-full text-gray-600 bg-gray-100 border-r rounded-l outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 hover:text-gray-700 dark:bg-gray-900 hover:bg-gray-300">
-<span class="m-auto text-2xl font-thin">-</span>
-</button>
-<input type="number" class="flex items-center w-full font-semibold text-center text-gray-700 placeholder-gray-700 bg-gray-100 outline-none dark:text-gray-400 dark:placeholder-gray-400 dark:bg-gray-900 focus:outline-none text-md hover:text-black" placeholder="1">
-<button class="w-20 h-full text-gray-600 bg-gray-100 border-l rounded-r outline-none cursor-pointer dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-400 dark:bg-gray-900 hover:text-gray-700 hover:bg-gray-300">
-<span class="m-auto text-2xl font-thin">+</span>
-</button>
-</div>
-</div>
 </div>
 <div class="mb-4 lg:mb-0">
-<button class="flex items-center justify-center w-full h-10 p-2 mr-4 text-gray-700 border border-gray-300 lg:w-11 hover:text-gray-50 dark:text-gray-200 dark:border-blue-600 hover:bg-blue-600 hover:border-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 dark:hover:border-blue-500 dark:hover:text-gray-100">
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class=" bi bi-heart" viewBox="0 0 16 16">
-<path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z">
-</path>
-</svg>
-</button>
 </div>
-<a href="#" class="w-full px-4 py-3 text-center text-blue-600 bg-blue-100 border border-blue-600 dark:hover:bg-gray-900 dark:text-gray-400 dark:border-gray-700 dark:bg-gray-700 hover:bg-blue-600 hover:text-gray-100 lg:w-1/2 rounded-xl">
+<button @click="addToCart(post)" class="flex items-center justify-center w-full px-6 py-3 text-base font-medium text-white transition duration-150 ease-in-out bg-blue-500 border border-transparent rounded-md shadow hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue md:py-4 md:text-lg md:px-10">
 Ajouter au panier
-</a>
+</button>
+
 </div>
-<div class="flex gap-4 mb-6">
-<a href="#" class="w-full px-4 py-3 text-center text-gray-100 bg-blue-600 border border-transparent dark:border-gray-700 hover:border-blue-500 hover:text-blue-700 hover:bg-blue-100 dark:text-gray-400 dark:bg-gray-700 dark:hover:bg-gray-900 rounded-xl">
-Acheter maintenant</a>
-</div>
+
 </div>
 </div>
 </div>

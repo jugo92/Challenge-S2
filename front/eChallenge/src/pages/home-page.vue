@@ -1,16 +1,19 @@
 
  <template>
+  <div>
+   <Navbar />
+    </div>
+
       <TopBar />
   <div>
 
-    <div class="mt-12">
+    <div class="mt-12 ">
       <SliderImage />
     </div>
-    <ProductList />
   </div>
   <div class="container">
-    <ProductList />
-  </div>
+      <ProductList />
+    </div>
 
 </template>
 
@@ -19,6 +22,7 @@
 import TopBar from '../components/TopBar.vue';
 import SliderImage from '../components/carousel/SliderImage.vue';
 import ProductList from "../views/ProductList.vue";
+import Navbar from '../components/Navbar.vue';
 
 </script>
 
@@ -26,7 +30,6 @@ import ProductList from "../views/ProductList.vue";
 
 
 .container {
-  display: flex;
  margin-left: auto;
  margin-right: auto;
 

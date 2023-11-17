@@ -9,7 +9,9 @@ import HomePage from "../pages/home-page.vue";
 import ShowAll from "../components/ShowAll.vue";
 import ProductDetailsVue from "../views/ProductDetails.vue";
 import ProductListVue from "../views/ProductList.vue";
-import homePageVue from "../pages/home-page.vue";
+import homePageVue from "../pages/Home-page.vue";
+import BasketPageVue from "../pages/Basket-page.vue";
+import ProfilePageVue from "../pages/Profile-page.vue";
 
 
 const router = createRouter({
@@ -20,6 +22,18 @@ const router = createRouter({
             name: "Home",
             component: homePageVue,
         },
+
+        {
+            path: "/profile",
+            name: "Profile",
+            component: ProfilePageVue,
+        },
+            
+            {
+                path: "/cart",
+                name: "Basket",
+                component: BasketPageVue,
+            },
         {
             path: "/products",
             name: "ProductList",

@@ -7,7 +7,7 @@
             ><div class="hidden md:block">
               <h1 class="text-2xl font-bold">Ô'PC</h1>
             </div>
-            <div class="block md:hidden">
+            <div class="block md:hidden mobile">
               <h1 class="text-2xl font-bold">Ô'PC</h1>
             </div>
         </a>
@@ -59,18 +59,26 @@
         <div class="flex mr-4 items-center">
          
           <div class="block relative">
-            <button type="button" class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative ">
-              <div class="flex items-center h-5">
-                <div class="_xpkakx text-2xl">
-                  <Icon icon="simple-line-icons:basket" />
+            <RouterLink to="/cart">
+              <button type="button" class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative ">
+                <div class="flex items-center h-5">
+                  <div class="_xpkakx text-2xl">
+                    <Icon icon="simple-line-icons:basket" />
+                  </div>
                 </div>
-              </div>
-            </button>
+                <div v-if="quantity > 0" class="absolute top-0 right-0 bg-red-500 rounded-full h-4 w-4 text-white text-xs flex items-center justify-center">
+                  {{ quantity }}
+                </div>
+              </button>
+            </RouterLink>
           </div>
         </div>
 
         <div class="block">
             <div class="inline relative">
+
+              <RouterLink to="/profile">
+              
                 <button type="button" class="inline-flex items-center relative px-2 border rounded-full hover:shadow-lg">
                     <div class="pl-1">
                         <svg
@@ -102,6 +110,7 @@
                         </svg>
                     </div>
                 </button>
+              </RouterLink>
             </div>
         </div>
       </div>
@@ -112,21 +121,12 @@
 
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import { RouterLink } from 'vue-router';
+import {ref} from "vue"
 
+const quantity = ref(1);
 </script>
 
-<!-- <style scoped>
-.navig {
-  background-color: #fff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ebebeb;
-}
-</style> -->
 
 <style scoped>
 .navig{
@@ -139,4 +139,18 @@ import { Icon } from '@iconify/vue';
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #ebebeb;
 }
+
+@media screen and (max-width: 480px) {
+
+  .navig {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+  }
+}
+
 </style>

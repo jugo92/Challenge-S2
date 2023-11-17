@@ -9,20 +9,13 @@
         
       </div>
     </Slide>
-
-    <template #addons>
-      <div class="paginations">
-        <Pagination />
-      </div>
-    </template>
   </Carousel>
   </div>
-
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { Carousel, Pagination, Slide } from 'vue3-carousel';
+import { Carousel, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
 
 interface Image {
@@ -71,7 +64,7 @@ onMounted(() => {
  color: white;
  }
 
- @media screen and (max-width: 768px) {
+ @media screen and (max-width: 480px) {
     
     img {
         width: 95%;
@@ -82,7 +75,7 @@ onMounted(() => {
     }
 
     .paginations {
-       margin-top: -4rem;
+       display: none;
     }
     
  }
