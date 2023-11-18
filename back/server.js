@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
+require("./src/Mongo/db");
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const port = process.env.PORT;
