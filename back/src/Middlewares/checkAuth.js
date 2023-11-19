@@ -7,7 +7,7 @@ module.exports = function ({ excludePaths = [] } = {}) {
     if (!token) return res.sendStatus(401);
     const proxyUser = verifyToken(token);
     req.user = proxyUser;
-    console.log(proxyUser.id);
+    // console.log(proxyUser.id);
     next();
   };
 };

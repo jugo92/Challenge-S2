@@ -1,7 +1,60 @@
 const { Model, DataTypes } = require("sequelize");
-
+const productMongo = require("../dtos/denormalization/productMongo");
+const genericMongo = require("../dtos/denormalization/genericMongo");
+const CaracteristiqueMongo = require("../Mongo/Caracteristique");
 module.exports = function (connection) {
-  class Caracteristique extends Model {}
+  class Caracteristique extends Model {
+    static addHooks(db) {
+      Caracteristique.addHook("afterCreate", caracteristique => {
+        productMongo(
+          caracteristique.id,
+          "CaracteristiqueId",
+          db.Product,
+          db.Caracteristique,
+          db.Marque,
+          db.Tva,
+          db.Category
+        );
+        genericMongo(
+          caracteristique.id,
+          db.Caracteristique,
+          CaracteristiqueMongo
+        );
+      });
+      Caracteristique.addHook("afterUpdate", caracteristique => {
+        productMongo(
+          caracteristique.id,
+          "CaracteristiqueId",
+          db.Product,
+          db.Caracteristique,
+          db.Marque,
+          db.Tva,
+          db.Category
+        );
+        genericMongo(
+          caracteristique.id,
+          db.Caracteristique,
+          CaracteristiqueMongo
+        );
+      });
+      Caracteristique.addHook("afterDestroy", caracteristique => {
+        productMongo(
+          caracteristique.id,
+          "CaracteristiqueId",
+          db.Product,
+          db.Caracteristique,
+          db.Marque,
+          db.Tva,
+          db.Category
+        );
+        genericMongo(
+          caracteristique.id,
+          db.Caracteristique,
+          CaracteristiqueMongo
+        );
+      });
+    }
+  }
 
   Caracteristique.init(
     {

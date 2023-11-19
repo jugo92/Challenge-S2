@@ -63,7 +63,6 @@ class GenericService {
         where: { id },
         individualHooks: true,
       });
-      console.log(items);
       if (!items.length) {
         return res.sendStatus(404);
       } else {
@@ -83,6 +82,7 @@ class GenericService {
       where: {
         id,
       },
+      individualHooks: true,
     });
     if (nbDeleted) return res.sendStatus(204);
     return res.sendStatus(404);

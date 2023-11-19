@@ -31,7 +31,6 @@ module.exports = async (
   });
 
   for (const product of products) {
-    console.log("PRODUIT TROUVE ARRAY : ", product);
     const productId = product.dataValues.id;
 
     await ProductMongo.deleteOne({ _id: productId });
@@ -44,9 +43,11 @@ module.exports = async (
       quantity: product.dataValues.quantity,
       state: product.dataValues.state,
       promotion: product.dataValues.promotion,
-      Marque: product.dataValues.Marque.dataValues,
+      Marque: product.dataValues.Marque?.dataValues
+        ? product.dataValues.Marque.dataValues
+        : {},
       Caracteristique: product.dataValues.Caracteristique,
-      Tva: product.dataValues.Tva,
+      Tva: product.dataValues.Tva.dataValues,
       Category: product.dataValues.Category,
     };
 
