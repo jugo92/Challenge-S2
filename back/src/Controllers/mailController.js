@@ -33,8 +33,9 @@ module.exports.sendMail = async (user, type) => {
 
     switch (type) {
       case "validateUserAccount":
+        console.log("USER : ", user.lastname);
         content = content
-          .replace("{{name}}", user.name.capitalize())
+          .replace("{{name}}", user.lastname.toUpperCase())
           .replace("{{confirmLink}}", verifyRoute + user.token)
           .replace("{{emailSupport}}", mailCompany);
         break;
