@@ -6,7 +6,7 @@ module.exports = function (connection) {
   class User extends Model {
     static addHooks(db) {
       User.addHook("afterCreate", async user => {
-        await sendMail(user.dataValues, "validateUserAccount");
+        // await sendMail(user.dataValues, "validateUserAccount");
         userMongo(
           user.id,
           db.User,
@@ -35,8 +35,11 @@ module.exports = function (connection) {
       firstname: DataTypes.STRING(45),
       lastname: DataTypes.STRING(45),
       email: {
-        type: DataTypes.STRING(120), // ou toute longueur adéquate
-        unique: true,
+        type: DataTypes.TEXT,
+        validate: {
+          max: 320,
+          notNull: true,
+        },
         allowNull: false,
       },
       password: {
@@ -68,18 +71,35 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         unique: true,
       },
-      salt: {
-        type: DataTypes.TEXT,
-      },
-      dateofbirth: {
-        type: DataTypes.STRING,
+      dateOfBirth: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isAbove18(value) {
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18);
+            if (value > eighteenYearsAgo) {
+              throw new Error("L'utilisateur doit avoir plus de 18 ans.");
+            }
+          },
+        },
       },
       role: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("admin", "user", "store_keeper"), // Ajoutez autant de rôles que nécessaire
+        allowNull: false,
       },
       isVerified: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false,
+        allowNull: false,
+      },
+      loginAttempts: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      lastPasswordChange: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: new Date(),
       },
       token: {
         type: DataTypes.STRING,

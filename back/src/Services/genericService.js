@@ -30,7 +30,10 @@ class GenericService {
       const model = await this.Model.create({ id, ...req.body });
       return res.status(201).json(model);
     } catch (error) {
-      if (error.name === "SequelizeValidationError") {
+      if (
+        error.name === "SequelizeValidationError" ||
+        error.name === "SequelizeUniqueConstraintError"
+      ) {
         error = ValidationError.fromSequelize(error);
       }
       next(error);
@@ -49,7 +52,10 @@ class GenericService {
         return res.status(201).json(updatedItem);
       }
     } catch (error) {
-      if (error.name === "SequelizeValidationError") {
+      if (
+        error.name === "SequelizeValidationError" ||
+        error.name === "SequelizeUniqueConstraintError"
+      ) {
         error = ValidationError.fromSequelize(error);
       }
       next(error);
@@ -69,7 +75,10 @@ class GenericService {
         return res.status(200).json(items[0]);
       }
     } catch (error) {
-      if (error.name === "SequelizeValidationError") {
+      if (
+        error.name === "SequelizeValidationError" ||
+        error.name === "SequelizeUniqueConstraintError"
+      ) {
         error = ValidationError.fromSequelize(error);
       }
       next(error);
