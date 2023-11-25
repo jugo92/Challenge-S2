@@ -1,4 +1,3 @@
-const { BOOLEAN } = require("sequelize");
 const connection = require("./db");
 
 const UserSchema = new connection.Schema({

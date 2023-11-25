@@ -9,14 +9,12 @@ module.exports.initPayment = async (req, res) => {
 
     const storeItems = new Map([]);
 
-    const tva = await Tva.findAll({});
     const order = await Order.create({
       id: uuidv7(),
-      HT: 1,
+      HT: req.body.HT,
       deliveryAddress: req.body.deliveryAddress,
       deliveryType: req.body.deliveryType,
-      TvaId: tva[0].dataValues.id,
-      UserId: "018c0677-6aca-736b-8fb2-ba58f9cba8e1",
+      UserId: req.user.id,
       email: "",
     });
 

@@ -2,10 +2,12 @@ const router = require("express").Router();
 const bodyParser = require("body-parser");
 
 const stripeController = require("../Controllers/stripeController");
+const checkAuth = require("../Middlewares/checkAuth");
 
 router.post(
   "/create-checkout-session",
   bodyParser.json(),
+  checkAuth(),
   stripeController.initPayment
 );
 
