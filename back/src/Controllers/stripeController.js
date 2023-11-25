@@ -1,4 +1,3 @@
-// const Order = require("../Models/dbOrder");
 const OrderStatus = require("../Enum/orderStatus");
 const PaymentStatus = require("../Enum/paymentStatus");
 const { Tva, Order, Product, ProductOrder, Payment } = require("../Models/");
