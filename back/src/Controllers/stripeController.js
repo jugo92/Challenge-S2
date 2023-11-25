@@ -1,6 +1,7 @@
 // const Order = require("../Models/dbOrder");
 const OrderStatus = require("../Enum/orderStatus");
-const { Tva, Order, Product, ProductOrder } = require("../Models/");
+const PaymentStatus = require("../Enum/paymentStatus");
+const { Tva, Order, Product, ProductOrder, Payment } = require("../Models/");
 const { uuidv7 } = require("uuidv7");
 
 module.exports.initPayment = async (req, res) => {
@@ -16,7 +17,7 @@ module.exports.initPayment = async (req, res) => {
       deliveryAddress: req.body.deliveryAddress,
       deliveryType: req.body.deliveryType,
       TvaId: tva[0].dataValues.id,
-      UserId: "018be7e8-cf53-7b0d-920a-c8701b350619",
+      UserId: "018c0677-6aca-736b-8fb2-ba58f9cba8e1",
       email: "",
     });
 
@@ -35,7 +36,6 @@ module.exports.initPayment = async (req, res) => {
           quantity: item.quantity,
           ProductId: item.id,
           OrderId: order.id,
-          version: 1,
         });
 
         storeItems.set(product.dataValues.id, {
@@ -48,15 +48,11 @@ module.exports.initPayment = async (req, res) => {
         });
       })
     );
-
-    console.log("ICIIIII : ", storeItems);
-    console.log(order.id);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items: req.body.items.map(item => {
         const storeItem = storeItems.get(item.id);
-        console.log("STORE ITEM FIND  : ", storeItem);
         return {
           price_data: {
             currency: "eur",
@@ -72,6 +68,18 @@ module.exports.initPayment = async (req, res) => {
       cancel_url: `${process.env.CLIENT_URL}/failed`,
       client_reference_id: order.id,
     });
+
+    const payment = await Payment.create({
+      id: uuidv7(),
+      session_stripe_id: session.id,
+      currency: "EUR",
+      OrderId: order.id,
+    });
+
+    await Order.update(
+      { PaymentId: payment.id },
+      { where: { id: order.id }, individualHooks: true }
+    );
 
     res.json({ url: session.url });
   } catch (e) {
@@ -91,16 +99,19 @@ module.exports.getEventPayment = async (req, res) => {
   try {
     event = stripe.webhooks.constructEvent(payload, sig, signingkey);
   } catch (error) {
-    console.log(error);
     res.status(400).json({ success: false });
     return;
   }
 
   if (event.type === "checkout.session.completed") {
-    console.log("SUUUUUUUUUUUUUUUUUUUUUUCESSSSSSSSSSSSSSSS");
     const session = event.data.object;
     const orderId = session.client_reference_id;
     const email = session.customer_details.email;
+
+    await Payment.update(
+      { status: PaymentStatus.Succeeded },
+      { where: { OrderId: orderId } }
+    );
 
     await Order.update(
       { state: OrderStatus.VALIDATE, email: email },

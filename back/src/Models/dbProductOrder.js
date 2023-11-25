@@ -8,17 +8,6 @@ module.exports = function (connection) {
       ProductOrder.belongsTo(db.Product);
       db.Product.hasMany(ProductOrder);
     }
-    // static addHooks(db) {
-    //   Article.addHook("afterCreate", (article) =>
-    //     userMongo(article.UserId, db.User, db.Article)
-    //   );
-    //   Article.addHook("afterUpdate", (article) =>
-    //     userMongo(article.UserId, db.User, db.Article)
-    //   );
-    //   Article.addHook("afterDestroy", (article) =>
-    //     userMongo(article.UserId, db.User, db.Article)
-    //   );
-    // }
   }
 
   ProductOrder.init(

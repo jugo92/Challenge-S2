@@ -1,20 +1,27 @@
 const UserMongo = require("../../Mongo/User");
 
-module.exports = async function (userId, User, Order, ProductOrder, Product) {
+module.exports = async function (
+  userId,
+  User,
+  Order,
+  ProductOrder,
+  Product,
+  Payment
+) {
   const user = await User.findByPk(userId, {
     attributes: { exclude: ["password"] },
     include: [
       {
         model: Order,
-        // attributes: ["id", "status"],
         include: [
           {
+            model: Payment,
+          },
+          {
             model: ProductOrder,
-            // attributes: ["quantity"],
             include: [
               {
                 model: Product,
-                // attributes: ["id", "name", "price"],
               },
             ],
           },
@@ -23,20 +30,22 @@ module.exports = async function (userId, User, Order, ProductOrder, Product) {
     ],
   });
 
+  console.log("USER : ", user);
+
   await UserMongo.deleteOne({ _id: userId });
 
   const userMongo = new UserMongo({
     _id: userId,
     ...user.dataValues,
     Orders: user.dataValues.Orders.map(order => {
-      // console.log("ORDER : ", order);
+      console.log("ORDERS : ", order);
       return {
         email: order.dataValues.email,
         state: order.dataValues.state,
         deliveryAddress: order.dataValues.deliveryAddress,
         deliveryType: order.dataValues.deliveryType,
+        Payment: order.dataValues.Payment?.dataValues,
         Products: order.dataValues.ProductOrders.map(productOrder => {
-          // console.log("PRODUCT ORDER : ", productOrder);
           return {
             quantityOrdered: productOrder.dataValues.quantity,
             id: productOrder.dataValues.Product.dataValues.id,

@@ -13,10 +13,24 @@ module.exports = function (connection) {
     }
     static addHooks(db) {
       Order.addHook("afterCreate", async order => {
-        userMongo(order.UserId, db.User, db.Order, db.ProductOrder, db.Product);
+        userMongo(
+          order.UserId,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        );
       });
       Order.addHook("afterUpdate", order =>
-        userMongo(order.UserId, db.User, db.Order, db.ProductOrder, db.Product)
+        userMongo(
+          order.UserId,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        )
       );
     }
   }

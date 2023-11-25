@@ -88,10 +88,6 @@ module.exports = function (connection) {
         allowNull: false,
         defaultValue: false,
       },
-      version: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
     },
     {
       sequelize: connection,

@@ -7,10 +7,24 @@ module.exports = function (connection) {
     static addHooks(db) {
       User.addHook("afterCreate", async user => {
         await sendMail(user.dataValues, "validateUserAccount");
-        userMongo(user.id, db.User, db.Order, db.ProductOrder, db.Product);
+        userMongo(
+          user.id,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        );
       });
       User.addHook("afterUpdate", user =>
-        userMongo(user.id, db.User, db.Order, db.ProductOrder, db.Product)
+        userMongo(
+          user.id,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        )
       );
     }
   }
