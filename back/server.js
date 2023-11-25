@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
+require("./src/Mongo/db");
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const port = process.env.PORT;
@@ -24,12 +25,13 @@ const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
+const checkAuth = require("./src/Middlewares/checkAuth");
 // const MarqueMongo = require("./src/Models/dbMarqueMongo");
 
+app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
 
 app.use(bodyParser.json());
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
@@ -103,16 +105,14 @@ app.use(function (err, req, res, next) {
   }
 });
 
-// app.use(mainRoutes);
+app.get("/failed", async (req, res) => {
+  console.log("FAILED");
+});
 
-// app.get("/failed", async (req, res) => {
-//   console.log("FAILED");
-// });
-
-// app.get("/success", async (req, res) => {
-//   console.log("SUCCESS");
-//   res.status(200).json({ message: "gg" });
-// });
+app.get("/success", async (req, res) => {
+  console.log("SUCCESS");
+  res.status(200).json({ message: "gg" });
+});
 
 app.listen(port, () => {
   console.log(`Port d'écoute: ${port}`);

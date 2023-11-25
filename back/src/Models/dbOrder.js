@@ -1,25 +1,38 @@
 const OrderStatus = require("../Enum/orderStatus");
 
 const { DataTypes, Model } = require("sequelize");
+const userMongo = require("../dtos/denormalization/userMongo");
 
 module.exports = function (connection) {
   class Order extends Model {
     static associate(db) {
       Order.belongsTo(db.User);
       db.User.hasMany(Order);
+      db.Tva.hasMany(Order);
       Order.belongsTo(db.Tva);
     }
-    // static addHooks(db) {
-    //   Article.addHook("afterCreate", (article) =>
-    //     userMongo(article.UserId, db.User, db.Article)
-    //   );
-    //   Article.addHook("afterUpdate", (article) =>
-    //     userMongo(article.UserId, db.User, db.Article)
-    //   );
-    //   Article.addHook("afterDestroy", (article) =>
-    //     userMongo(article.UserId, db.User, db.Article)
-    //   );
-    // }
+    static addHooks(db) {
+      Order.addHook("afterCreate", async order => {
+        userMongo(
+          order.UserId,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        );
+      });
+      Order.addHook("afterUpdate", order =>
+        userMongo(
+          order.UserId,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        )
+      );
+    }
   }
 
   Order.init(

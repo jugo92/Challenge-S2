@@ -1,8 +1,8 @@
-const Product = require("../Models/dbProduct");
-const Order = require("../Models/dbOrder");
-const ProductOrder = require("../Models/dbProductOrder");
+// const Order = require("../Models/dbOrder");
 const OrderStatus = require("../Enum/orderStatus");
-const Tva = require("../Models/dbTva");
+const PaymentStatus = require("../Enum/paymentStatus");
+const { Tva, Order, Product, ProductOrder, Payment } = require("../Models/");
+const { uuidv7 } = require("uuidv7");
 
 module.exports.initPayment = async (req, res) => {
   try {
@@ -10,32 +10,44 @@ module.exports.initPayment = async (req, res) => {
 
     const storeItems = new Map([]);
 
-    const tva = await Tva.findOne({
-      where: {
-        isActive: true,
-      },
-    });
+    const tva = await Tva.findAll({});
     const order = await Order.create({
+      id: uuidv7(),
       HT: 1,
       deliveryAddress: req.body.deliveryAddress,
       deliveryType: req.body.deliveryType,
-      idTVA: tva.dataValues.id,
+      TvaId: tva[0].dataValues.id,
+      UserId: "018c0677-6aca-736b-8fb2-ba58f9cba8e1",
       email: "",
-      userId: req.body.userId,
     });
 
     await Promise.all(
       req.body.items.map(async item => {
-        const product = await Product.findByPk(item.id);
+        const product = await Product.findByPk(item.id, {
+          include: [
+            {
+              model: Tva,
+            },
+          ],
+        });
+
+        await ProductOrder.create({
+          id: uuidv7(),
+          quantity: item.quantity,
+          ProductId: item.id,
+          OrderId: order.id,
+        });
+
         storeItems.set(product.dataValues.id, {
           priceInCents:
-            product.dataValues.prix * 100 +
-            product.dataValues.prix * 100 * (tva.dataValues.taux / 100),
-          name: product.dataValues.nom,
+            product.dataValues.price * 100 +
+            product.dataValues.price *
+              100 *
+              (product.dataValues.Tva.dataValues.rate / 100),
+          name: product.dataValues.name,
         });
       })
     );
-
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -54,11 +66,21 @@ module.exports.initPayment = async (req, res) => {
       }),
       success_url: `${process.env.CLIENT_URL}/success`,
       cancel_url: `${process.env.CLIENT_URL}/failed`,
-      client_reference_id: JSON.stringify({
-        orderId: order.id,
-        items: req.body.items,
-      }),
+      client_reference_id: order.id,
     });
+
+    const payment = await Payment.create({
+      id: uuidv7(),
+      session_stripe_id: session.id,
+      currency: "EUR",
+      OrderId: order.id,
+    });
+
+    await Order.update(
+      { PaymentId: payment.id },
+      { where: { id: order.id }, individualHooks: true }
+    );
+
     res.json({ url: session.url });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -77,33 +99,24 @@ module.exports.getEventPayment = async (req, res) => {
   try {
     event = stripe.webhooks.constructEvent(payload, sig, signingkey);
   } catch (error) {
-    console.log(error);
     res.status(400).json({ success: false });
     return;
   }
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    const detailsOrder = JSON.parse(session.client_reference_id);
+    const orderId = session.client_reference_id;
     const email = session.customer_details.email;
+
+    await Payment.update(
+      { status: PaymentStatus.Succeeded },
+      { where: { OrderId: orderId } }
+    );
 
     await Order.update(
       { state: OrderStatus.VALIDATE, email: email },
-      { where: { id: detailsOrder.orderId } }
+      { where: { id: orderId }, individualHooks: true }
     );
-
-    await Promise.all(
-      detailsOrder.items.map(async item => {
-        await ProductOrder.create({
-          quantity: item.quantity,
-          idProduct: item.id,
-          idOrder: detailsOrder.orderId,
-          version: item.version,
-        });
-      })
-    );
-
-    console.log(`Details commande : ${detailsOrder}`);
   }
   res.json({
     success: true,

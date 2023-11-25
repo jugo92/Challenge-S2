@@ -1,66 +1,66 @@
 const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
 const genericMongo = require("../dtos/denormalization/genericMongo");
-const MarqueMongo = require("../Mongo/Marque");
+const CategoryMongo = require("../Mongo/Category");
 
 module.exports = function (connection) {
-  class Marque extends Model {
+  class Category extends Model {
     static addHooks(db) {
-      Marque.addHook("afterCreate", marque => {
+      Category.addHook("afterCreate", category => {
         productMongo(
-          marque.id,
-          "MarqueId",
+          category.id,
+          "CategoryId",
           db.Product,
           db.Caracteristique,
           db.Marque,
           db.Tva,
           db.Category
         );
-        genericMongo(marque.id, db.Marque, MarqueMongo);
+        genericMongo(category.id, db.Category, CategoryMongo);
       });
-      Marque.addHook("afterUpdate", marque => {
+      Category.addHook("afterUpdate", category => {
         productMongo(
-          marque.id,
-          "MarqueId",
+          category.id,
+          "CategoryId",
           db.Product,
           db.Caracteristique,
           db.Marque,
           db.Tva,
           db.Category
         );
-        genericMongo(marque.id, db.Marque, MarqueMongo);
+        genericMongo(category.id, db.Cateory, CategoryMongo);
       });
-      Marque.addHook("afterDestroy", marque => {
+      Category.addHook("afterDestroy", category => {
         productMongo(
-          marque.id,
-          "MarqueId",
+          category.id,
+          "CategoryId",
           db.Product,
           db.Caracteristique,
           db.Marque,
           db.Tva,
           db.Category
         );
-        genericMongo(marque.id, db.Marque, MarqueMongo);
+        genericMongo(category.id, db.Category, CategoryMongo);
       });
     }
   }
 
-  Marque.init(
+  Category.init(
     {
       id: { type: DataTypes.UUID, primaryKey: true },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      image: {
+      description: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
     },
     {
       sequelize: connection,
-      tableName: "Marque",
+      tableName: "Category",
     }
   );
-  return Marque;
+  return Category;
 };

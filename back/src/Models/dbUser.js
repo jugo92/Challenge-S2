@@ -1,26 +1,31 @@
 const { Model, DataTypes } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
 const crypto = require("crypto");
+const userMongo = require("../dtos/denormalization/userMongo");
 module.exports = function (connection) {
   class User extends Model {
     static addHooks(db) {
-      User.addHook(
-        "afterCreate",
-        async user => {
-          console.log(user);
-          await sendMail(user.dataValues, "validateUserAccount").then(
-            response => {}
-          );
-        }
-        //userMongo(user.id, db.User, db.Article)
+      User.addHook("afterCreate", async user => {
+        await sendMail(user.dataValues, "validateUserAccount");
+        userMongo(
+          user.id,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        );
+      });
+      User.addHook("afterUpdate", user =>
+        userMongo(
+          user.id,
+          db.User,
+          db.Order,
+          db.ProductOrder,
+          db.Product,
+          db.Payment
+        )
       );
-      // User.addHook("afterUpdate", user =>
-      //   userMongo(user.id, {
-      //     User: db.User,
-      //     Article: db.Article,
-      //     onlyRemove: true,
-      //   })
-      // );
     }
   }
 
