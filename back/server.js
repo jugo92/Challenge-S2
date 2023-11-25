@@ -26,6 +26,7 @@ const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const checkAuth = require("./src/Middlewares/checkAuth");
+const users = require("./src/Mongo/User");
 // const MarqueMongo = require("./src/Models/dbMarqueMongo");
 
 app.use(cookieParser());
@@ -36,18 +37,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
 
-// const genericService = new GenericService(Marque);
+const genericUserService = new GenericService(User);
 
-// const serviceProxy = new Proxy(genericService, {
-//   get(target, prop, receiver) {
-//     console.log(prop);
-//     if (prop === "getAll") {
-//       const ms = new MongoService(MarqueMongo);
-//       return ms.getAll.bind(ms);
-//     }
-//     return Reflect.get(target, prop, receiver);
-//   },
-// });
+const serviceUserProxy = new Proxy(genericUserService, {
+  get(target, prop, receiver) {
+    if (prop === "getAll") {
+      const ms = new MongoService(users);
+      return ms.getAll.bind(ms);
+    }
+    return Reflect.get(target, prop, receiver);
+  },
+});
+
+app.use(
+  routePrefix + "/users",
+  new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
+);
 
 // const genericController = new GenericController(serviceProxy);
 
@@ -55,11 +60,6 @@ app.use(routePrefix, Security);
 //   routePrefix + "/marques",
 //   new GenericRouter(genericController).getRouter()
 // );
-
-app.use(
-  routePrefix + "/users",
-  new GenericRouter(new GenericController(new GenericService(User))).getRouter()
-);
 
 app.use(
   routePrefix + "/tvas",
