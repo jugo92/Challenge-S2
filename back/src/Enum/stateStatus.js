@@ -1,8 +1,8 @@
 const StateStatus = {
-  NEUF: "NEUF",
-  RECONDITIONNE: "RECONDITIONNE",
-  OCCASION: "OCCASION",
-  SECONDE_MAIN: "SECONDE MAIN",
+  NEUF: "Neuf",
+  RECONDITIONNE: "Reconditionne",
+  OCCASION: "Occasion",
+  SECONDE_MAIN: "Seconde Main",
 };
 
 module.exports = StateStatus;

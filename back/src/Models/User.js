@@ -85,7 +85,7 @@ module.exports = function (connection) {
         },
       },
       role: {
-        type: DataTypes.ENUM("admin", "user", "store_keeper"), // Ajoutez autant de rôles que nécessaire
+        type: DataTypes.ENUM("admin", "user", "store_keeper"),
         allowNull: false,
       },
       isVerified: {

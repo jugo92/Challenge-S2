@@ -79,7 +79,12 @@ module.exports = function (connection) {
         allowNull: true,
       },
       state: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM(
+          "Neuf",
+          "Reconditionne",
+          "Occasion",
+          "Seconde Main"
+        ),
         defaultValue: StateStatus.NEUF,
         allowNull: false,
       },

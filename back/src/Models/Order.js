@@ -49,8 +49,8 @@ module.exports = function (connection) {
         allowNull: false,
       },
       state: {
-        type: DataTypes.STRING,
-        defaultValue: OrderStatus.PENDING,
+        type: DataTypes.ENUM("Pending", "Validate", "Canceled"),
+        defaultValue: "Pending",
         allowNull: false,
       },
       email: {

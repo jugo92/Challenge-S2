@@ -1,7 +1,7 @@
 const PaymentStatus = {
-  PENDING: "PENDING",
-  Succeeded: "SUCCEEDED",
-  Failed: "FAILED",
+  PENDING: "Pending",
+  Succeeded: "Succeeded",
+  Failed: "Failed",
 };
 
 module.exports = PaymentStatus;

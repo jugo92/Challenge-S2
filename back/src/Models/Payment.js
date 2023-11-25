@@ -30,6 +30,11 @@ module.exports = function (connection) {
         allowNull: false,
         defaultValue: PaymentStatus.PENDING,
       },
+      state: {
+        type: DataTypes.ENUM("Pending", "Succeeded", "Failed"),
+        defaultValue: "Pending",
+        allowNull: false,
+      },
     },
     {
       sequelize: connection,
