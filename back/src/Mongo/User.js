@@ -1,4 +1,3 @@
-const { BOOLEAN } = require("sequelize");
 const connection = require("./db");
 
 const UserSchema = new connection.Schema({
@@ -13,6 +12,7 @@ const UserSchema = new connection.Schema({
   phone: String,
   dateofbirth: String,
   role: String,
+  loginAttemps: Number,
   isVerified: Boolean,
   token: String,
   Orders: Array,

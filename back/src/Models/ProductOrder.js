@@ -16,9 +16,6 @@ module.exports = function (connection) {
       quantity: {
         type: DataTypes.INTEGER,
       },
-      version: {
-        type: DataTypes.INTEGER,
-      },
     },
     {
       sequelize: connection,

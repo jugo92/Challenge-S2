@@ -8,8 +8,6 @@ module.exports = function (connection) {
     static associate(db) {
       Order.belongsTo(db.User);
       db.User.hasMany(Order);
-      db.Tva.hasMany(Order);
-      Order.belongsTo(db.Tva);
     }
     static addHooks(db) {
       Order.addHook("afterCreate", async order => {

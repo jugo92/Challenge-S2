@@ -9,7 +9,7 @@ exports.createToken = function (user) {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1y",
+      expiresIn: "2h",
     }
   );
 };

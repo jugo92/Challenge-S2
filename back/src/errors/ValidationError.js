@@ -20,6 +20,4 @@ ValidationError.fromSequelize = function (SequelizeValidationError) {
   return new ValidationError(errors);
 };
 
-ValidationError.fromMongoose = function (MongooseValidationError) {};
-
 module.exports = ValidationError;

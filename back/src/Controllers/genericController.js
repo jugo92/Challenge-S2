@@ -15,7 +15,7 @@ class GenericController {
     return this.service.create(req, res, next);
   }
 
-  update(req, res) {
+  update(req, res, next) {
     return this.service.update(req, res, next);
   }
 
