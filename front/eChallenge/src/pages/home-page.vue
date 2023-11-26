@@ -3,7 +3,6 @@
   <div>
    <Navbar />
     </div>
-
       <TopBar />
   <div>
 
