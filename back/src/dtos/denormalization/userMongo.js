@@ -6,7 +6,8 @@ module.exports = async function (
   Order,
   ProductOrder,
   Product,
-  Payment
+  Payment,
+  Invoice
 ) {
   const user = await User.findByPk(userId, {
     attributes: { exclude: ["password"] },
@@ -16,6 +17,9 @@ module.exports = async function (
         include: [
           {
             model: Payment,
+          },
+          {
+            model: Invoice
           },
           {
             model: ProductOrder,
@@ -38,13 +42,16 @@ module.exports = async function (
     _id: userId,
     ...user.dataValues,
     Orders: user.dataValues.Orders.map(order => {
-      console.log("ORDERS : ", order);
+      console.log('---------------------')
+      console.log(order.dataValues);
+      console.log(order.dataValues.Invoice);
       return {
         email: order.dataValues.email,
         state: order.dataValues.state,
         deliveryAddress: order.dataValues.deliveryAddress,
         deliveryType: order.dataValues.deliveryType,
         Payment: order.dataValues.Payment?.dataValues,
+        Invoice: order.dataValues.Invoice?.dataValues,
         Products: order.dataValues.ProductOrders.map(productOrder => {
           return {
             quantityOrdered: productOrder.dataValues.quantity,

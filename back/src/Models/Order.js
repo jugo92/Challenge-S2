@@ -17,7 +17,8 @@ module.exports = function (connection) {
           db.Order,
           db.ProductOrder,
           db.Product,
-          db.Payment
+          db.Payment,
+          db.Invoice
         );
       });
       Order.addHook("afterUpdate", order =>
@@ -27,7 +28,8 @@ module.exports = function (connection) {
           db.Order,
           db.ProductOrder,
           db.Product,
-          db.Payment
+          db.Payment,
+          db.Invoice
         )
       );
     }
