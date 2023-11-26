@@ -27,6 +27,8 @@ const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const checkAuth = require("./src/Middlewares/checkAuth");
 const users = require("./src/Mongo/User");
+const { invoicePdf } = require("./src/Services/pdfService");
+const { generateDataFacture } = require("./src/Helper/Utils");
 // const MarqueMongo = require("./src/Models/dbMarqueMongo");
 
 app.use(cookieParser());
@@ -54,12 +56,13 @@ app.use(
   new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
 );
 
-// const genericController = new GenericController(serviceProxy);
-
-// app.use(
-//   routePrefix + "/marques",
-//   new GenericRouter(genericController).getRouter()
-// );
+app.get("/api/test", async (req, res) => {
+  const data = await generateDataFacture(
+    "018c0836-9757-7b17-93fd-ec07cfe14c70"
+  );
+  await invoicePdf(data);
+  res.send("Hello");
+});
 
 app.use(
   routePrefix + "/tvas",
