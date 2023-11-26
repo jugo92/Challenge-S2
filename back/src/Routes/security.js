@@ -57,6 +57,7 @@ router.post("/login", async (req, res, next) => {
         })
       );
     }
+    //check if acc is verified
 
     await user.update({ loginAttempts: 0 });
 

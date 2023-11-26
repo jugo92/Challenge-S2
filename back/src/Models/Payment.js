@@ -1,6 +1,4 @@
 const { Model, DataTypes } = require("sequelize");
-const StateStatus = require("../Enum/stateStatus");
-const userMongo = require("../dtos/denormalization/userMongo");
 const PaymentStatus = require("../Enum/paymentStatus");
 
 module.exports = function (connection) {
@@ -26,14 +24,9 @@ module.exports = function (connection) {
         type: DataTypes.FLOAT,
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("Pending", "Succeeded", "Failed"),
         allowNull: false,
         defaultValue: PaymentStatus.PENDING,
-      },
-      state: {
-        type: DataTypes.ENUM("Pending", "Succeeded", "Failed"),
-        defaultValue: "Pending",
-        allowNull: false,
       },
     },
     {

@@ -1,7 +1,16 @@
 const OrderStatus = require("../Enum/orderStatus");
 const PaymentStatus = require("../Enum/paymentStatus");
-const { Tva, Order, Product, ProductOrder, Payment } = require("../Models/");
+const { generateDataFacture } = require("../Helper/Utils");
+const {
+  Tva,
+  Order,
+  Product,
+  ProductOrder,
+  Payment,
+  Invoice,
+} = require("../Models/");
 const { uuidv7 } = require("uuidv7");
+const PdfService = require("../Services/pdfService");
 
 module.exports.initPayment = async (req, res) => {
   try {
@@ -105,15 +114,25 @@ module.exports.getEventPayment = async (req, res) => {
     const orderId = session.client_reference_id;
     const email = session.customer_details.email;
 
+    const invoice = await Invoice.create({
+      id: uuidv7(),
+      path: `invoice_${orderId}.pdf`,
+      OrderId: orderId,
+    });
+
     await Payment.update(
       { status: PaymentStatus.Succeeded },
       { where: { OrderId: orderId } }
     );
 
     await Order.update(
-      { state: OrderStatus.VALIDATE, email: email },
+      { state: OrderStatus.VALIDATE, email: email, InvoiceId: invoice.id },
       { where: { id: orderId }, individualHooks: true }
     );
+
+    const getDataFacture = await generateDataFacture(orderId);
+    const pdfService = new PdfService(getDataFacture);
+    await pdfService.invoicePdf();
   }
   res.json({
     success: true,
