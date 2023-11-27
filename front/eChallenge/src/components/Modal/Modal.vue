@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import FormBuilder, { Field } from "../FormBuilder.vue";
-import { defineProps, defineEmits } from "vue";
+import FormBuilder from "../Form/FormBuilder.vue";
 import Button from "../Button.vue";
 
 const props = defineProps(["title", "content", "formConfig", "show", "modelValue"]);
@@ -15,7 +14,7 @@ const closeModal = () => {
     <div>
         <!-- Overlay -->
         <div v-if="show" class="overlay" @click="closeModal"></div>
-
+{{console.log(props.formConfig)}}
         <!-- Modal -->
         <div v-if="show" id="default-modal" tabindex="-1" aria-hidden="true" class="ab overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-1 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="m-auto p-4 w-full max-w-2xl max-h-full">
@@ -35,7 +34,7 @@ const closeModal = () => {
                     </div>
                     <!-- Modal body -->
                     <div class="p-4 md:p-5 space-y-4" v-if="content=='modalCreateProduct'">
-                        <FormBuilder :fields="formConfig" format="column" :modelValue="modelValue"/>
+                        <FormBuilder :formFields="formConfig" format="column" :modelValue="modelValue"/>
                     </div>
                     <!-- Modal footer -->
                     <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -43,6 +42,9 @@ const closeModal = () => {
                         <span v-for="field in formConfig">
 
                             <Button
+                                action=""
+                                name=""
+                                :redirect=false
                                 v-if="field.tag === 'button'"
                                 :content="field.content"
                                 :color="field.color"
