@@ -19,7 +19,7 @@ module.exports = async function (
             model: Payment,
           },
           {
-            model: Invoice
+            model: Invoice,
           },
           {
             model: ProductOrder,
@@ -42,9 +42,6 @@ module.exports = async function (
     _id: userId,
     ...user.dataValues,
     Orders: user.dataValues.Orders.map(order => {
-      console.log('---------------------')
-      console.log(order.dataValues);
-      console.log(order.dataValues.Invoice);
       return {
         email: order.dataValues.email,
         state: order.dataValues.state,

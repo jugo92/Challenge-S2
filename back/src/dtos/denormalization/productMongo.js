@@ -8,8 +8,6 @@ module.exports = async (
   Category,
   Tva
 ) => {
-  console.log("key : ", key);
-  console.log("modelid : ", modelId);
   const products = await Product.findAll({
     where: {
       [key]: modelId,

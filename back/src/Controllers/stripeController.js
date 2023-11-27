@@ -80,6 +80,7 @@ module.exports.initPayment = async (req, res) => {
       session_stripe_id: session.id,
       currency: "EUR",
       OrderId: order.id,
+      UserId: req.user.id,
     });
 
     await Order.update(
@@ -122,7 +123,7 @@ module.exports.getEventPayment = async (req, res) => {
 
     await Payment.update(
       { status: PaymentStatus.Succeeded },
-      { where: { OrderId: orderId } }
+      { where: { OrderId: orderId }, individualHooks: true }
     );
 
     await Order.update(
