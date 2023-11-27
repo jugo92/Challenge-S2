@@ -12,6 +12,7 @@
     "@heroicons/vue": "^2.0.18",
     "@ncform/ncform": "^1.7.9",
     "@ncform/ncform-common": "^1.7.9",
+    "@tailwindcss/forms": "^0.5.7",
     "@vee-validate/zod": "^4.11.8",
     "@vueform/vueform": "^1.5.3",
     "dotenv": "^16.3.1",
