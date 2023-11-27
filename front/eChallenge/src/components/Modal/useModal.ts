@@ -8,7 +8,9 @@ export function useModal() {
     };
 
     const closeModal = () => {
+        console.log('Fermeture');
         isModalVisible.value = false;
+        console.log(isModalVisible.value);
     };
 
     return { isModalVisible, openModal, closeModal };

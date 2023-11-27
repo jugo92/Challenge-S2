@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto w-full mt-4 p-6 bg-gray-100 rounded-md">
     <form>
-      <div v-for="(field, index) in formFields" :key="index" class="mb-4">
+      <div v-for="(field, index) in formFields" :key="index" class="mb-4" :class="{['flex w-full'] : format==='row', ['flex flex-col w-full'] : format==='column'}">
         <template v-if="field.type !== 'button'">
           <!-- Label -->
           <template v-if="field.type === 'label' && showField(field)">
@@ -31,12 +31,12 @@
 
           <!-- Input File -->
           <template v-else-if="field.type === 'file' && showField(field)">
-              <input type="file" multiple  ref="fileInput" @change="handleFileChange" class="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary" />
-              <div class="mt-4">
-                <div v-for="file in files" :key="file.name" class="inline-block mr-4">
-                  <img :src="getFileUrl(file)" class="w-32 h-32 object-cover" />
-                </div>
+            <input type="file" multiple  ref="fileInput" @change="handleFileChange" class="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary" />
+            <div class="mt-4">
+              <div v-for="file in files" :key="file.name" class="inline-block mr-4">
+                <img :src="getFileUrl(file)" class="w-32 h-32 object-cover" />
               </div>
+            </div>
           </template>
 
           <!-- Select Static -->
@@ -123,13 +123,15 @@
 <script setup lang="ts">
 
 import {useForm} from "./formHelper.ts";
+import {useModal} from "../Modal/useModal.ts";
 
 const {showField, callChangeHandlers, handleInput, selectSuggestion, getFileUrl, handleFileChange, files} = useForm();
-const props = defineProps(["formFields", "format", "modelValue"]);
+const props = defineProps(["formFields", "format"]);
 
 </script>
 
 <style scoped lang="scss">
+
 @import "./../../assets/styles.css";
 
 .suggestions {

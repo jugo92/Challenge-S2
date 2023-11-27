@@ -1,29 +1,13 @@
 <template>
+  <Modal
+      title="test"
+      content="modalCreateProduct"
+      :show="isModalVisible"
+      @close="closeModal"
+      :formConfig="formConfig"
+  />
   <div class="grid grid-cols-6 gap-5">
-    <Button
-        name=""
-        action=""
-        :redirect=false
-        content="Créer un Produit"
-        color="green"
-        @click="openModal"
-    />
-    <Button
-        v-if="selectedItems.length === 1"
-        name=""
-        action=""
-        :redirect=false
-        content="Modifier un Produit"
-        color="yellow"
-        @click="openModal"/>
-    <Button
-        v-if="selectedItems.length > 0"
-        name=""
-        action=""
-        :redirect=false
-        content="Supprimer Produit"
-        color="red"
-        @click="deleteSelectedItems"/>
+    <FormBuilder :formFields="actionsConfig" format="row"/>
   </div>
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -80,6 +64,13 @@ import { ref, computed } from 'vue';
 import {Icon} from "@iconify/vue";
 import Button from "../Button.vue";
 import {forEach} from "lodash";
+import {z} from "zod";
+import FormBuilder from "../Form/FormBuilder.vue";
+import {useModal} from "../Modal/useModal.ts";
+import Modal from "../Modal/Modal.vue";
+import vueformConfig from "../../../vueform.config.ts";
+const { isModalVisible, openModal, closeModal } = useModal();
+const emit = defineEmits();
 
 interface TableColumn {
   key: string;
@@ -92,7 +83,7 @@ interface TableRow {
   [key: string]: string | number;
 }
 
-const props = defineProps(['columns', 'data']);
+const props = defineProps(['columns', 'data', 'formConfig']);
 const filters = ref<Record<string, string>>({});
 const sortColumn = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
@@ -206,9 +197,39 @@ const sortByColumn = (columnKey: string) => {
     sortDirection.value = 'asc';
   }
 };
+
+const actionsConfig = ref([
+  {
+    type: 'button',
+    label: 'Créer un produit',
+    buttonType: 'button',
+    buttonClass: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
+    buttonClick: openModal,
+    showCondition: () => true
+  },
+  {
+    type: 'button',
+    label: 'Modifier un produit',
+    buttonType: 'button',
+    buttonClass: 'bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
+    buttonClick: openModal,
+    showCondition: () => true
+  },
+  {
+    type: 'button',
+    label: 'Supprimer',
+    buttonType: 'button',
+    buttonClass: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
+    buttonClick: deleteSelectedItems,
+    showCondition: () => true
+  }
+])
 </script>
 
 <style scoped lang="scss">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import "./../../assets/styles.css";
 
 </style>

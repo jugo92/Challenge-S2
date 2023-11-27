@@ -28,12 +28,12 @@ const router = createRouter({
             name: "Login",
             component: LoginVue,
         },
-
-        {
-            path: "/test",
-            name: "Test",
-            component: TestVue,
-        },
+        //
+        // {
+        //     path: "/test",
+        //     name: "Test",
+        //     component: TestVue,
+        // },
 
         {
             path: "/unauthorized",

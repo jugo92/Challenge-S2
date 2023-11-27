@@ -7,13 +7,21 @@
         placeholder="Rechercher dans la liste"
     />
 
-    <div :class="{'hidden': !isModalVisible}">
+<!--    <button @click="openModal" >Open Modal</button>-->
+<!--    &lt;!&ndash;    <div :class="{'hidden': !isModalVisible}">&ndash;&gt;-->
 <!--    <div>-->
-      <FormBuilder :formFields="formConfig" format="column" :modelValue="modelValue"/>
-    </div>
-
+<!--      &lt;!&ndash;      <FormBuilder :formFields="formConfig" format="column"/>&ndash;&gt;-->
+<!--    </div>-->
+<!--    <Modal-->
+<!--        title="test"-->
+<!--        content="modalCreateProduct"-->
+<!--        :show="isModalVisible"-->
+<!--        @close="closeModal"-->
+<!--        :formConfig="formConfig"-->
+<!--        @open="openModal"-->
+<!--    />-->
     <div>
-      <TabBuilder :columns="tableColumns" :data="tableData" />
+      <TabBuilder :columns="tableColumns" :data="tableData" :formConfig="formConfig"/>
     </div>
   </div>
 </template>
@@ -26,6 +34,7 @@ import {useModal} from "./Modal/useModal.ts";
 import FormBuilder from "./Form/FormBuilder.vue";
 import {useForm} from "./Form/formHelper.ts";
 import TabBuilder from "./Table/TableBuilder.vue";
+import Modal from "./Modal/Modal.vue";
 
 const { isModalVisible, openModal, closeModal } = useModal();
 const { reinitForm, validateField } = useForm()
@@ -54,28 +63,9 @@ const fetchProducts = async (includedProperties) => {
     console.error('Erreur lors de la récupération des produits depuis l\'API', error);
   }
 };
-
-const modelValue = ref<ProductFormData>({
-  name: '',
-  description: '',
-  brand: '',
-  model: '',
-  quantity: 0,
-  prixTTC: 0,
-  promotion: 0,
-});
-
-interface ProductFormData {
-  name: string;
-  description: string;
-  brand: string;
-  model: string;
-  quantity: number;
-  prixTTC: number;
-  promotion: number;
-}
-
+const emit = defineEmits();
 const createProduct = async () => {
+  console.log('Création du produit', formConfig.value);
   for (const field of formConfig.value) {
     if (!field.value && field.required) {
       field.validationError = { message: 'Ce champ est obligatoire' };
@@ -123,8 +113,8 @@ const createProduct = async () => {
       .then(response => response.json())
       .then(data => {
         console.log('Success:', data);
-        reinitForm;
         closeModal();
+        console.log('Success:', isModalVisible);
       })
       .catch((error) => {
         console.error('Error:', error);
