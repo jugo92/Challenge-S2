@@ -6,7 +6,7 @@ const ProductSchema = new connection.Schema({
   price: String,
   quantity: Number,
   state: String,
-  promotion: Boolean,
+  promotion: Number,
   Marque: Object,
   Caracteristique: Object,
   Tva: Object,

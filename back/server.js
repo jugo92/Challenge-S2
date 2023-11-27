@@ -15,6 +15,7 @@ const {
   Order,
   Marque,
   Product,
+  Category
 } = require("./src/Models");
 
 app.use(cors());
@@ -50,8 +51,8 @@ const serviceUserProxy = new Proxy(genericUserService, {
 });
 
 app.use(
-  routePrefix + "/users",
-  new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
+    routePrefix + "/users",
+    new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
 );
 
 // const genericController = new GenericController(serviceProxy);
@@ -62,36 +63,43 @@ app.use(
 // );
 
 app.use(
-  routePrefix + "/tvas",
-  new GenericRouter(new GenericController(new GenericService(Tva))).getRouter()
+    routePrefix + "/tvas",
+    new GenericRouter(new GenericController(new GenericService(Tva))).getRouter()
 );
 
 app.use(
-  routePrefix + "/caracteristiques",
-  new GenericRouter(
-    new GenericController(new GenericService(Caracteristique))
-  ).getRouter()
+    routePrefix + "/caracteristiques",
+    new GenericRouter(
+        new GenericController(new GenericService(Caracteristique))
+    ).getRouter()
 );
 
 app.use(
-  routePrefix + "/marques",
-  new GenericRouter(
-    new GenericController(new GenericService(Marque))
-  ).getRouter()
+    routePrefix + "/marques",
+    new GenericRouter(
+        new GenericController(new GenericService(Marque))
+    ).getRouter()
 );
 
 app.use(
-  routePrefix + "/orders",
-  new GenericRouter(
-    new GenericController(new GenericService(Order))
-  ).getRouter()
+    routePrefix + "/orders",
+    new GenericRouter(
+        new GenericController(new GenericService(Order))
+    ).getRouter()
 );
 
 app.use(
-  routePrefix + "/products",
-  new GenericRouter(
-    new GenericController(new GenericService(Product))
-  ).getRouter()
+    routePrefix + "/products",
+    new GenericRouter(
+        new GenericController(new GenericService(Product))
+    ).getRouter()
+);
+
+app.use(
+    routePrefix + "/categories",
+    new GenericRouter(
+        new GenericController(new GenericService(Category))
+    ).getRouter()
 );
 
 app.use(function (err, req, res, next) {
