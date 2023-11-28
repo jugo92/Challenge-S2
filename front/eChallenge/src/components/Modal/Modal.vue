@@ -15,7 +15,7 @@ const closeModal = () => {
         <!-- Overlay -->
         <div v-if="show" class="overlay" @click="closeModal"></div>
         <!-- Modal -->
-        <div v-if="show" id="default-modal" tabindex="-1" aria-hidden="true" class="ab overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-1 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div v-if="show" id="default-modal" tabindex="-1" aria-hidden="true" class="ab overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-10 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="m-auto p-4 w-full max-w-2xl max-h-full">
                 <!-- Modal content -->
                 <div class="bg-white rounded-lg shadow">
@@ -32,9 +32,8 @@ const closeModal = () => {
                         </button>
                     </div>
                     <!-- Modal body -->
-                    <div class="p-4 md:p-5 space-y-4" v-if="content=='modalCreateProduct'">
+                    <div class="p-4 md:p-5 space-y-4" v-if="content=='formBuilder'">
                       <FormBuilder :formFields="formConfig" format="column"/>
-                      {{console.log(formConfig)}}
                     </div>
                     <!-- Modal footer -->
                     <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -66,7 +65,7 @@ const closeModal = () => {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5); /* Fond gris avec une transparence de 50% */
-    z-index: 0; /* Doit être inférieur au z-index de la modal pour le recouvrir */
+    z-index: 10; /* Doit être inférieur au z-index de la modal pour le recouvrir */
 }
 
 /* Autres styles pour la modal ici */

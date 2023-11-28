@@ -1,7 +1,7 @@
 <template>
-  <div class="mx-auto w-full mt-4 p-6 bg-gray-100 rounded-md">
+  <div class="mx-auto w-full p-6 rounded-md">
     <form>
-      <div v-for="(field, index) in formFields" :key="index" class="mb-4" :class="{['flex w-full'] : format==='row', ['flex flex-col w-full'] : format==='column'}">
+      <div v-for="(field, index) in formFields" :key="index" :class="{['flex w-full'] : format==='row', ['flex flex-col w-full'] : format==='column'}" class="mb-2">
         <template v-if="field.type !== 'button'">
           <!-- Label -->
           <template v-if="field.type === 'label' && showField(field)">
@@ -9,7 +9,7 @@
               <b>{{ field.label }}</b>&nbsp; {{ field.value }} €
             </label>
           </template>
-          <template v-else-if="showField(field)">
+          <template v-else-if="field.type !== 'button' && showField(field)">
             <label :for="field.name" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }} <span class="text-red-600" v-if="field.required">*</span></label>
           </template>
 

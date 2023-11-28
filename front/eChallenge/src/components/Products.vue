@@ -1,37 +1,24 @@
 <template>
   <div class="flex flex-col gap-2">
-    <span class="font-bold">Produits et services</span>
-    <input
-        class="w-full p-2 rounded bg-gray-100 text-black"
-        type="text"
-        placeholder="Rechercher dans la liste"
-    />
+    <span class="font-bold text-2xl">Produits et services</span>
 
-<!--    <button @click="openModal" >Open Modal</button>-->
-<!--    &lt;!&ndash;    <div :class="{'hidden': !isModalVisible}">&ndash;&gt;-->
-<!--    <div>-->
-<!--      &lt;!&ndash;      <FormBuilder :formFields="formConfig" format="column"/>&ndash;&gt;-->
-<!--    </div>-->
-<!--    <Modal-->
-<!--        title="test"-->
-<!--        content="modalCreateProduct"-->
-<!--        :show="isModalVisible"-->
-<!--        @close="closeModal"-->
-<!--        :formConfig="formConfig"-->
-<!--        @open="openModal"-->
-<!--    />-->
+    <Modal
+        title="test"
+        content="formBuilder"
+        :show="isModalVisible"
+        @close="closeModal"
+        :formConfig="formConfig"
+    />
     <div>
-      <TabBuilder :columns="tableColumns" :data="tableData" :formConfig="formConfig"/>
+      <TabBuilder :columns="tableColumns" :data="tableData" @open="openModalCreate" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import {onMounted, ref, watch} from 'vue';
-import Button from "./Button.vue";
 import { z } from "zod";
 import {useModal} from "./Modal/useModal.ts";
-import FormBuilder from "./Form/FormBuilder.vue";
 import {useForm} from "./Form/formHelper.ts";
 import TabBuilder from "./Table/TableBuilder.vue";
 import Modal from "./Modal/Modal.vue";
@@ -63,8 +50,7 @@ const fetchProducts = async (includedProperties) => {
     console.error('Erreur lors de la récupération des produits depuis l\'API', error);
   }
 };
-const emit = defineEmits();
-const createProduct = async () => {
+const createProduct = async (data) => {
   console.log('Création du produit', formConfig.value);
   for (const field of formConfig.value) {
     if (!field.value && field.required) {
@@ -75,7 +61,7 @@ const createProduct = async () => {
       field.value = 0;
       continue;
     }
-    if(await isExistingProduct()) {
+    if(await isExistingProduct() && !formConfig.id) {
       field.validationError = { message: 'Ce produit existe déjà' };
       return;
     }
@@ -86,7 +72,9 @@ const createProduct = async () => {
   }
 
   const promotionField = formConfig.value.find(field => field.name === 'promotion');
-  const selectedPromotion = promotionField.options.find(option => option.id === promotionField.value);
+  console.log("promotionField", promotionField["value"]);
+  const selectedPromotion = promotionField["value"]
+  console.log("selectedPromotion", selectedPromotion);
 
   const requestBody = {
     CategoryId: formConfig.value.find(field => field.name === 'categories').value,
@@ -102,23 +90,40 @@ const createProduct = async () => {
     state: formConfig.value.find(field => field.name === 'state').value,
     promotion: selectedPromotion.id || 0,
   };
-  console.log(requestBody);
-  fetch('http://localhost:3000/api/products', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(requestBody), // Convertir l'objet en chaîne JSON
-  })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        closeModal();
-        console.log('Success:', isModalVisible);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+  if(formConfig.id) {
+    requestBody.id = formConfig.id;
+    fetch('http://localhost:3000/api/products/' + formConfig.id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          location.reload();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+  }else {
+    fetch('http://localhost:3000/api/products', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          location.reload();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+  }
 };
 
 const isExistingProduct = async () => {
@@ -137,7 +142,6 @@ const isExistingProduct = async () => {
 
 const fetchOptions = async (field, callback) => {
   const url = `http://localhost:3000/api/${field}`;
-  console.log(`Récupération des options depuis l'API ${url}`);
   try {
     const response = await fetch(url);
     const data = await response.json();
@@ -148,7 +152,43 @@ const fetchOptions = async (field, callback) => {
 };
 
 const marques = ref([]);
-
+const stateOptions = {
+  'Neuf': 1,
+  'Occasion': 2,
+  'Reconditionné': 3,
+  'Seconde Main': 4
+};
+const openModalCreate = ( data ) => {
+  if(data === undefined) {
+    openModal();
+    return;
+  }
+  else if(data.length > 1) {
+    alert('Vous ne pouvez pas modifier plusieurs produits à la fois');
+    return;
+  }
+  else{
+    fetch("http://localhost:3000/api/products/" + data[0])
+        .then(response => response.json())
+        .then(data => {
+          formConfig.id = data.id;
+          formConfig.value.find(field => field.name === 'name').value = data.name;
+          formConfig.value.find(field => field.name === 'description').value = data.description;
+          formConfig.value.find(field => field.name === 'quantite').value = data.quantity;
+          formConfig.value.find(field => field.name === 'prixTTC').value = data.price;
+          formConfig.value.find(field => field.name === 'state').value = stateOptions[data.state];
+          formConfig.value.find(field => field.name === 'promotion').value = data.promotion;
+          formConfig.value.find(field => field.name === 'brands').value = data.MarqueId;
+          formConfig.value.find(field => field.name === 'tvas').value = data.TvaId;
+          formConfig.value.find(field => field.name === 'categories').value = data.CategoryId;
+          formConfig.value.find(field => field.name === 'id').value = data.id;
+          openModal();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+  }
+};
 const filterMarques = () => {
   const searchField = formConfig.value.find((field) => field.name === 'brands' && field.type === 'search');
   const inputValue = searchField.value;
@@ -207,10 +247,6 @@ const formConfig = ref([
     valueKey: 'id',
     placeholder: 'Saisissez le nom de la marque...',
     required: true,
-    // suggestions: [],
-    // changeHandlers: [filterMarques],
-    // validationError: '',
-    // validationSchema: z.string().nonempty({ message: 'La marque est obligatoire' }),
     showCondition: () => true,
   },
   {
@@ -343,6 +379,9 @@ const formConfig = ref([
     buttonClass: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
     buttonClick: createProduct,
     showCondition: () => true
+  },
+  {
+    name: 'id',
   }
 ]);
 

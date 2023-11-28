@@ -1,17 +1,8 @@
 <template>
-  <Modal
-      title="test"
-      content="modalCreateProduct"
-      :show="isModalVisible"
-      @close="closeModal"
-      :formConfig="formConfig"
-  />
-  <div class="grid grid-cols-6 gap-5">
-    <FormBuilder :formFields="actionsConfig" format="row"/>
-  </div>
-  <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+  <FormBuilder :formFields="actionsConfig" format="column"/>
+  <div class="relative overflow-x-auto shadow-md sm:rounded-lg z-1">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-100">
       <tr>
         <th scope="col" class="p-4">
           <div class="flex items-center">
@@ -22,7 +13,7 @@
           <span class="flex justify-between">
             {{ column.label }} <Icon icon="fa6-solid:sort" v-if="column.filter" @click="sortByColumn(column.key)" class="hover:cursor-pointer"/>
           </span>
-          <input v-if="column.filter" v-model="filters[column.key]" @input="applyFilters" class="table table-input-text"/>
+          <input v-if="column.filter" v-model="filters[column.key]" class="table table-input-text"/>
         </th>
       </tr>
       </thead>
@@ -30,7 +21,7 @@
       <tr class="bg-white hover:bg-gray-50" v-for="row in sortedData" :key="row.id">
         <td class="w-4 p-4">
           <div class="flex items-center">
-            <input :id="row.id" type="checkbox" class="table table-input-checkbox" @change="getSelectedProducts">
+            <input :id="row.id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row.id" @change="getSelectedProducts">
           </div>
         </td>
         <td v-for="(value, key, index) in Object.entries(row).slice(1)" :key="index" :class="{[columnsStyleObject[value[0]]] : columnsStyleObject.hasOwnProperty(value[0]) }">
@@ -71,7 +62,6 @@ import Modal from "../Modal/Modal.vue";
 import vueformConfig from "../../../vueform.config.ts";
 const { isModalVisible, openModal, closeModal } = useModal();
 const emit = defineEmits();
-
 interface TableColumn {
   key: string;
   label: string;
@@ -131,9 +121,6 @@ const sortedData = computed(() => {
   }
 });
 
-const applyFilters = () => {
-};
-
 const selectedItems = ref([]); // Use ref to make it reactive
 
 const getSelectedProducts = () => {
@@ -144,8 +131,6 @@ const getSelectedProducts = () => {
       selectedItems.value.push(checkbox.id);
     }
   });
-  console.log(selectedItems.value);
-  return selectedItems.value;
 };
 
 const selectAll = () => {
@@ -204,7 +189,7 @@ const actionsConfig = ref([
     label: 'Créer un produit',
     buttonType: 'button',
     buttonClass: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
-    buttonClick: openModal,
+    buttonClick: () => emit('open'),
     showCondition: () => true
   },
   {
@@ -212,7 +197,10 @@ const actionsConfig = ref([
     label: 'Modifier un produit',
     buttonType: 'button',
     buttonClass: 'bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
-    buttonClick: openModal,
+    buttonClick: () => {
+      emit('open', selectedItems.value);
+      emit('itemToUpdate', selectedItems.value)
+    },
     showCondition: () => true
   },
   {
