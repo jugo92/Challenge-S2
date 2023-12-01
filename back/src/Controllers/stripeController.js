@@ -136,13 +136,6 @@ module.exports.getEventPayment = async (req, res) => {
     const getDataFacture = await generateDataFacture(orderId);
     const pdfService = new PdfService(getDataFacture);
     await pdfService.invoicePdf();
-  }else if(event.type === "charge.refunded"){
-    const session = event.data.object;
-    //ici on à la confirmation du succes de remboursement il faut adapter les tables
-    //
-    console.log(session);
-  }else{
-    console.log(event.type)
   }
   res.json({
     success: true,
