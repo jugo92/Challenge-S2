@@ -24,15 +24,28 @@ const selectedCategory = ref<number | null>(null);
 const selectCategory = (category: { id: number }) => {
   selectedCategory.value = category.id;
 };
+
+const paginatedPosts = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const filteredPosts = posts.value.filter(post =>
+    post.name.toLowerCase().includes(store.state.searchTerm.toLowerCase()) &&
+    (selectedState.value === 'Tout' || post.state === selectedState.value)
+  );
+
+  return filteredPosts.slice(startIndex, endIndex, startIndex + itemsPerPage);
+});
+
 </script>
 
 <style scoped>
 .top {
-  border: solid 1px rgb(255, 255, 255);
-  background-color: rgb(248, 248, 248);
+  border: solid 1px rgb(255, 254, 254);
+  background-color: rgb(245, 245, 245);
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0px 0px 8px 0px rgb(160, 160, 160);
+  box-shadow: 0px 0px 8px 0px rgb(247, 247, 247);
   overflow-x: auto; 
   white-space: nowrap; 
   display: flex;

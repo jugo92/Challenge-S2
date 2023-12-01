@@ -1,7 +1,5 @@
 <template>
-  <!-- component -->
 <nav class=" bg-white w-full flex relative justify-between items-center mx-auto px-8 h-20 navig">
-    <!-- logo -->
     <div class="inline-flex">
         <a class="_o6689fn" href="/"
             ><div class="hidden md:block">
@@ -13,9 +11,6 @@
         </a>
     </div>
 
-    <!-- end logo -->
-
-    <!-- search bar -->
     <div class="hidden sm:block flex-shrink flex-grow-0 justify-start px-2">
     <div class="inline-block">
         <div class="inline-flex items-center max-w-full">
@@ -29,7 +24,7 @@
                         role="presentation"
                         focusable="false"
                         style="
-                            display: block;
+                   
                             fill: none;
                             height: 12px;
                             width: 12px;
@@ -81,21 +76,10 @@
               
                 <button type="button" class="inline-flex items-center relative px-2 border rounded-full hover:shadow-lg">
                     <div class="pl-1">
-                        <svg
-                            viewBox="0 0 32 32"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-hidden="true"
-                            role="presentation"
-                            focusable="false"
-                            style="display: block; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 3; overflow: visible;"
-                        >
-                            <g fill="none" fill-rule="nonzero">
-                                <path d="m2 16h28"></path>
-                                <path d="m2 24h28"></path>
-                                <path d="m2 8h28"></path>
-                            </g>
-                        </svg>
+                 
                     </div>
+                     <p  class="text-center">  {{ user.firstname }} {{ user.lastname }}</p>
+                  
 
                     <div class="block flex-grow-0 flex-shrink-0 h-10 w-12 pl-5">
                         <svg
@@ -116,7 +100,52 @@
       </div>
     </div>
 
+    
 </nav>
+<nav class="nav_mobile">
+  <div class="sm:block flex-shrink flex-grow-0 justify-start px-2 mt-24">
+    <div class="inline-block mobile_nav">
+        <div class="inline-flex items-center max-w-full input_mobile">
+            <div class="flex items-center flex-grow-0 flex-shrink pl-2 relative w-60 border rounded-full px-1 py-1 ">
+              <input
+              type="text"
+              placeholder="Rechercher"
+              class="block flex-grow flex-shrink outline-none px-2"
+              v-model="searchTerm"
+              @input="updateSearchTerm"
+              @focus="showRecentSearches"
+            />
+                <div class="flex items-center justify-center relative h-8 w-8 rounded-full">
+                    <svg
+                        viewBox="0 0 32 32"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="false"
+                        role="presentation"
+                        focusable="false"
+                        style="
+                   
+                            fill: none;
+                            height: 12px;
+                            width: 12px;
+                            stroke: currentcolor;
+                            stroke-width: 5.33333;
+                            overflow: visible;
+                        "
+                       
+                    >
+                        <g fill="none">
+                            <path
+                                d="m13 24c6.0751322 0 11-4.9248678 11-11 0-6.07513225-4.9248678-11-11-11-6.07513225 0-11 4.92486775-11 11 0 6.0751322 4.92486775 11 11 11zm8-3 9 9"
+                            ></path>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</nav>
+
 </template>
 
 <script setup lang="ts">
@@ -129,26 +158,34 @@ const quantity = ref(1);
 
 
 <style scoped>
-.navig{
+.navig {
   background-color: #fff;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border: 1px solid #ebebeb;
+}
+
+.mobile_nav{
+  display: none;
 }
 
 @media screen and (max-width: 480px) {
 
-  .navig {
-    width: 100%;
+  .mobile_nav{ 
+    display: flex;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+   position: fixed;
+   top: 0;
+   left: 0;
+   right: 0;
+   z-index: 1000;
+   border: 1px solid #ffffff;
+   background-color: #fff;
+   margin-top: 20%;
+    
 
   }
 }

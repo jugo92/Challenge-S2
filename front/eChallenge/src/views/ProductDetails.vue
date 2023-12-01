@@ -4,7 +4,6 @@
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { ref, onMounted, watch } from 'vue';
-import TopBar from '../components/TopBar.vue';
 import Navbar from '../components/Navbar.vue';
 
 const route = useRoute();
@@ -50,8 +49,7 @@ const addToCart = (product) => {
 
 <template>
     <Navbar/>
-    <TopBar />
-    <section class="py-10 font-poppins">
+<section class="py-10 font-poppins mt-24">
 <div class="max-w-6xl px-4 mx-auto">
 <div class="flex flex-wrap mb-24 -mx-4">
 <div class="w-full px-4 mb-8 md:w-1/2 md:mb-0">

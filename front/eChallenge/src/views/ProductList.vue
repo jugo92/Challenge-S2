@@ -34,15 +34,28 @@ const changePage = (page) => {
 
 const store = useStore(); 
 const addToCart = (product) => {
-  store.commit('addToCart', product);
+  if(store.state.isLoggedIn){
+    store.commit('addToCart', product);
+}else{
+  router.push('/login');
+}
+
 };
 
 </script>
 
 <template>
 
-<h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Nos produits</h2>
+<h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
   <div>
+    <div class="flex mt-8 filtre">
+  <div class="relative flex items-center">
+    <Icon icon="lets-icons:filter" class="text-2xl icon "/>
+    <select v-model="triSelected" class="p-2 border rounded-md">
+      <option v-for="option in optionTri" :key="option.value" :value="option.value">{{ option.label }}</option>
+    </select>
+  </div>
+</div>
 
     <section class="mt-12">
       <div class="px-4 mx-auto max-w-7xl">
@@ -149,6 +162,10 @@ const addToCart = (product) => {
 h2{
   margin-top: 2%;
 }
+.filtre{
+margin-left: auto;
+margin-right: auto;
+}
 
 @media screen and (max-width: 480px) {
 
@@ -158,9 +175,12 @@ h2{
   align-items: center;
   margin-top: 2rem;
   margin: 0 0.5rem;
+  margin-inline-start:auto;
+}
 
-
-margin-inline-start:auto;
+.filtre{
+  margin-block-end: auto;
+  margin-left: 10px;
 }
 
 .mobile {
