@@ -54,7 +54,7 @@ module.exports = function (connection) {
         allowNull: false,
       },
       state: {
-        type: DataTypes.ENUM("Pending", "Validate", "Canceled"),
+        type: DataTypes.ENUM("Pending", "Validate", "Canceled", "Partiel_Refund", "Refund"),
         defaultValue: "Pending",
         allowNull: false,
       },

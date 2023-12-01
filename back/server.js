@@ -15,6 +15,7 @@ const {
   Order,
   Marque,
   Product,
+  Refund
 } = require("./src/Models");
 
 app.use(cors());
@@ -94,6 +95,13 @@ app.use(
   routePrefix + "/products",
   new GenericRouter(
     new GenericController(new GenericService(Product))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/refunds",
+  new GenericRouter(
+    new GenericController(new GenericService(Refund))
   ).getRouter()
 );
 

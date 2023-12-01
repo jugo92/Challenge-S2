@@ -26,6 +26,10 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      payment_stripe_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       currency: {
         type: DataTypes.STRING,
         allowNull: false,

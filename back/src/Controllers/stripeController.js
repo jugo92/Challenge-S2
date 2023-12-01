@@ -98,7 +98,7 @@ module.exports.getEventPayment = async (req, res) => {
   const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
   let signingkey =
-    "whsec_3ba2e17763269bf829ddd31b54250017b17bb6c63f4ceec54d8c39aaae9318fb";
+    "whsec_5f2b38115e8a5de5ea0b95d872511de0352af0372fb4a1d8489c03be91eb4659";
   const payload = req.body;
   const sig = req.headers["stripe-signature"];
 
@@ -109,9 +109,11 @@ module.exports.getEventPayment = async (req, res) => {
     res.status(400).json({ success: false });
     return;
   }
+  console.log("HEREEEEEE")
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
+    console.log(session)
     const orderId = session.client_reference_id;
     const email = session.customer_details.email;
 
@@ -122,7 +124,7 @@ module.exports.getEventPayment = async (req, res) => {
     });
 
     await Payment.update(
-      { status: PaymentStatus.Succeeded },
+      { status: PaymentStatus.Succeeded, payment_stripe_id: session.payment_intent },
       { where: { OrderId: orderId }, individualHooks: true }
     );
 
@@ -134,8 +136,28 @@ module.exports.getEventPayment = async (req, res) => {
     const getDataFacture = await generateDataFacture(orderId);
     const pdfService = new PdfService(getDataFacture);
     await pdfService.invoicePdf();
+  }else if(event.type === "charge.refunded"){
+    const session = event.data.object;
+    //ici on à la confirmation du succes de remboursement il faut adapter les tables
+    //
+    console.log(session);
+  }else{
+    console.log(event.type)
   }
   res.json({
     success: true,
   });
-};
+}
+
+module.exports.refundPayment = async (req, res) => {
+    try {
+      const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
+      const refund = await stripe.refunds.create({
+        payment_intent: req.body.payment_intent,
+        amount: req.body.amount
+      });
+      res.status(200).json({ refund });
+  }catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+}

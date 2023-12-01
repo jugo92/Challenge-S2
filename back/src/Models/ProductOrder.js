@@ -16,6 +16,10 @@ module.exports = function (connection) {
       quantity: {
         type: DataTypes.INTEGER,
       },
+      quantity_refunded: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
     },
     {
       sequelize: connection,
