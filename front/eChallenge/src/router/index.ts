@@ -15,7 +15,7 @@ import ProfilePageVue from "../pages/Profile-page.vue";
 import NotFoundVue from "../components/NotFound.vue";
 import RecapPageVue from "../pages/Recap-page.vue";
 import SuccessPageVue from "../pages/Success-page.vue";
-
+import SettingPageVue from "../pages/Setting-page.vue"
 
 const router = createRouter({
     history: createWebHistory(),
@@ -35,6 +35,13 @@ const router = createRouter({
             path: "/success",
             name: "Success",
             component: SuccessPageVue,
+        },
+
+        {
+            path:"/setting",
+            name:"setting",
+            component:SettingPageVue,
+
         },
             
             {

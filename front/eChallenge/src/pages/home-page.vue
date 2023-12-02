@@ -3,10 +3,10 @@
   <div>
    <Navbar />
     </div>
-      <TopBar />
+
   <div>
 
-    <div class="mt-12 ">
+    <div class="top ">
       <SliderImage />
     </div>
   </div>
@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 
-import TopBar from '../components/TopBar.vue';
 import SliderImage from '../components/carousel/SliderImage.vue';
 import ProductList from "../views/ProductList.vue";
 import Navbar from '../components/Navbar.vue';
@@ -32,6 +31,10 @@ import Navbar from '../components/Navbar.vue';
  margin-left: auto;
  margin-right: auto;
 
+}
+
+.top{
+  margin-top: 10%;
 }
 
 </style> 

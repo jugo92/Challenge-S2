@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
-import { useRouter } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 import {useStore} from 'vuex';
 
 
@@ -69,10 +69,12 @@ onMounted(() => {
                     </div>
                     </div>
                      <div  class="bg-white absolute right-0 w-40 py-2 mt-1 border border-gray-200 shadow-2xl w-48 option">
-                            <button @click="openSettings = false" class="w-full flex items-center py-1.5 px-6 space-x-2 hover:bg-gray-200 radius">
+                        <RouterLink to="/setting">
+                            <button class="w-full flex items-center py-1.5 px-6 space-x-2 hover:bg-gray-200 radius">
                             <Icon icon="lets-icons:setting-line"  class="text-3xl"/>                
                             <span class="text-sm text-black">Paramètres</span>
                         </button>
+                        </RouterLink>
 
                         <button @click="disconnect" class="w-full flex items-center px-6 py-1.5 space-x-2 hover:bg-gray-200 radius">
                             <Icon icon="system-uicons:exit-right" class="text-3xl"/>
