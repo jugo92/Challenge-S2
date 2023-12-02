@@ -46,26 +46,9 @@ const router = createRouter({
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
-            path: "/tvas",
-            name: "ShowAllTvas",
-            component: ShowAll,
-            props: (route) => ({ instance: route.path.substring(1) })
-        },
-        {
-            path: "/caracteristiques",
-            name: "ShowAllCaracteristiques",
-            component: ShowAll,
-            props: (route) => ({ instance: route.path.substring(1) })
-        },
-        {
             path: "/unauthorized",
             name: "Unauthorized",
             component: unauthorized,
-        },
-        {
-            path: "/productsOk",
-            name: "Products",
-            component: Products,
         }
     ],
 });
