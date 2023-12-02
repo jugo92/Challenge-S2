@@ -2,7 +2,6 @@ const OrderStatus = require("../Enum/orderStatus");
 const PaymentStatus = require("../Enum/paymentStatus");
 const { generateDataFacture } = require("../Helper/Utils");
 const {
-  Tva,
   Order,
   Product,
   ProductOrder,
@@ -29,13 +28,7 @@ module.exports.initPayment = async (req, res) => {
 
     await Promise.all(
       req.body.items.map(async item => {
-        const product = await Product.findByPk(item.id, {
-          include: [
-            {
-              model: Tva,
-            },
-          ],
-        });
+        const product = await Product.findByPk(item.id, {});
 
         await ProductOrder.create({
           id: uuidv7(),
@@ -49,7 +42,7 @@ module.exports.initPayment = async (req, res) => {
             product.dataValues.price * 100 +
             product.dataValues.price *
               100 *
-              (product.dataValues.Tva.dataValues.rate / 100),
+              (product.dataValues.tva.dataValues.rate / 100),
           name: product.dataValues.name,
         });
       })

@@ -11,9 +11,7 @@ module.exports = function (connection) {
           marque.id,
           "MarqueId",
           db.Product,
-          db.Caracteristique,
           db.Marque,
-          db.Tva,
           db.Category
         );
         genericMongo(marque.id, db.Marque, MarqueMongo);
@@ -23,9 +21,7 @@ module.exports = function (connection) {
           marque.id,
           "MarqueId",
           db.Product,
-          db.Caracteristique,
           db.Marque,
-          db.Tva,
           db.Category
         );
         genericMongo(marque.id, db.Marque, MarqueMongo);
@@ -35,9 +31,7 @@ module.exports = function (connection) {
           marque.id,
           "MarqueId",
           db.Product,
-          db.Caracteristique,
           db.Marque,
-          db.Tva,
           db.Category
         );
         genericMongo(marque.id, db.Marque, MarqueMongo);
@@ -51,10 +45,21 @@ module.exports = function (connection) {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
+        validate: {
+          len: [2, 255], 
+        },
       },
       image: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        validate: {
+          len: [2, 1000], 
+        },
       },
     },
     {

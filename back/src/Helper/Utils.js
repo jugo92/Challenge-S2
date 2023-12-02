@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Order, Product, ProductOrder, User, Tva } = require("../Models/");
+const { Order, Product, ProductOrder, User } = require("../Models/");
 
 function isPasswordExpired(passwordChangeDate, maxAgeInDays) {
   const currentDate = new Date();
@@ -25,7 +25,6 @@ const generateDataFacture = async OrderId => {
         include: [
           {
             model: Product,
-            include: [{ model: Tva }],
           },
         ],
       },
@@ -48,7 +47,7 @@ const generateDataFacture = async OrderId => {
         description: productOrder.dataValues.Product.dataValues.name,
         price: productOrder.dataValues.Product.dataValues.price,
         "tax-rate":
-          productOrder.dataValues.Product.dataValues.Tva.dataValues.rate,
+          productOrder.dataValues.Product.dataValues.tva.dataValues.rate,
       };
     }),
   };

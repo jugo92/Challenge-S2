@@ -11,8 +11,6 @@ const Security = require("./src/Routes/security");
 const port = process.env.PORT;
 const {
   User,
-  Tva,
-  Caracteristique,
   Order,
   Marque,
   Product,
@@ -30,9 +28,7 @@ const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const users = require("./src/Mongo/User");
-const tvas = require("./src/Mongo/Tva");
 const marques = require("./src/Mongo/Marque");
-const caracteristiques = require("./src/Mongo/Caracteristique");
 const categories = require("./src/Mongo/Category");
 const orders = require("./src/Mongo/Order");
 const payments = require("./src/Mongo/Payment");
@@ -86,36 +82,6 @@ const serviceUserProxy = new Proxy(genericUserService, {
 app.use(
   routePrefix + "/users",
   new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
-);
-
-const genericTvaService = new GenericService(Tva);
-const serviceTvaProxy = new Proxy(genericTvaService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(tvas)) {
-      return createMongoMethods(tvas)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
-app.use(
-  routePrefix + "/tvas",
-  new GenericRouter(new GenericController(serviceTvaProxy)).getRouter()
-);
-
-const genericCaracteristiqueService = new GenericService(Caracteristique);
-const serviceCaracteristiqueProxy = new Proxy(genericCaracteristiqueService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(caracteristiques)) {
-      return createMongoMethods(caracteristiques)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
-app.use(
-  routePrefix + "/caracteristiques",
-  new GenericRouter(
-    new GenericController(serviceCaracteristiqueProxy)
-  ).getRouter()
 );
 
 const genericMarqueService = new GenericService(Marque);

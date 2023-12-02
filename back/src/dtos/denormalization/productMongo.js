@@ -3,10 +3,8 @@ module.exports = async (
   modelId,
   key,
   Product,
-  Caracteristique,
   Marque,
   Category,
-  Tva
 ) => {
   const products = await Product.findAll({
     where: {
@@ -14,16 +12,10 @@ module.exports = async (
     },
     include: [
       {
-        model: Caracteristique,
-      },
-      {
         model: Category,
       },
       {
         model: Marque,
-      },
-      {
-        model: Tva,
       },
     ],
   });
@@ -36,17 +28,32 @@ module.exports = async (
   const productMongoInstances = products.map(product => {
     const productMongoData = {
       _id: product.dataValues.id,
+      name: product.dataValues.name,
       description: product.dataValues.description,
       price: product.dataValues.price,
       quantity: product.dataValues.quantity,
+      image: product.dataValues.image,
       state: product.dataValues.state,
       promotion: product.dataValues.promotion,
-      Marque: product.dataValues.Marque?.dataValues
-        ? product.dataValues.Marque.dataValues
-        : {},
-      Caracteristique: product.dataValues.Caracteristique,
-      Tva: product.dataValues.Tva.dataValues,
-      Category: product.dataValues.Category,
+      isPublished: product.dataValues.isPublished,
+      tva: product.dataValues.tva,
+      resolution: product.dataValues.resolution,
+      size: product.dataValues.size,
+      storage: product.dataValues.storage,
+      loudspeaker: product.dataValues.loudspeaker,
+      frontcamera: product.dataValues.frontcamera,
+      backcamera: product.dataValues.backcamera,
+      weight: product.dataValues.weight,
+      width: product.dataValues.width,
+      height: product.dataValues.height,
+      battery: product.dataValues.battery,
+      code: product.dataValues.code,
+      accesories: product.dataValues.accesories,
+      operatingSystem: product.dataValues.operatingSystem,
+      cpu: product.dataValues.cpu,
+      gpu: product.dataValues.gpu,
+      Marque: product.dataValues.Marque?.dataValues,
+      Category: product.dataValues.Category?.dataValues,
     };
 
     return new ProductMongo(productMongoData);

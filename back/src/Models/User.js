@@ -34,44 +34,101 @@ module.exports = function (connection) {
   User.init(
     {
       id: { type: DataTypes.UUID, primaryKey: true },
-      firstname: DataTypes.STRING(45),
-      lastname: DataTypes.STRING(45),
+      firstname: {
+        type: DataTypes.STRING(45),
+        validate: {
+          len: [2, 45], 
+        },
+        allowNull: false
+      },
+      lastname: {
+        type: DataTypes.STRING(45),
+        validate: {
+          len: [2, 45], 
+        },
+        allowNull: false
+      },
       email: {
         type: DataTypes.TEXT,
-        validate: {
-          max: 320,
-          notNull: true,
-        },
         allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: 'L\'adresse e-mail ne peut pas être vide.',
+          },
+          isEmail: {
+            msg: 'Veuillez fournir une adresse e-mail valide.',
+          },
+        },
       },
       password: {
         type: DataTypes.TEXT,
-        validate: {
-          max: 320,
-          notNull: true,
-          //is: {
-          //  args: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i,
-          //  msg: "Password must be at least 8 characters long and contain at least one letter and one number",
-          //},
-        },
         allowNull: false,
+        validate: {
+          isStrongPassword(value) {
+            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+      
+            if (!strongPasswordRegex.test(value)) {
+              throw new Error('Le mot de passe doit avoir au moins 12 caractères avec au moins une majuscule, un chiffre et un caractère spécial.');
+            }
+          },
+        },
       },
       gender: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("H", "F"),
+        allowNull: false,
       },
-      adress: {
+      address: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: 'L\'adresse ne peut pas être vide.',
+          },
+          len: {
+            args: [2, 255], // Ajustez les valeurs minimales et maximales selon vos besoins
+            msg: 'L\'adresse doit avoir entre 2 et 255 caractères.',
+          },
+        },
       },
       city: {
         type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: 'L\'adresse ne peut pas être vide.',
+          },
+          len: {
+            args: [2, 255], // Ajustez les valeurs minimales et maximales selon vos besoins
+            msg: 'La ville doit avoir entre 2 et 255 caractères.',
+          },
+        },
       },
       zip: {
         type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: 'Le code postal ne peut pas être vide.',
+          },
+          is: {
+            args: /^\d{5}$/, // Exemple pour un code postal à 5 chiffres, ajustez selon vos besoins
+            msg: 'Le code postal doit avoir le format correct.',
+          },
+        },
       },
       phone: {
         type: DataTypes.STRING,
+        allowNull: false,
         unique: true,
+        validate: {
+          notEmpty: {
+            msg: 'Le numero de telephone ne peut pas être vide.',
+          },
+          is: {
+            args: /^\d{10}$/,
+            msg: 'Le numero de telephone doit avoir le format correct.',
+          },
+        },
       },
       dateOfBirth: {
         type: DataTypes.DATE,
@@ -93,6 +150,7 @@ module.exports = function (connection) {
       isVerified: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false
       },
       loginAttempts: {
         type: DataTypes.INTEGER,

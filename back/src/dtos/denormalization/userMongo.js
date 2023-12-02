@@ -34,8 +34,6 @@ module.exports = async function (
     ],
   });
 
-  console.log("USER : ", user);
-
   await UserMongo.deleteOne({ _id: userId });
 
   const userMongo = new UserMongo({
@@ -44,9 +42,12 @@ module.exports = async function (
     Orders: user.dataValues.Orders.map(order => {
       return {
         email: order.dataValues.email,
-        state: order.dataValues.state,
+        status: order.dataValues.state,
         deliveryAddress: order.dataValues.deliveryAddress,
-        deliveryType: order.dataValues.deliveryType,
+        address: order.dataValues.address,
+        phone: order.dataValues.phone,
+        zip: order.dataValues.zip,
+        city: order.dataValues.city,
         Payment: order.dataValues.Payment?.dataValues,
         Invoice: order.dataValues.Invoice?.dataValues,
         Products: order.dataValues.ProductOrders.map(productOrder => {

@@ -30,12 +30,15 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
       },
       amount_refund: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.FLOAT,
+        validate: {
+          min: {
+            args: [0], 
+            msg: 'Le montant remboursé ne peut pas être négatif.',
+          },
+        },
       },
-      motif_accept_refund: {
-        type: DataTypes.STRING,
-      },
-      motif_refused_refund: {
+      response: {
         type: DataTypes.STRING,
       },
     },

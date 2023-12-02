@@ -11,9 +11,7 @@ module.exports = function (connection) {
           category.id,
           "CategoryId",
           db.Product,
-          db.Caracteristique,
           db.Marque,
-          db.Tva,
           db.Category
         );
         genericMongo(category.id, db.Category, CategoryMongo);
@@ -23,9 +21,7 @@ module.exports = function (connection) {
           category.id,
           "CategoryId",
           db.Product,
-          db.Caracteristique,
           db.Marque,
-          db.Tva,
           db.Category
         );
         genericMongo(category.id, db.Cateory, CategoryMongo);
@@ -35,9 +31,7 @@ module.exports = function (connection) {
           category.id,
           "CategoryId",
           db.Product,
-          db.Caracteristique,
           db.Marque,
-          db.Tva,
           db.Category
         );
         genericMongo(category.id, db.Category, CategoryMongo);
@@ -51,10 +45,17 @@ module.exports = function (connection) {
       name: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
+        validate: {
+          len: [2, 255], 
+        },
       },
       description: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          len: [2, 1000], 
+        },
       },
     },
     {

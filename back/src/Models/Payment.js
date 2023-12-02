@@ -30,17 +30,23 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      currency: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       amount: {
         type: DataTypes.FLOAT,
+        validate: {
+          min: {
+            args: [0], 
+            msg: 'Le montant ne peut pas être négatif.',
+          },
+          max: {
+            args: [1000000], 
+            msg: 'Le montant ne peut pas dépasser 1 000 000.',
+          },
+        },
       },
       status: {
         type: DataTypes.ENUM("Pending", "Succeeded", "Failed"),
         allowNull: false,
-        defaultValue: PaymentStatus.PENDING,
+        defaultValue: "Pending",
       },
     },
     {

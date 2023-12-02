@@ -6,7 +6,7 @@ const UserSchema = new connection.Schema({
   lastname: String,
   email: String,
   gender: String,
-  adress: String,
+  address: String,
   city: String,
   zip: String,
   phone: String,

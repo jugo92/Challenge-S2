@@ -2,8 +2,13 @@ const connection = require("./db");
 
 const OrderSchema = new connection.Schema({
   _id: String,
-  HT: Number,
-  state: String,
+  TTC: Number,
+  status: String,
+  email: String,
+  address: String,
+  city: String,
+  zip: String,
+  phone: String,
   User: Object,
 });
 
