@@ -38,6 +38,7 @@ const orders = require("./src/Mongo/Order");
 const payments = require("./src/Mongo/Payment");
 const refunds = require("./src/Mongo/Refund");
 const products = require("./src/Mongo/Product");
+const multerMiddleware = require('./src/Middlewares/upload')
 
 app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
@@ -47,22 +48,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Le dossier où les fichiers seront enregistrés
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Nom du fichier
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, 'uploads/'); // Le dossier où les fichiers seront enregistrés
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, Date.now() + '-' + file.originalname); // Nom du fichier
+//   },
+// });
 
-const upload = multer({ storage: storage });
+// const upload = multer({ storage: storage });
 
-// Route pour traiter l'upload d'image
-app.post('/upload', upload.single('image'), (req, res) => {
-  console.log("reqFile", req.file);
-  res.send('Image uploadée avec succès !');
-});
+// // Route pour traiter l'upload d'image
+// app.post('/upload', upload.single('image'), (req, res) => {
+//   console.log("reqFile", req.file);
+//   res.send('Image uploadée avec succès !');
+// });
 
 const createMongoMethods = (collection) => {
   const ms = new MongoService(collection);
@@ -191,7 +192,7 @@ const serviceProductProxy = new Proxy(genericProductService, {
   },
 });
 app.use(
-  routePrefix + "/products",
+  routePrefix + "/products",multerMiddleware,
   new GenericRouter(
     new GenericController(serviceProductProxy)
   ).getRouter()

@@ -91,21 +91,21 @@ const getRequestBody = (formConfig) => {
         case "products":
             const promotionField = formConfig.find(field => field.name === 'promotion');
             const selectedPromotion = promotionField["value"]
-            return {
-                CategoryId: formConfig.find(field => field.name === 'categories').value,
-                MarqueId: formConfig.find(field => field.name === 'brands').value,
-                CaractetistiqueId: '018c0d75-1908-7d35-accb-6a22d6c617b8',
-                TvaId: formConfig.find(field => field.name === 'tvas').value,
-                name: formConfig.find(field => field.name === 'name').value,
-                description: formConfig.find(field => field.name === 'description').value,
-                quantity: formConfig.find(field => field.name === 'quantite').value,
-                price: formConfig.find(field => field.name === 'prixTTC').value,
-                deliveryDate: 0,
-                image: formConfig.find(field => field.name === 'images').files,
-                state: formConfig.find(field => field.name === 'state').value,
-                promotion: selectedPromotion.id || 0,
-                formData: formConfig.find(field => field.name === 'files').value
-            };
+            const formProduct = new FormData();
+            formProduct.append('file', formConfig.find(field => field.name === 'files').value)
+            formProduct.append('CategoryId', formConfig.find(field => field.name === 'categories').value)
+            formProduct.append('MarqueId', formConfig.find(field => field.name === 'brands').value)
+            formProduct.append('CaracteristiqueId', "018c0d75-1908-7d35-accb-6a22d6c617b8")
+            formProduct.append('TvaId', '018c0d73-2021-7eab-a6a2-193a0a78cab8')
+            formProduct.append('name',  formConfig.find(field => field.name === 'name').value)
+            formProduct.append('description', formConfig.find(field => field.name === 'description').value)
+            formProduct.append('quantity', formConfig.find(field => field.name === 'quantite').value)
+            formProduct.append('price', formConfig.find(field => field.name === 'prixTTC').value)
+            formProduct.append('deliveryDate', 0)
+            formProduct.append('state',formConfig.find(field => field.name === 'state').value)
+            formProduct.append('promotion', selectedPromotion.id || 0)
+            formProduct.append('image', formConfig.find(field => field.name === 'files').value.name)
+            return formProduct
         case "marques":
             return {
                 name: formConfig.find(field => field.name === 'name').value,
@@ -491,10 +491,22 @@ const createInstance = async (data) => {
     //     return;
     // }
 
-    let requestBody = getRequestBody(formConfig.value);
-    console.log("requestBody", requestBody);
+    const requestBody = getRequestBody(formConfig.value);
     if(!isUpdateItem) {
-        fetch('http://localhost:3000/api/' + instance, {
+        if(requestBody instanceof FormData){
+            fetch('http://localhost:3000/api/' + instance, {
+                method: 'POST',
+                body: requestBody
+            })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }else{
+            fetch('http://localhost:3000/api/' + instance, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -508,9 +520,23 @@ const createInstance = async (data) => {
             .catch((error) => {
                 console.error('Error:', error);
             });
+        }
     }else {
         const itemId =  formConfig.value.find(field => field.name === 'id').value;
-        fetch('http://localhost:3000/api/' + instance + '/' + itemId, {
+        if(requestBody instanceof FormData){
+            fetch('http://localhost:3000/api/' + instance + '/' + itemId, {
+                method: 'PUT',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }else{
+            fetch('http://localhost:3000/api/' + instance + '/' + itemId, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -524,6 +550,7 @@ const createInstance = async (data) => {
             .catch((error) => {
                 console.error('Error:', error);
             });
+        }
     }
 };
 
