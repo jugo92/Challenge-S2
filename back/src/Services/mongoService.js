@@ -4,10 +4,27 @@ class MongoService {
   }
 
   async getAll(req, res) {
-    // console.log("QUERY : ", query);
-    console.log("MODEL : ", req.query);
-    const models = await this.Model.find(req.query);
+    const { page: reqPage, limit: reqLimit, ...filters } = req.query;
+    const page = parseInt(reqPage) || 1;
+    const limit = parseInt(reqLimit) || 10;
+    const query = this.Model.find(filters)
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const models = await query.exec();
     return res.status(200).json(models);
+  }
+
+  async getById(req, res) {
+    try {
+      const model = await this.Model.findById(req.params.id);
+      if (!model) {
+        return res.status(404);
+      } 
+      res.status(200).json(model);
+    } catch (error) {
+      console.error('Erreur lors de la récupération', error);
+      res.status(500).json({ message: 'Erreur serveur' });
+    }
   }
 }
 

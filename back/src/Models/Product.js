@@ -89,9 +89,9 @@ module.exports = function (connection) {
         allowNull: false,
       },
       promotion: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: 0,
       },
     },
     {
