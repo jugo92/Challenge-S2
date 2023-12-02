@@ -1,13 +1,21 @@
 const { Model, DataTypes } = require("sequelize");
-const StateStatus = require("../Enum/stateStatus");
-const userMongo = require("../dtos/denormalization/userMongo");
 const PaymentStatus = require("../Enum/paymentStatus");
+const paymentMongo = require("../dtos/denormalization/paymentMongo");
 
 module.exports = function (connection) {
   class Payment extends Model {
     static associate(db) {
       db.Order.belongsTo(Payment);
       Payment.belongsTo(db.Order);
+      Payment.belongsTo(db.User);
+    }
+    static addHooks(db) {
+      Payment.addHook("afterCreate", async payment => {
+        paymentMongo(payment.id, db.Payment, db.User);
+      });
+      Payment.addHook("afterUpdate", payment => {
+        paymentMongo(payment.id, db.Payment, db.User);
+      });
     }
   }
 
@@ -18,6 +26,10 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      payment_stripe_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       currency: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -26,14 +38,9 @@ module.exports = function (connection) {
         type: DataTypes.FLOAT,
       },
       status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM("Pending", "Succeeded", "Failed"),
         allowNull: false,
         defaultValue: PaymentStatus.PENDING,
-      },
-      state: {
-        type: DataTypes.ENUM("Pending", "Succeeded", "Failed"),
-        defaultValue: "Pending",
-        allowNull: false,
       },
     },
     {

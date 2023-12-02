@@ -1,7 +1,16 @@
 const OrderStatus = require("../Enum/orderStatus");
 const PaymentStatus = require("../Enum/paymentStatus");
-const { Tva, Order, Product, ProductOrder, Payment } = require("../Models/");
+const { generateDataFacture } = require("../Helper/Utils");
+const {
+  Tva,
+  Order,
+  Product,
+  ProductOrder,
+  Payment,
+  Invoice,
+} = require("../Models/");
 const { uuidv7 } = require("uuidv7");
+const PdfService = require("../Services/pdfService");
 
 module.exports.initPayment = async (req, res) => {
   try {
@@ -71,6 +80,7 @@ module.exports.initPayment = async (req, res) => {
       session_stripe_id: session.id,
       currency: "EUR",
       OrderId: order.id,
+      UserId: req.user.id,
     });
 
     await Order.update(
@@ -88,7 +98,7 @@ module.exports.getEventPayment = async (req, res) => {
   const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
   let signingkey =
-    "whsec_3ba2e17763269bf829ddd31b54250017b17bb6c63f4ceec54d8c39aaae9318fb";
+    "whsec_5f2b38115e8a5de5ea0b95d872511de0352af0372fb4a1d8489c03be91eb4659";
   const payload = req.body;
   const sig = req.headers["stripe-signature"];
 
@@ -99,23 +109,48 @@ module.exports.getEventPayment = async (req, res) => {
     res.status(400).json({ success: false });
     return;
   }
+  console.log("HEREEEEEE")
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
+    console.log(session)
     const orderId = session.client_reference_id;
     const email = session.customer_details.email;
 
+    const invoice = await Invoice.create({
+      id: uuidv7(),
+      path: `invoice_${orderId}.pdf`,
+      OrderId: orderId,
+    });
+
     await Payment.update(
-      { status: PaymentStatus.Succeeded },
-      { where: { OrderId: orderId } }
+      { status: PaymentStatus.Succeeded, payment_stripe_id: session.payment_intent },
+      { where: { OrderId: orderId }, individualHooks: true }
     );
 
     await Order.update(
-      { state: OrderStatus.VALIDATE, email: email },
+      { state: OrderStatus.VALIDATE, email: email, InvoiceId: invoice.id },
       { where: { id: orderId }, individualHooks: true }
     );
+
+    const getDataFacture = await generateDataFacture(orderId);
+    const pdfService = new PdfService(getDataFacture);
+    await pdfService.invoicePdf();
   }
   res.json({
     success: true,
   });
-};
+}
+
+module.exports.refundPayment = async (req, res) => {
+    try {
+      const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
+      const refund = await stripe.refunds.create({
+        payment_intent: req.body.payment_intent,
+        amount: req.body.amount
+      });
+      res.status(200).json({ refund });
+  }catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+}

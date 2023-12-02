@@ -10,11 +10,17 @@ router.post(
   checkAuth(),
   stripeController.initPayment
 );
+router.post(
+  "/refund",
+  bodyParser.json(),
+  stripeController.refundPayment
+);
 
 router.post(
   "/hooks",
   bodyParser.raw({ type: "application/json" }),
   stripeController.getEventPayment
 );
+
 
 module.exports = router;
