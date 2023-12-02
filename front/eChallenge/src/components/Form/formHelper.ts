@@ -28,7 +28,7 @@ interface FormField {
 }
 
 export function useForm(formConfig: FormField[]) {
-    const files = ref([]);
+    const listFormData = ref([]);
     const showField = (field: FormField) => {
         return !field.showCondition || (field.showCondition && field.showCondition());
     };
@@ -123,14 +123,21 @@ export function useForm(formConfig: FormField[]) {
         searchField.suggestions = [];
     };
 
-    const handleFileChange = (event) => {
-        const selectedFiles = Array.from(event.target.files);
-        files.value = selectedFiles;
+    const handleFileChange = (formConfig, event) => {
+        formConfig.find(field => field.name === 'files').value = event;
+        // console.log("handlefilechange event", event.target.files[0])
+        // const formData = new FormData();
+        // formData.append('image', event.target.files[0]);
+        // listFormData.value.push(formData);
+
+        // const selectedFiles = Array.from(event.target.files);
+        // files.value = selectedFiles;
+        // listFormData.value = event.target.files[0];
     };
 
     const getFileUrl = (file) => {
         return URL.createObjectURL(file);
     };
 
-    return { reinitForm, handleInput, handleFileChange, getFileUrl, files, selectSuggestion, showField, callChangeHandlers, validateField };
+    return { reinitForm, handleInput, handleFileChange, getFileUrl, listFormData, selectSuggestion, showField, callChangeHandlers, validateField };
 }

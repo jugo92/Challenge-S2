@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const multer = require("multer");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -45,6 +46,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Le dossier où les fichiers seront enregistrés
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Nom du fichier
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Route pour traiter l'upload d'image
+app.post('/upload', upload.single('image'), (req, res) => {
+  console.log("reqFile", req.file);
+  res.send('Image uploadée avec succès !');
+});
 
 const createMongoMethods = (collection) => {
   const ms = new MongoService(collection);
