@@ -33,13 +33,25 @@ export function useForm(formConfig: FormField[]) {
         return !field.showCondition || (field.showCondition && field.showCondition());
     };
 
-    const reinitForm = () => {
+    const reinitForm = (formConfig) => {
         console.log('Formulaire réinitialisé !');
+        console.log(formConfig);
 
-        const fieldsToReset = formConfig.filter(field => field.type !== 'button').map(field => field.name);
+        const fieldsToReset = formConfig.value.filter(field => field.type !== 'button').map(field => field.name);
 
-        for (const fieldName of fieldsToReset) {
-            const field = formFields.find(field => field.name === fieldName);
+        // Réinitialiser les erreurs de validation pour les champs pertinents
+        formConfig.value
+            .filter(field => field.type !== 'button' && field.validationError != null)
+            .forEach(field => {
+                this.$nextTick(() => {
+                    field.validationError = '';
+                });
+            });
+
+        // Réinitialiser les valeurs des champs
+        fieldsToReset.forEach(fieldName => {
+            const field = formConfig.value.find(field => field.name === fieldName);
+
             if (field) {
                 switch (field.type) {
                     case 'number':
@@ -64,10 +76,13 @@ export function useForm(formConfig: FormField[]) {
                     case 'file':
                         field.value = null;
                         break;
+                    default:
+                        // Gérer d'autres types de champs ici si nécessaire
+                        break;
                 }
             }
-        }
-    };
+        });
+    }
 
     const callChangeHandlers = (changeHandlers: (() => void)[] | undefined) => {
         if (changeHandlers && Array.isArray(changeHandlers)) {

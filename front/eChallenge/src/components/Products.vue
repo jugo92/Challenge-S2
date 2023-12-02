@@ -158,30 +158,16 @@ const stateOptions = {
   'Reconditionné': 3,
   'Seconde Main': 4
 };
-const openModalCreate = ( data ) => {
+const openModalCreate = (instance, data) => {
   if(data === undefined) {
     openModal();
     return;
   }
-  else if(data.length > 1) {
-    alert('Vous ne pouvez pas modifier plusieurs produits à la fois');
-    return;
-  }
   else{
-    fetch("http://localhost:3000/api/products/" + data[0])
+    fetch("http://localhost:3000/api/" + instance + "/" + data)
         .then(response => response.json())
         .then(data => {
-          formConfig.id = data.id;
-          formConfig.value.find(field => field.name === 'name').value = data.name;
-          formConfig.value.find(field => field.name === 'description').value = data.description;
-          formConfig.value.find(field => field.name === 'quantite').value = data.quantity;
-          formConfig.value.find(field => field.name === 'prixTTC').value = data.price;
-          formConfig.value.find(field => field.name === 'state').value = stateOptions[data.state];
-          formConfig.value.find(field => field.name === 'promotion').value = data.promotion;
-          formConfig.value.find(field => field.name === 'brands').value = data.MarqueId;
-          formConfig.value.find(field => field.name === 'tvas').value = data.TvaId;
-          formConfig.value.find(field => field.name === 'categories').value = data.CategoryId;
-          formConfig.value.find(field => field.name === 'id').value = data.id;
+          getInstanceForm(instance, formConfig, data);
           openModal();
         })
         .catch((error) => {
@@ -189,6 +175,47 @@ const openModalCreate = ( data ) => {
         });
   }
 };
+
+const getInstanceForm = (instance, formConfig, data) => {
+  switch (instance) {
+    case 'products':
+      formConfig.value.find(field => field.name === 'id').value = data.id;
+      formConfig.value.find(field => field.name === 'name').value = data.name;
+      formConfig.value.find(field => field.name === 'description').value = data.description;
+      formConfig.value.find(field => field.name === 'quantite').value = data.quantity;
+      formConfig.value.find(field => field.name === 'prixTTC').value = data.price;
+      formConfig.value.find(field => field.name === 'state').value = stateOptions[data.state];
+      formConfig.value.find(field => field.name === 'promotion').value = data.promotion;
+      formConfig.value.find(field => field.name === 'brands').value = data.MarqueId;
+      formConfig.value.find(field => field.name === 'tvas').value = data.TvaId;
+      formConfig.value.find(field => field.name === 'categories').value = data.CategoryId;
+      break;
+    case 'categories':
+      formConfig.value.find(field => field.name === 'id').value = data.id;
+      formConfig.value.find(field => field.name === 'name').value = data.name;
+      formConfig.value.find(field => field.name === 'description').value = data.description;
+      break;
+    case 'marques':
+      formConfig.value.find(field => field.name === 'id').value = data.id;
+      formConfig.value.find(field => field.name === 'name').value = data.name;
+      formConfig.value.find(field => field.name === 'description').value = data.description;
+      break;
+    case 'tvas':
+      formConfig.value.find(field => field.name === 'id').value = data.id;
+      formConfig.value.find(field => field.name === 'rate').value = data.rate;
+      break;
+    case 'caracteristiques':
+      formConfig.value.find(field => field.name === 'id').value = data.id;
+      formConfig.value.find(field => field.name === 'name').value = data.name;
+      formConfig.value.find(field => field.name === 'description').value = data.description;
+      break;
+    default:
+      break;
+  }
+};
+
+
+
 const filterMarques = () => {
   const searchField = formConfig.value.find((field) => field.name === 'brands' && field.type === 'search');
   const inputValue = searchField.value;
@@ -369,7 +396,6 @@ const formConfig = ref([
     label: 'Ajouter une ou plusieurs images',
     type: 'file',
     name: 'images',
-    // multiple: true,
     showCondition: () => true
   },
   {

@@ -53,13 +53,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import {Icon} from "@iconify/vue";
-import Button from "../Button.vue";
 import {forEach} from "lodash";
-import {z} from "zod";
 import FormBuilder from "../Form/FormBuilder.vue";
 import {useModal} from "../Modal/useModal.ts";
-import Modal from "../Modal/Modal.vue";
-import vueformConfig from "../../../vueform.config.ts";
 const { isModalVisible, openModal, closeModal } = useModal();
 const emit = defineEmits();
 interface TableColumn {
@@ -74,6 +70,7 @@ interface TableRow {
 }
 
 const props = defineProps(['columns', 'data', 'formConfig']);
+
 const filters = ref<Record<string, string>>({});
 const sortColumn = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
@@ -84,6 +81,8 @@ const columnsStyleObject = columnsWithStyle.reduce((acc, column) => {
   return acc;
 }, {});
 
+const currentPath = window.location.pathname;
+const instance = currentPath.substring(currentPath.lastIndexOf('/') + 1);
 
 const filteredData = computed(() => {
   let filteredData = [...props.data];
@@ -121,7 +120,7 @@ const sortedData = computed(() => {
   }
 });
 
-const selectedItems = ref([]); // Use ref to make it reactive
+const selectedItems = ref([]);
 
 const getSelectedProducts = () => {
   selectedItems.value = [];
@@ -186,22 +185,23 @@ const sortByColumn = (columnKey: string) => {
 const actionsConfig = ref([
   {
     type: 'button',
-    label: 'Créer un produit',
+    label: 'Créer',
     buttonType: 'button',
     buttonClass: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
-    buttonClick: () => emit('open'),
+    buttonClick: () => {
+      emit('open', instance, false);
+    },
     showCondition: () => true
   },
   {
     type: 'button',
-    label: 'Modifier un produit',
+    label: 'Modifier',
     buttonType: 'button',
     buttonClass: 'bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
     buttonClick: () => {
-      emit('open', selectedItems.value);
-      emit('itemToUpdate', selectedItems.value)
+      emit('open', instance, true, selectedItems.value);
     },
-    showCondition: () => true
+    showCondition: () => selectedItems.value.length === 1
   },
   {
     type: 'button',
@@ -209,7 +209,7 @@ const actionsConfig = ref([
     buttonType: 'button',
     buttonClass: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
     buttonClick: deleteSelectedItems,
-    showCondition: () => true
+    showCondition: () => selectedItems.value.length > 0
   }
 ])
 </script>

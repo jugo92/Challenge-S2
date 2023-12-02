@@ -6,6 +6,7 @@ import TestVue from "../components/TestForm.vue";
 import unauthorized from "../pages/unauthorized-page.vue";
 import Products from "../components/Products.vue";
 import HomePage from "../pages/home-page.vue";
+import ShowAll from "../components/ShowAll.vue";
 
 
 const router = createRouter({
@@ -16,37 +17,56 @@ const router = createRouter({
             name: "Home",
             component: HomePage,
         },
-
         {
             path: "/register",
             name: "Register",
             component: RegisterVue,
         },
-
         {
             path: "/login",
             name: "Login",
             component: LoginVue,
         },
-        //
-        // {
-        //     path: "/test",
-        //     name: "Test",
-        //     component: TestVue,
-        // },
-
+        {
+            path: "/products",
+            name: "ShowAllProducts",
+            component: ShowAll,
+            props: (route) => ({ instance: route.path.substring(1) })
+        },
+        {
+            path: "/marques",
+            name: "ShowAllMarques",
+            component: ShowAll,
+            props: (route) => ({ instance: route.path.substring(1) })
+        },
+        {
+            path: "/categories",
+            name: "ShowAllCategories",
+            component: ShowAll,
+            props: (route) => ({ instance: route.path.substring(1) })
+        },
+        {
+            path: "/tvas",
+            name: "ShowAllTvas",
+            component: ShowAll,
+            props: (route) => ({ instance: route.path.substring(1) })
+        },
+        {
+            path: "/caracteristiques",
+            name: "ShowAllCaracteristiques",
+            component: ShowAll,
+            props: (route) => ({ instance: route.path.substring(1) })
+        },
         {
             path: "/unauthorized",
             name: "Unauthorized",
             component: unauthorized,
         },
-
         {
-            path: "/products",
+            path: "/productsOk",
             name: "Products",
             component: Products,
         }
-
     ],
 });
 

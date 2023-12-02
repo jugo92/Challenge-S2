@@ -7,24 +7,24 @@ class GenericRouter {
 
     this.router.get(
       "/",
-      checkAuth(),
+      // checkAuth(),
       this.controller.getAll.bind(this.controller)
     );
     this.router.get(
       "/:id",
-      checkAuth(),
+      // checkAuth(),
       this.controller.getById.bind(this.controller)
     );
     this.router.post("/", this.controller.create.bind(this.controller));
     this.router.put("/:id", this.controller.update.bind(this.controller));
     this.router.patch(
       "/:id",
-      checkAuth(),
+      // checkAuth(),
       this.controller.patch.bind(this.controller)
     );
     this.router.delete(
       "/:id",
-      checkAuth(),
+      // checkAuth(),
       this.controller.delete.bind(this.controller)
     );
   }
