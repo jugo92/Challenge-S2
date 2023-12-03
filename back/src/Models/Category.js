@@ -28,11 +28,12 @@ module.exports = function (connection) {
       });
       Category.addHook("afterDestroy", category => {
         productMongo(
-          category.id,
+          null,
           "CategoryId",
           db.Product,
           db.Marque,
-          db.Category
+          db.Category,
+          "destroy"
         );
         genericMongo(category.id, db.Category, CategoryMongo);
       });

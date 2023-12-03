@@ -27,12 +27,13 @@ module.exports = function (connection) {
         genericMongo(marque.id, db.Marque, MarqueMongo);
       });
       Marque.addHook("afterDestroy", marque => {
-        productMongo(
-          marque.id,
+         productMongo(
+          null,
           "MarqueId",
           db.Product,
           db.Marque,
-          db.Category
+          db.Category,
+          "destroy"
         );
         genericMongo(marque.id, db.Marque, MarqueMongo);
       });

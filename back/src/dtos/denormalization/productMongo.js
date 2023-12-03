@@ -5,6 +5,7 @@ module.exports = async (
   Product,
   Marque,
   Category,
+  event = "update"
 ) => {
   const products = await Product.findAll({
     where: {
@@ -20,11 +21,20 @@ module.exports = async (
     ],
   });
 
-  for (const product of products) {
-    const productId = product.dataValues.id;
-
-    await ProductMongo.deleteOne({ _id: productId });
+  if (key === "id") {
+    //Dans le cas ou on supprime/modifie UN produit
+    await ProductMongo.deleteOne({ _id: modelId });
+  } else {
+    if (event === "destroy") {
+      await Product.update({ isPublished: 0 }, { where: { [key]: modelId } });
+    }
+    //Dans le cas ou on supprime/modifie marque/catagory
+    for (const product of products) {
+      const productId = product.dataValues.id;
+      await ProductMongo.deleteOne({ _id: productId });
+    }
   }
+
   const productMongoInstances = products.map(product => {
     const productMongoData = {
       _id: product.dataValues.id,
@@ -35,7 +45,7 @@ module.exports = async (
       image: product.dataValues.image,
       state: product.dataValues.state,
       promotion: product.dataValues.promotion,
-      isPublished: product.dataValues.isPublished,
+      isPublished: event === "destroy" ? 0 : product.dataValues.isPublished,
       tva: product.dataValues.tva,
       resolution: product.dataValues.resolution,
       size: product.dataValues.size,
