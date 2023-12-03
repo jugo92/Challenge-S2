@@ -47,7 +47,7 @@ const generateDataFacture = async OrderId => {
         description: productOrder.dataValues.Product.dataValues.name,
         price: productOrder.dataValues.Product.dataValues.price,
         "tax-rate":
-          productOrder.dataValues.Product.dataValues.tva.dataValues.rate,
+          productOrder.dataValues.Product.tva,
       };
     }),
   };

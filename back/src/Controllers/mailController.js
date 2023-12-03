@@ -4,20 +4,9 @@ const mailCompany = process.env.MAIL_USER;
 const password = process.env.MAIL_PASSWORD;
 const port = process.env.MAIL_PORT;
 const host = process.env.MAIL_HOST;
-const fs = require("fs");
+const fs = require("fs").promises;
 const crypto = require("crypto");
 const verifyRoute = "http://localhost:3000/api/verify/";
-
-const htmlResources = "./htmlResources.json";
-let htmlData = null;
-function readFileCallback(err, content) {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  htmlData = JSON.parse(content);
-}
-fs.readFile(htmlResources, readFileCallback);
 
 const transporter = nodemailer.createTransport({
   host: host,
@@ -28,13 +17,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-module.exports.sendMail = async (user, type) => {
+module.exports.sendMail = async (user, type, subject, attachementPath = null) => {
   try {
-    let { subject, content } = htmlData[type];
+    console.log(type)
+    let content = await fs.readFile(
+      `mails/${type}.txt`,
+      "utf8"
+    );
 
     switch (type) {
       case "validateUserAccount":
-        console.log("USER : ", user.lastname);
         content = content
           .replace("{{name}}", user.lastname.toUpperCase())
           .replace("{{confirmLink}}", verifyRoute + user.token)
@@ -42,8 +34,11 @@ module.exports.sendMail = async (user, type) => {
         break;
       case "forgetPassword":
         const token = crypto.randomBytes(30).toString("hex");
-        content = content
-          .replace("{{your_token}}", token)
+        content = content.replace("{{your_token}}", token);
+        break;
+      case "validateOrder":
+        console.log("ICIIIIIIIIIIIIIIIII")
+        content = content.replace("{{name}}", user.lastname);
         break;
       default:
         break;
@@ -54,7 +49,16 @@ module.exports.sendMail = async (user, type) => {
       to: user.email,
       subject: subject,
       html: content,
+      attachments: []  
     };
+
+    if (attachementPath) {
+      console.log('DANS LE ATTACHEMENTPATH')
+      mailOptions.attachments.push({
+        filename: 'facture.pdf', 
+        path: attachementPath  
+      });
+    }
 
     return new Promise((resolve, reject) => {
       transporter.sendMail(mailOptions, (err, info) => {

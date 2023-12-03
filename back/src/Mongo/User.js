@@ -15,6 +15,10 @@ const UserSchema = new connection.Schema({
   loginAttemps: Number,
   isVerified: Boolean,
   token: String,
+  product_category_alert:Boolean,
+  restock_product_alert: Boolean,
+  change_price_alert : Boolean,
+  newsletter_alert : Boolean,
   Orders: Array,
 });
 

@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 require("./src/Mongo/db");
+const path = require('path');
+const fs = require('fs');
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const path = require('path');
@@ -75,6 +77,7 @@ app.get('/getImage/:imageName', (req, res) => {
 //   console.log("reqFile", req.file);
 //   res.send('Image uploadée avec succès !');
 // });
+
 
 const createMongoMethods = (collection) => {
   const ms = new MongoService(collection);

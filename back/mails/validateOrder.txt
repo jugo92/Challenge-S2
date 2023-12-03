@@ -1,0 +1,23 @@
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation de commande</title>
+  <style>
+  </style>
+</head>
+<body>
+  <table width="100%" style="border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 20px; background-color: #f5f5f5;">
+        <h1 style="color: #333333;">Confirmation de commande</h1>
+        <p style="font-size: 16px; color: #666666;">Bonjour {{name}},</p>
+        <p style="font-size: 16px; color: #666666;">Votre commande a été validée avec succès.</p>
+        <p style="font-size: 16px; color: #666666;">Vous pouvez télécharger votre facture en pièce jointe.</p>
+        <p style="font-size: 16px; color: #666666;">Merci de faire confiance à notre service.</p>
+        <p style="font-size: 16px; color: #666666;">Cordialement,<br>Votre équipe O'My'Pc</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -7,9 +7,11 @@ const {
   ProductOrder,
   Payment,
   Invoice,
+  User
 } = require("../Models/");
 const { uuidv7 } = require("uuidv7");
 const PdfService = require("../Services/pdfService");
+const { sendMail } = require("../Controllers/mailController");
 
 module.exports.initPayment = async (req, res) => {
   try {
@@ -19,11 +21,13 @@ module.exports.initPayment = async (req, res) => {
 
     const order = await Order.create({
       id: uuidv7(),
-      HT: req.body.HT,
-      deliveryAddress: req.body.deliveryAddress,
-      deliveryType: req.body.deliveryType,
+      TTC: req.body.TTC,
+      city: req.body.city,
+      zip: req.body.zip,
+      phone: req.body.phone,
+      address: req.body.address,
       UserId: req.user.id,
-      email: "",
+      email: req.user.email,
     });
 
     await Promise.all(
@@ -40,9 +44,7 @@ module.exports.initPayment = async (req, res) => {
         storeItems.set(product.dataValues.id, {
           priceInCents:
             product.dataValues.price * 100 +
-            product.dataValues.price *
-              100 *
-              (product.dataValues.tva.dataValues.rate / 100),
+            product.dataValues.price * 100 * (product.dataValues.tva / 100),
           name: product.dataValues.name,
         });
       })
@@ -102,13 +104,16 @@ module.exports.getEventPayment = async (req, res) => {
     res.status(400).json({ success: false });
     return;
   }
-  console.log("HEREEEEEE")
-
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
-    console.log(session)
     const orderId = session.client_reference_id;
-    const email = session.customer_details.email;
+    const order = await Order.findByPk(orderId);
+
+    const user = await User.findOne({
+      where: {
+        email: order.email
+      }
+    })
 
     const invoice = await Invoice.create({
       id: uuidv7(),
@@ -117,33 +122,83 @@ module.exports.getEventPayment = async (req, res) => {
     });
 
     await Payment.update(
-      { status: PaymentStatus.Succeeded, payment_stripe_id: session.payment_intent },
+      {
+        status: PaymentStatus.Succeeded,
+        payment_stripe_id: session.payment_intent,
+      },
       { where: { OrderId: orderId }, individualHooks: true }
     );
 
-    await Order.update(
-      { state: OrderStatus.VALIDATE, email: email, InvoiceId: invoice.id },
-      { where: { id: orderId }, individualHooks: true }
-    );
+    const bodySendcloud = {
+      parcel: {
+        name:"parcel",
+        address: order.dataValues.address,
+        city: order.dataValues.city,
+        country: "FR",
+        postal_code: order.dataValues.zip,
+        shipment: {
+          id: 8,
+          name: "unstamped letter",
+        },
+        request_label: true,
+      },
+    };
+    const authHeader =
+      "Basic " +
+      Buffer.from(
+        process.env.SENDCLOUD_API_USERNAME +
+          ":" +
+          process.env.SENDCLOUD_API_PASSWORD
+      ).toString("base64");
+    await fetch(process.env.SENDCLOUD_API + "parcels", {
+      method: "POST",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodySendcloud),
+    })
+      .then(response => {
+        return response.json();
+      })
+      .then(async data => {
+        await Order.update(
+          {
+            state: OrderStatus.VALIDATE,
+            InvoiceId: invoice.id,
+            tracking_url: data.parcel.tracking_url,
+          },
+          { where: { id: orderId }, individualHooks: true }
+        );
+      });
 
     const getDataFacture = await generateDataFacture(orderId);
     const pdfService = new PdfService(getDataFacture);
     await pdfService.invoicePdf();
+
+    //sendMail with invoice
+    console.log("le user : ", req.user);
+    await sendMail(
+      user,
+      "validateOrder",
+      "Votre facture",
+      "./invoice/invoice_" + orderId + ".pdf"
+    );
   }
   res.json({
     success: true,
   });
-}
+};
 
 module.exports.refundPayment = async (req, res) => {
-    try {
-      const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
-      const refund = await stripe.refunds.create({
-        payment_intent: req.body.payment_intent,
-        amount: req.body.amount
-      });
-      res.status(200).json({ refund });
-  }catch (e) {
+  try {
+    const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
+    const refund = await stripe.refunds.create({
+      payment_intent: req.body.payment_intent,
+      amount: req.body.amount,
+    });
+    res.status(200).json({ refund });
+  } catch (e) {
     res.status(500).json({ error: e.message });
   }
-}
+};

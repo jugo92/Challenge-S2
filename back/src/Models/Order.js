@@ -52,10 +52,6 @@ module.exports = function (connection) {
           },
         },
       },
-      deliveryAddress: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-      },
       status: {
         type: DataTypes.ENUM(
           "Pending",
@@ -131,6 +127,10 @@ module.exports = function (connection) {
           },
         },
       },
+      tracking_url:{
+        type: DataTypes.STRING,
+        allowNull: true
+      }
     },
     {
       sequelize: connection,

@@ -9,6 +9,7 @@ const OrderSchema = new connection.Schema({
   city: String,
   zip: String,
   phone: String,
+  tracking_number: String,
   User: Object,
 });
 

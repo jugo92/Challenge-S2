@@ -12,11 +12,11 @@ class PdfService {
         logo: `${base64_encode(imgPath)}`,
       },
       sender: {
-        company: "Sample Corp",
-        address: "Sample Street 123",
-        zip: "1234 AB",
-        city: "Sampletown",
-        country: "Samplecountry",
+        company: "Oh'PC",
+        address: "Rue de Paris",
+        zip: "75010",
+        city: "Paris",
+        country: "France",
       },
       settings: {
         currency: "EUR",
