@@ -49,6 +49,7 @@ const getTableColumns = (instance) => {
         case 'marques':
             return [
                 { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
+                { key: 'description', label: 'Description', filter: true, style: 'font-bold' },
                 { key: 'image', label: 'Image', filter: true },
             ];
         case 'categories':
@@ -76,7 +77,7 @@ const getIncludedProperties = (instance) => {
         case 'products':
             return ['id', 'name', 'MarqueId', 'state', 'quantity', 'price'];
         case 'marques':
-            return ['id', 'name', 'image'];
+            return ['id', 'name', 'description', 'image'];
         case 'categories':
             return ['id', 'name', 'description'];
         case 'tvas':
@@ -107,10 +108,12 @@ const getRequestBody = (formConfig) => {
             formProduct.append('image', formConfig.find(field => field.name === 'files').value.name)
             return formProduct
         case "marques":
-            return {
-                name: formConfig.find(field => field.name === 'name').value,
-                image: formConfig.find(field => field.name === 'image').value,
-            };
+            const formMarque = new FormData();
+            formMarque.append('file', formConfig.find(field => field.name === 'files').value)
+            formMarque.append('name', formConfig.find(field => field.name === 'name').value)
+            formMarque.append('description', formConfig.find(field => field.name === 'description').value)
+            formMarque.append('image', formConfig.find(field => field.name === 'files').value.name)
+            return formMarque
         case "categories":
             return {
                 name: formConfig.find(field => field.name === 'name').value,
@@ -144,6 +147,7 @@ const getInstanceForm = (instance, formConfig, data) => {
             formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
             formConfig.value.find(field => field.name === 'name').value = data ? data.name : '';
             formConfig.value.find(field => field.name === 'image').value = data ? data.image : '';
+            formConfig.value.find(field => field.name === 'description').value = data ? data.description : '';
             break;
         case 'categories':
             formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
@@ -352,13 +356,33 @@ const getInstanceFormConfig = (instance) => {
                     showCondition: () => true
                 },
                 {
-                    label: 'Image',
+                    label: 'Description',
                     type: 'text',
-                    name: 'image',
+                    name: 'description',
                     value: '',
-                    placeholder: 'Saisissez la description de la marque...',
+                    placeholder: 'Saisissez le nom de la marque...' ,
+                    required: true,
+                    changeHandlers: [],
+                    validationError: '',
+                    validationSchema: z.string()
+                        .min(3, { message: 'Le nom doit contenir au moins 3 caractères' })
+                        .max(255, { message: 'Le nom doit contenir au maximum 255 caractères' })
+                    ,
                     showCondition: () => true
                 },
+                {
+                    label: 'Ajouter une ou plusieurs images',
+                    type: 'file',
+                    name: 'images',
+                    showCondition: () => true
+                },
+                {
+                    name: 'files',
+                    value: 'test'
+                },
+                {
+                    name: 'id',
+                },  
                 {
                     type: 'button',
                     label: 'Enregistrer',
@@ -367,9 +391,6 @@ const getInstanceFormConfig = (instance) => {
                     buttonClick: createInstance,
                     showCondition: () => true
                 },
-                {
-                    name: 'id',
-                }
             ]
         case 'categories':
             return [
@@ -492,6 +513,7 @@ const createInstance = async (data) => {
     // }
 
     const requestBody = getRequestBody(formConfig.value);
+    console.log(requestBody)
     if(!isUpdateItem) {
         if(requestBody instanceof FormData){
             fetch('http://localhost:3000/api/' + instance, {
@@ -500,12 +522,13 @@ const createInstance = async (data) => {
             })
                 .then(response => response.json())
                 .then(data => {
-                    location.reload();
+                    // location.reload();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
                 });
         }else{
+            console.log('ICIIIII : ', requestBody)
             fetch('http://localhost:3000/api/' + instance, {
             method: 'POST',
             headers: {
@@ -515,7 +538,7 @@ const createInstance = async (data) => {
         })
             .then(response => response.json())
             .then(data => {
-                location.reload();
+                // location.reload();
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -530,7 +553,7 @@ const createInstance = async (data) => {
             })
                 .then(response => response.json())
                 .then(data => {
-                    location.reload();
+                    // location.reload();
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -545,7 +568,7 @@ const createInstance = async (data) => {
         })
             .then(response => response.json())
             .then(data => {
-                location.reload();
+                // location.reload();
             })
             .catch((error) => {
                 console.error('Error:', error);

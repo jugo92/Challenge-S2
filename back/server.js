@@ -94,7 +94,7 @@ const serviceMarqueProxy = new Proxy(genericMarqueService, {
   },
 });
 app.use(
-  routePrefix + "/marques",
+  routePrefix + "/marques",multerMiddleware,
   new GenericRouter(
     new GenericController(serviceMarqueProxy)
   ).getRouter()

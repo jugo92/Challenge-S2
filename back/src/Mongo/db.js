@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 
 mongoose
   .connect(
-    "mongodb+srv://root:challenges2@atlascluster.w2ouj6n.mongodb.net/challenge-s2?retryWrites=true&w=majority",
+    "mongodb://localhost:27019/challenge",
     {
       useNewUrlParser: true,
+      useUnifiedTopology: true,
     }
   )
   .then(() => console.log("MongoDB connected"));
