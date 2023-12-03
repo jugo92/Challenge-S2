@@ -12,8 +12,8 @@ const {
 const { uuidv7 } = require("uuidv7");
 const PdfService = require("../Services/pdfService");
 const { sendMail } = require("../Controllers/mailController");
-
-module.exports.initPayment = async (req, res) => {
+const ValidationError = require("../errors/ValidationError");
+module.exports.initPayment = async (req, res, next) => {
   try {
     const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
@@ -33,7 +33,13 @@ module.exports.initPayment = async (req, res) => {
     await Promise.all(
       req.body.items.map(async item => {
         const product = await Product.findByPk(item.id, {});
-
+        if(!product.dataValues.isPublished){
+          return next(
+          new ValidationError({
+            accountLocked: "Produit non publie.",
+          })
+          )
+        }
         await ProductOrder.create({
           id: uuidv7(),
           quantity: item.quantity,
