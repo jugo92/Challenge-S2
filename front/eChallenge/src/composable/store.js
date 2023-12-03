@@ -49,6 +49,12 @@ const store = createStore({
     setIsloggedIn(state, isLoggedIn) {
       state.isLoggedIn = isLoggedIn;
     },
+
+    clearIsloggedIn(state) {
+      state.isLoggedIn = false;
+    }
+
+
     
   },
 
@@ -116,7 +122,7 @@ const store = createStore({
 
     async deleteUser({ commit }) {
       try {
-        const response = await fetch('http://localhost:3000/api/deleteUser', {
+        const response = await fetch('http://localhost:3000/api/users/${state.user.id}', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -136,7 +142,31 @@ const store = createStore({
       }
     },
 
+    async updateUser({ commit }, userData) {
+      try {
+        const response = await fetch('http://localhost:3000/api/users/${state.user.id}', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(userData),
+        });
+  
+        if (!response.ok) {
+          throw new Error('Update failed');
+        }
+      const updateUser = await response.json();
+      commit('setUser', updateUser);
+  
+        return updateUser;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
   },
+
 });
 
 export default store;

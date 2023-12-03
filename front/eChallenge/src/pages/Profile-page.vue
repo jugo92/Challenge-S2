@@ -35,9 +35,8 @@ onMounted(() => {
 
   if (token) {
     store.commit('setToken', token);
-    console.log("Token dans localStorage après le rafraîchissement :", token);
+
   } else {
-    router.push('/login');
   }
 });
 
