@@ -70,8 +70,6 @@ const showNotification = (isActive) => {
     const resetPasswordEmail = document.getElementById('resetPasswordEmail').value;
 
     console.log('Demande de réinitialisation de mot de passe envoyée pour :', resetPasswordEmail);
-
-    // Fermez le pop-up après avoir traité la demande
     closeResetPasswordPopup();
 };
 

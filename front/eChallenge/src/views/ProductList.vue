@@ -15,6 +15,7 @@ onMounted(async () => {
   const response = await fetch('https://jsonplaceholder.typicode.com/posts');
   const data = await response.json();
   posts.value = data;
+  
 });
 
 const paginatedPosts = computed(() => {
@@ -48,14 +49,19 @@ const addToCart = (product) => {
 
 <h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
   <div>
-    <div class="flex mt-8 filtre">
+  
+
+<div class="flex mt-8 filtre">
   <div class="relative flex items-center">
-    <Icon icon="lets-icons:filter" class="text-2xl icon "/>
-    <select v-model="triSelected" class="p-2 border rounded-md">
-      <option v-for="option in optionTri" :key="option.value" :value="option.value">{{ option.label }}</option>
-    </select>
-  </div>
+  <Icon icon="lets-icons:filter" class="text-2xl icon" />
+  <select v-model="selectedState" @change="updateFilter" class="p-2 border rounded-md">
+    <option value="default">Tous les états</option>
+    <option v-for="state in uniqueStates" :key="state" :value="state">{{ state }}</option>
+  </select>
 </div>
+
+
+    </div>
 
     <section class="mt-12">
       <div class="px-4 mx-auto max-w-7xl">

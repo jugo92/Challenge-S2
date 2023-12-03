@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// import { onMounted } from 'vue';
-// import { useStore } from 'vuex';
-// import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
-// const store = useStore();
-// const router = useRouter();
+const store = useStore();
+const router = useRouter();
 
 </script>
 

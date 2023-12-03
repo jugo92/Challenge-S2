@@ -16,6 +16,7 @@ import NotFoundVue from "../components/NotFound.vue";
 import RecapPageVue from "../pages/Recap-page.vue";
 import SuccessPageVue from "../pages/Success-page.vue";
 import SettingPageVue from "../pages/Setting-page.vue"
+import ResetPasswordVue from "../pages/ResetPassword-page.vue"
 
 const router = createRouter({
     history: createWebHistory(),
@@ -31,6 +32,12 @@ const router = createRouter({
             name: "Profile",
             component: ProfilePageVue,
         },
+            
+            {
+                path: "/reset_password",
+                name: "ResetPassword",
+                component: ResetPasswordVue,
+            },
         {
             path: "/success",
             name: "Success",

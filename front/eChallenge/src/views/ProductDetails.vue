@@ -1,7 +1,7 @@
 
 
 <script setup>
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { ref, onMounted, watch } from 'vue';
 import Navbar from '../components/Navbar.vue';
@@ -41,9 +41,16 @@ const loadData = async () => {
 
 onMounted(loadData);
 
+
+
 const store = useStore(); 
+
 const addToCart = (product) => {
-  store.commit('addToCart', product);
+    if(store.state.isLoggedIn){
+        store.commit('addToCart', product);
+    }else{
+        router.push('/login');
+    }
 };
 </script>
 

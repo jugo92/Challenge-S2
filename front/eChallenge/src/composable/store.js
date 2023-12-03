@@ -52,8 +52,19 @@ const store = createStore({
 
     clearIsloggedIn(state) {
       state.isLoggedIn = false;
-    }
+    },
 
+    setSelectedState(state, newState) {
+      state.selectedState = newState;
+    },
+
+    setSelectedPrice(state, newPrice) {
+      state.selectedPrice = newPrice;
+    },
+
+    setselectedName(state, newBrand) {
+      state.selectedName = newBrand;
+    },
 
     
   },
@@ -116,7 +127,8 @@ const store = createStore({
   
     logout({ commit }) {
       commit('clearToken');
-      commit('IsloggedIn', false)
+      commit('clearUser');
+      commit('setIsloggedIn', false)
       localStorage.removeItem('token');
     },
 
@@ -166,6 +178,19 @@ const store = createStore({
       }
     },
   },
+
+  getters: {
+    filteredProducts: (state) => {
+      return state.posts.filter((product) => {
+        return (
+          (state.selectedState === null || product.state === state.selectedState) &&
+          (state.selectedPrice === null || product.price === state.selectedPrice) &&
+          (state.selectedName === null || product.name === state.selectedName)
+        );
+      });
+    },
+  }
+  
 
 });
 
