@@ -6,7 +6,7 @@ module.exports = function (connection) {
   class User extends Model {
     static addHooks(db) {
       User.addHook("afterCreate", async user => {
-        // await sendMail(user.dataValues, "validateUserAccount");
+        await sendMail(user.dataValues, "validateUserAccount");
         userMongo(
           user.id,
           db.User,

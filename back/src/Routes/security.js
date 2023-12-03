@@ -5,6 +5,7 @@ const ValidationError = require("../errors/ValidationError");
 const { createToken } = require("../Services/token");
 const { uuidv7 } = require("uuidv7");
 const { isPasswordExpired } = require("../Helper/Utils");
+const { sendMail } = require("../Controllers/mailController");
 const router = new Router();
 
 router.post("/login", async (req, res, next) => {
@@ -30,6 +31,15 @@ router.post("/login", async (req, res, next) => {
         })
       );
     }
+    if(!user.isVerified) {
+      return next(
+        new ValidationError({
+          accountLocked: "Votre compte n'a pas ete verifie",
+        })
+      );
+    }
+
+    
     if (user.loginAttempts >= 3) {
       return next(
         new ValidationError({
@@ -85,6 +95,31 @@ router.post("/register", async (req, res, next) => {
       lastPasswordChange: new Date(),
     });
     res.status(201).json(user);
+  } catch (error) {
+    if (
+      error.name === "SequelizeValidationError" ||
+      error.name === "SequelizeUniqueConstraintError"
+    ) {
+      error = ValidationError.fromSequelize(error);
+    }
+    next(error);
+  }
+});
+
+router.post("/forget-password", async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        email: req.body.email
+      }
+    })
+    console.log(user)
+    if(user !== null){
+      sendMail(user, 'forgetPassword')
+       res.status(200);
+    }else{
+       res.status(400).send();
+    }
   } catch (error) {
     if (
       error.name === "SequelizeValidationError" ||

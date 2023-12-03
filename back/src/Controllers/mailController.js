@@ -5,6 +5,7 @@ const password = process.env.MAIL_PASSWORD;
 const port = process.env.MAIL_PORT;
 const host = process.env.MAIL_HOST;
 const fs = require("fs");
+const crypto = require("crypto");
 const verifyRoute = "http://localhost:3000/api/verify/";
 
 const htmlResources = "./htmlResources.json";
@@ -38,6 +39,11 @@ module.exports.sendMail = async (user, type) => {
           .replace("{{name}}", user.lastname.toUpperCase())
           .replace("{{confirmLink}}", verifyRoute + user.token)
           .replace("{{emailSupport}}", mailCompany);
+        break;
+      case "forgetPassword":
+        const token = crypto.randomBytes(30).toString("hex");
+        content = content
+          .replace("{{your_token}}", token)
         break;
       default:
         break;
