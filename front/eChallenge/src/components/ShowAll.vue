@@ -513,67 +513,11 @@ const createInstance = async (data) => {
     // }
 
     const requestBody = getRequestBody(formConfig.value);
-    console.log(requestBody)
     if(!isUpdateItem) {
-        if(requestBody instanceof FormData){
-            fetch('http://localhost:3000/api/' + instance, {
-                method: 'POST',
-                body: requestBody
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // location.reload();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }else{
-            console.log('ICIIIII : ', requestBody)
-            fetch('http://localhost:3000/api/' + instance, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        })
-            .then(response => response.json())
-            .then(data => {
-                // location.reload();
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+        apiService.create(instance, requestBody);
     }else {
         const itemId =  formConfig.value.find(field => field.name === 'id').value;
-        if(requestBody instanceof FormData){
-            fetch('http://localhost:3000/api/' + instance + '/' + itemId, {
-                method: 'PUT',
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // location.reload();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-        }else{
-            fetch('http://localhost:3000/api/' + instance + '/' + itemId, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        })
-            .then(response => response.json())
-            .then(data => {
-                // location.reload();
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+        apiService.update(instance, requestBody, itemId);
     }
 };
 

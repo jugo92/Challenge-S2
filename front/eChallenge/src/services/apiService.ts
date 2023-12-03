@@ -12,25 +12,33 @@ export const apiService = {
     },
 
     create(instance, item) {
-        return fetch(API_URL_BASE + instance, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
-            .then(response => response.json());
+        var myInit = {
+            method: 'POST', 
+          };
+        if(item instanceof FormData){
+            myInit.body = item
+        }else {
+            myInit.body = JSON.stringify(item);
+            myInit.headers = new Headers({
+              'Content-Type': 'application/json'
+            });
+          }
+        return fetch(API_URL_BASE + instance, myInit).then(response => response.json())
     },
 
     update(instance, item, id) {
-        return fetch(API_URL_BASE + instance + '/' + id, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
-            .then(response => response.json());
+        var myInit = {
+            method: 'PUT', 
+          };
+        if(item instanceof FormData){
+            myInit.body = item
+        }else {
+            myInit.body = JSON.stringify(item);
+            myInit.headers = new Headers({
+              'Content-Type': 'application/json'
+            });
+          }
+        return fetch(API_URL_BASE + instance + '/' + id, myInit).then(response => response.json())
     },
 
     delete(instance, id) {
