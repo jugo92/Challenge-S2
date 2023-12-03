@@ -31,7 +31,6 @@ let isUpdateItem = ref(null);
 
 import {apiService} from "../services/apiService.ts";
 
-console.log("produit IMac", apiService.getOne("products", "018c27a3-2ec1-798f-9533-4045120fc264"));
 
 //////////////////////////////////
 ///   DEFINITION DES DONNEES  ///
@@ -41,10 +40,14 @@ const getTableColumns = (instance) => {
         case 'products':
             return [
                 { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
+                { key: 'category', label: 'Catégorie', filter: true },
                 { key: 'brands', label: 'Marque', filter: true },
-                { key: 'state', label: 'État', filter: true },
-                { key: 'quantity', label: 'Quantité', filter: true },
                 { key: 'price', label: 'Prix', filter: true },
+                { key: 'quantity', label: 'Quantité', filter: true },
+                { key: 'state', label: 'État', filter: true },
+                { key: 'promotion', label: 'Promotion', filter: true },
+                { key: 'tva', label: 'TVA', filter: true },
+                { key: 'isPublished', label: 'Est Publié', filter: true },
             ];
         case 'marques':
             return [
@@ -57,14 +60,6 @@ const getTableColumns = (instance) => {
                 { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
                 { key: 'description', label: 'Description', filter: true },
             ];
-        case 'tvas':
-            return [
-                { key: 'rate', label: 'Taux', filter: true, style: 'font-bold' },
-            ];
-        case 'caracteristiques':
-            return [
-                { key: 'description', label: 'Description', filter: true },
-            ];
         default:
             return;
     }
@@ -75,7 +70,7 @@ const tableData = ref([])
 const getIncludedProperties = (instance) => {
     switch (instance) {
         case 'products':
-            return ['id', 'name', 'MarqueId', 'state', 'quantity', 'price'];
+            return ['id', 'name', 'Category.name', 'Marque.name', 'price', 'quantity', 'state', 'promotion', 'tva', 'isPublished'];
         case 'marques':
             return ['id', 'name', 'description', 'image'];
         case 'categories':
@@ -119,10 +114,6 @@ const getRequestBody = (formConfig) => {
                 name: formConfig.find(field => field.name === 'name').value,
                 description: formConfig.find(field => field.name === 'description').value,
             };
-        case "tvas":
-            return {
-                rate: formConfig.find(field => field.name === 'rate').value,
-            };
         default:
             return;
     }
@@ -154,15 +145,6 @@ const getInstanceForm = (instance, formConfig, data) => {
             formConfig.value.find(field => field.name === 'name').value = data ? data.name : '';
             formConfig.value.find(field => field.name === 'description').value = data ? data.description : '';
             break;
-        case 'tvas':
-            formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
-            formConfig.value.find(field => field.name === 'rate').value = data ? data.rate : '';
-            break;
-        case 'caracteristiques':
-            formConfig.value.find(field => field.name === 'id').value = data.id;
-            formConfig.value.find(field => field.name === 'name').value = data.name;
-            formConfig.value.find(field => field.name === 'description').value = data.description;
-            break;
         default:
             break;
     }
@@ -172,46 +154,6 @@ const getInstanceFormConfig = (instance) => {
     switch (instance) {
         case 'products':
             return [
-                {
-                    label: 'Catégorie',
-                    type: 'select',
-                    name: 'categories',
-                    value: '',
-                    optionsType: 'dynamic',
-                    options: [],
-                    labelKey: 'name',
-                    valueKey: 'id',
-                    required: true,
-                    changeHandlers: [],
-                    showCondition: () => true
-                },
-                {
-                    label: 'Marque',
-                    type: 'select',
-                    optionsType: 'static',
-                    options: [],
-                    name: 'brands',
-                    value: '',
-                    // valueId: '',
-                    labelKey: 'name',
-                    valueKey: 'id',
-                    placeholder: 'Saisissez le nom de la marque...',
-                    required: true,
-                    showCondition: () => true,
-                },
-                {
-                    label: 'TVA (%)',
-                    type: 'select',
-                    name: 'tvas',
-                    value: '',
-                    optionsType: 'dynamic',
-                    options: [],
-                    labelKey: 'rate',
-                    valueKey: 'id',
-                    required: true,
-                    changeHandlers: [updatePrixHT],
-                    showCondition: () => true
-                },
                 {
                     label: 'Nom',
                     type: 'text',
@@ -241,29 +183,31 @@ const getInstanceFormConfig = (instance) => {
                     showCondition: () => true
                 },
                 {
-                    label: 'État',
+                    label: 'Catégorie',
                     type: 'select',
-                    name: 'state',
+                    name: 'categories',
                     value: '',
-                    optionsType: 'static',
-                    options: [
-                        { id: '1', name: 'Neuf', value: 'Neuf' },
-                        { id: '2', name: 'Occasion', value: 'Occasion' },
-                        { id: '3', name: 'Reconditionné', value: 'Reconditionné' },
-                        { id: '4', name: 'Seconde Main', value: 'Seconde Main'}
-                    ],
+                    optionsType: 'dynamic',
+                    options: [],
+                    labelKey: 'name',
+                    valueKey: 'id',
+                    required: true,
+                    changeHandlers: [],
                     showCondition: () => true
                 },
                 {
-                    label: 'Quantite',
-                    type: 'number',
-                    name: 'quantite',
-                    value: '0',
-                    min: 0,
+                    label: 'Marque',
+                    type: 'select',
+                    optionsType: 'static',
+                    options: [],
+                    name: 'brands',
+                    value: '',
+                    // valueId: '',
+                    labelKey: 'name',
+                    valueKey: 'id',
+                    placeholder: 'Saisissez le nom de la marque...',
                     required: true,
-                    validationError: '',
-                    validationSchema: z.number().min(0, { message: 'La quantité doit être supérieure à 0' }),
-                    showCondition: () => true
+                    showCondition: () => true,
                 },
                 {
                     label: 'Prix TTC',
@@ -287,37 +231,264 @@ const getInstanceFormConfig = (instance) => {
                     showCondition: () => true
                 },
                 {
-                    label: 'Promotion',
-                    type: 'select',
-                    name: 'promotion',
-                    value: '',
-                    optionsType: 'static',
-                    changeHandlers: [updatePrixTTCAfterPromotion],
-                    options: [
-                        { id: '0', name: 'Aucune', value: 0 },
-                        { id: '10', name: '10 % (dix pourcent)', value: 10 },
-                        { id: '20', name: '20 % (vingt pourcent)', value: 20 },
-                        { id: '30', name: '30 % (trente pourcent)', value: 30 },
-                        { id: '40', name: '40 % (quarante pourcent)', value: 40 },
-                        { id: '50', name: '50 % (cinquante pourcent)', value: 50 },
-                        { id: '60', name: '60 % (soixante pourcent)', value: 60 },
-                        { id: '70', name: '70 % (soixante-dix pourcent)', value: 70 },
-                        { id: '80', name: '80 % (quatre-vingt pourcent)', value: 80 },
-                        { id: '90', name: '90 % (quatre-vingt-dix pourcent)', value: 90 },
-                        { id: '100', name: '100 % (cent pourcent)', value: 100},
-                    ],
-                    showCondition: () => true,
-                },
-                {
-                    label: 'Prix TTC après promotion',
-                    type: 'label',
-                    name: 'prixTTCAfterPromotion',
-                    value: '0.00',
-                    readonly: true,
+                    label: 'Quantite',
+                    type: 'number',
+                    name: 'quantite',
+                    value: '0',
+                    min: 0,
+                    required: true,
+                    validationError: '',
+                    validationSchema: z.number().min(0, { message: 'La quantité doit être supérieure à 0' }),
                     showCondition: () => true
                 },
                 {
-                    label: 'Ajouter une ou plusieurs images',
+                    label: 'État',
+                    type: 'select',
+                    name: 'state',
+                    value: '',
+                    optionsType: 'static',
+                    options: [
+                        { id: '1', name: 'Neuf', value: 'Neuf' },
+                        { id: '2', name: 'Occasion', value: 'Occasion' },
+                        { id: '3', name: 'Reconditionné', value: 'Reconditionné' },
+                        { id: '4', name: 'Seconde Main', value: 'Seconde Main'}
+                    ],
+                    showCondition: () => true
+                },
+                {
+                    label: 'Promotion (%)',
+                    type: 'number',
+                    name: 'promotion',
+                    value: '0',
+                    min: 0,
+                    max: 90,
+                    optionsType: 'static',
+                    changeHandlers: [updatePrixTTCAfterPromotion],
+                    validationError: '',
+                    validationSchema: z.number()
+                        .min(0, { message: 'La promotion doit être supérieure à 0' })
+                        .max(90, { message: 'La promotion doit être inférieure à 90' }),
+                    showCondition: () => true,
+                },
+                {
+                    label: 'TVA (%)',
+                    type: 'number',
+                    name: 'tva',
+                    value: '0',
+                    min: 0,
+                    max: 50,
+                    required: true,
+                    changeHandlers: [updatePrixHT],
+                    validationError: '',
+                    validationSchema: z.number()
+                        .min(0, { message: 'La TVA doit être supérieure à 0' })
+                        .max(50, { message: 'La TVA doit être inférieure à 50' }),
+                    showCondition: () => true
+                },
+                {
+                    label: 'Publier',
+                    type: 'checkbox',
+                    name: 'isPublished',
+                    isChecked: false,
+                    showCondition: () => true
+                },
+                {
+                    label: "Résolution",
+                    type: "text",
+                    name: "resolution",
+                    value: "",
+                    placeholder: "Saisissez la résolution de l'écran...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La résolution doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La résolution doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Taille",
+                    type: "text",
+                    name: "size",
+                    value: "",
+                    placeholder: "Saisissez la taille de l'écran...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La taille doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La taille doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Stockage",
+                    type: "text",
+                    name: "storage",
+                    value: "",
+                    placeholder: "Saisissez la capacité de stockage...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Le stockage doit contenir au moins 3 caractères" })
+                        .max(255, { message: "Le stockage doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Haut-parleur",
+                    type: "text",
+                    name: "loudspeaker",
+                    value: "",
+                    placeholder: "Saisissez la qualité du haut-parleur...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Le haut-parleur doit contenir au moins 3 caractères" })
+                        .max(255, { message: "Le haut-parleur doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Caméra Avant",
+                    type: "text",
+                    name: "frontcamera",
+                    value: "",
+                    placeholder: "Saisissez la qualité de la caméra avant...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La caméra avant doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La caméra avant doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Caméra Arrière",
+                    type: "text",
+                    name: "backcamera",
+                    value: "",
+                    placeholder: "Saisissez la qualité de la caméra arrière...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La caméra arrière doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La caméra arrière doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Poids",
+                    type: "text",
+                    name: "weight",
+                    value: "",
+                    placeholder: "Saisissez le poids du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Le poids doit contenir au moins 3 caractères" })
+                        .max(255, { message: "Le poids doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Largeur",
+                    type: "text",
+                    name: "width",
+                    value: "",
+                    placeholder: "Saisissez la largeur du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La largeur doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La largeur doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Hauteur",
+                    type: "text",
+                    name: "height",
+                    value: "",
+                    placeholder: "Saisissez la hauteur du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La hauteur doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La hauteur doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Batterie",
+                    type: "text",
+                    name: "battery",
+                    value: "",
+                    placeholder: "Saisissez la capacité de la batterie...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La batterie doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La batterie doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Code",
+                    type: "text",
+                    name: "code",
+                    value: "",
+                    placeholder: "Saisissez le code du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Le code doit contenir au moins 3 caractères" })
+                        .max(255, { message: "Le code doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Accessoires",
+                    type: "text",
+                    name: "accessories",
+                    value: "",
+                    placeholder: "Saisissez les accessoires du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Les accessoires doivent contenir au moins 3 caractères" })
+                        .max(255, { message: "Les accessoires doivent contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Système d'exploitation",
+                    type: "text",
+                    name: "os",
+                    value: "",
+                    placeholder: "Saisissez le système d'exploitation du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Le système d'exploitation doit contenir au moins 3 caractères" })
+                        .max(255, { message: "Le système d'exploitation doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Processeur (CPU)",
+                    type: "text",
+                    name: "cpu",
+                    value: "",
+                    placeholder: "Saisissez le processeur du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "Le processeur doit contenir au moins 3 caractères" })
+                        .max(255, { message: "Le processeur doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: "Carte Graphique (GPU)",
+                    type: "text",
+                    name: "gpu",
+                    value: "",
+                    placeholder: "Saisissez la carte graphique du produit...",
+                    required: true,
+                    validationError: "",
+                    validationSchema: z.string()
+                        .min(3, { message: "La carte graphique doit contenir au moins 3 caractères" })
+                        .max(255, { message: "La carte graphique doit contenir au maximum 255 caractères" }),
+                    showCondition: () => true,
+                },
+                {
+                    label: 'Ajouter une image',
                     type: 'file',
                     name: 'images',
                     showCondition: () => true
@@ -328,6 +499,7 @@ const getInstanceFormConfig = (instance) => {
                     buttonType: 'button',
                     buttonClass: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
                     buttonClick: createInstance,
+                    validationError: '',
                     showCondition: () => true
                 },
                 {
@@ -382,7 +554,7 @@ const getInstanceFormConfig = (instance) => {
                 },
                 {
                     name: 'id',
-                },  
+                },
                 {
                     type: 'button',
                     label: 'Enregistrer',
@@ -434,35 +606,6 @@ const getInstanceFormConfig = (instance) => {
                     name: 'id',
                 }
             ]
-        case 'tvas':
-            return [
-                {
-                    label: 'Taux',
-                    type: 'number',
-                    name: 'rate',
-                    value: '',
-                    placeholder: 'Saisissez le taux de la TVA...' ,
-                    required: true,
-                    changeHandlers: [],
-                    validationError: '',
-                    validationSchema: z.number()
-                        .min(0, { message: 'Le taux doit être supérieur à 0' })
-                        .max(100, { message: 'Le taux doit être inférieur à 100' })
-                    ,
-                    showCondition: () => true
-                },
-                {
-                    type: 'button',
-                    label: 'Enregistrer',
-                    buttonType: 'button',
-                    buttonClass: 'bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
-                    buttonClick: createInstance,
-                    showCondition: () => true
-                },
-                {
-                    name: 'id',
-                }
-            ]
         default:
             return;
     }
@@ -476,17 +619,37 @@ const fetchListOfItems = async () => {
     try {
         const response = await fetch('http://localhost:3000/api/' + instance);
         const data = await response.json();
-        tableData.value = data.map((item) => {
+        const tab = data.map((item) => {
             const filteredItem = {};
             for (const property of includedProperties) {
-                filteredItem[property] = item[property];
+                if(property.includes('.')){
+                    filteredItem[property] = item[property.split('.')[0]][property.split('.')[1]] || ''
+                }
+                else  {
+                    filteredItem[property] = item[property] || '';
+                }
             }
             return filteredItem;
         });
+        return tab
     } catch (error) {
         console.error('Erreur lors de la récupération des produits depuis l\'API', error);
     }
 };
+
+const updateTableData = async () => {
+    const data = await fetchListOfItems();
+    tableData.value = data;
+};
+
+// watch(() => tableData.value, () => {
+//     fetchListOfItems();
+// })
+
+const afterInstanceSave = () => {
+    isModalVisible.value = false;
+    tableData.value = fetchListOfItems();
+}
 
 const createInstance = async (data) => {
     console.log("createInstance formconfig", formConfig )
@@ -514,10 +677,16 @@ const createInstance = async (data) => {
 
     const requestBody = getRequestBody(formConfig.value);
     if(!isUpdateItem) {
-        apiService.create(instance, requestBody);
+        apiService.create(instance, requestBody)
+            .then(res =>{
+                afterInstanceSave()
+            });
     }else {
         const itemId =  formConfig.value.find(field => field.name === 'id').value;
-        apiService.update(instance, requestBody, itemId);
+        apiService.update(instance, requestBody, itemId)
+            .then(res =>{
+                afterInstanceSave()
+            });
     }
 };
 
@@ -545,18 +714,18 @@ const openModalCreate = async (instance, isUpdate, data) => {
         formConfig.value = getInstanceFormConfig(instance);
         if (instance === 'products') {
             await fetchOptions('marques', (data) => {
-        // marques.value = data;
-        const brandsField = formConfig.value.find(field => field.name === 'brands');
-        brandsField.options = data;
-    });
-    await fetchOptions('tvas', (data) => {
-        const tvasField = formConfig.value.find(field => field.name === 'tvas');
-        tvasField.options = data;
-    });
-    await fetchOptions('categories', (data) => {
-        const categoriesField = formConfig.value.find(field => field.name === 'categories');
-        categoriesField.options = data;
-    });
+                // marques.value = data;
+                const brandsField = formConfig.value.find(field => field.name === 'brands');
+                brandsField.options = data;
+            });
+            await fetchOptions('tvas', (data) => {
+                const tvasField = formConfig.value.find(field => field.name === 'tvas');
+                tvasField.options = data;
+            });
+            await fetchOptions('categories', (data) => {
+                const categoriesField = formConfig.value.find(field => field.name === 'categories');
+                categoriesField.options = data;
+            });
         }
         openModal();
         return;
@@ -601,20 +770,23 @@ let formConfig = ref([]);
 
 onMounted(async () => {
     formConfig.value = getInstanceFormConfig(instance);
-    await fetchOptions('marques', (data) => {
-        // marques.value = data;
-        const brandsField = formConfig.value.find(field => field.name === 'brands');
-        brandsField.options = data;
-    });
-    await fetchOptions('tvas', (data) => {
-        const tvasField = formConfig.value.find(field => field.name === 'tvas');
-        tvasField.options = data;
-    });
-    await fetchOptions('categories', (data) => {
-        const categoriesField = formConfig.value.find(field => field.name === 'categories');
-        categoriesField.options = data;
-    });
-    fetchListOfItems();
+    // if(instance === 'products') {
+    //     await fetchOptions('marques', (data) => {
+    //         // marques.value = data;
+    //         const brandsField = formConfig.value.find(field => field.name === 'brands');
+    //         brandsField.options = data;
+    //     });
+    //     await fetchOptions('tvas', (data) => {
+    //         const tvasField = formConfig.value.find(field => field.name === 'tvas');
+    //         tvasField.options = data;
+    //     });
+    //     await fetchOptions('categories', (data) => {
+    //         const categoriesField = formConfig.value.find(field => field.name === 'categories');
+    //         categoriesField.options = data;
+    //     });
+    // }
+    // await fetchListOfItems();
+    updateTableData()
     for (const field of formConfig.value) {
         if (field.validationSchema) {
             watch(() => field.value, async () => {

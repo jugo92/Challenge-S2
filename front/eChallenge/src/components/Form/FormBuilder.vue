@@ -9,6 +9,11 @@
               <b>{{ field.label }}</b>&nbsp; {{ field.value }} €
             </label>
           </template>
+            <template v-if="field.type === 'checkbox' && showField(field)">
+                <label :for="field.name" class="block text-gray-700 text-sm mb-2">
+                     <input :type="field.type" :id="field.name" :name="field.name" v-model="field.isChecked" class="mr-2 leading-tight"> <b>{{ field.label }}</b>&nbsp;
+                </label>
+            </template>
           <template v-else-if="field.type !== 'button' && showField(field)">
             <label :for="field.name" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }} <span class="text-red-600" v-if="field.required">*</span></label>
           </template>
@@ -94,10 +99,9 @@
           </template>
 
           <!-- Checkbox -->
-          <template v-else-if="field.type === 'checkbox' && showField(field)">
-            <input :type="field.type" :id="field.name" :name="field.name" v-model="field.isChecked" class="mr-2 leading-tight">
-            <label :for="field.name" class="text-sm">{{ field.label }}</label>
-          </template>
+<!--          <template v-else-if="field.type === 'checkbox' && showField(field)">-->
+<!--            <input :type="field.type" :id="field.name" :name="field.name" v-model="field.isChecked" class="mr-2 leading-tight">-->
+<!--          </template>-->
 
           <!-- Error message -->
           <div class="text-red-600" v-if="field.validationError">{{ field.validationError.message }}</div>
