@@ -11,6 +11,12 @@ const cart = ref([]);
 
 
 
+const activateSearch = () => {
+  isSearchActive.value = true;
+  isSearchResultsVisible.value = true; 
+};
+
+
 onMounted(async () => {
   const response = await fetch('https://jsonplaceholder.typicode.com/posts');
   const data = await response.json();
@@ -46,6 +52,13 @@ const addToCart = (product) => {
 </script>
 
 <template>
+ <div v-if="searchTerm !== ''" class="search-results">
+      <router-link v-for="result in searchSuggestions" :key="result.id" :to="{ name: 'ProductDetails', params: { id: result.id } }">
+        <div @click="selectSearchResult(result)">
+          {{ result.name }}
+        </div>
+      </router-link>
+    </div>
 
 <h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
   <div>

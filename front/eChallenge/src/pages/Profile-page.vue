@@ -70,8 +70,8 @@ onMounted(() => {
                      <div  class="bg-white absolute right-0 w-40 py-2 mt-1 border border-gray-200 shadow-2xl w-48 option">
                         <RouterLink to="/setting">
                             <button class="w-full flex items-center py-1.5 px-6 space-x-2 hover:bg-gray-200 radius">
-                            <Icon icon="lets-icons:setting-line"  class="text-3xl"/>                
-                            <span class="text-sm text-black">Paramètres</span>
+                                <Icon icon="codicon:account"  class="text-3xl"/>               
+                            <span class="text-sm text-black">Paramètres de mon compte</span>
                         </button>
                         </RouterLink>
 
