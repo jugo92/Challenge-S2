@@ -1,8 +1,12 @@
 const API_URL_BASE = 'http://localhost:3000/api/';
 
 export const apiService = {
-    getAll(instance) {
-        return fetch(API_URL_BASE + instance)
+    getAll(instance, params) {
+        let url = API_URL_BASE + instance;
+        if (params) {
+            url += '?' + params;
+        }
+        return fetch(url)
             .then(response => response.json());
     },
 

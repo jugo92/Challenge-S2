@@ -26,7 +26,7 @@
         </td>
         <td v-for="(value, key, index) in Object.entries(row).slice(1)" :key="index" :class="{[columnsStyleObject[value[0]]] : columnsStyleObject.hasOwnProperty(value[0]) }">
           <p class="text-center">
-            {{ value[1] }}
+            {{ value[1] == "undefined" || value[1] == "" ? "-" : value[1] }}
           </p>
         </td>
       </tr>

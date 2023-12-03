@@ -126,27 +126,10 @@ export function useForm(formConfig: FormField[]) {
     const handleFileChange = async (formConfig, event) => {
         console.log('EVENT : ', event);
         formConfig.find(field => field.name === 'files').value = event;
-        // const form = new FormData();
-        // form.append('image', event)
-        // await fetch(`http://localhost:3000/upload`, {
-        //     method: 'POST',
-        //     // headers: {
-        //     //   'Content-Type': 'application/json',
-        //     // },
-        //     body: form,
-        //   });
-        // console.log("handlefilechange event", event.target.files[0])
-        // const formData = new FormData();
-        // formData.append('image', event.target.files[0]);
-        // listFormData.value.push(formData);
-
-        // const selectedFiles = Array.from(event.target.files);
-        // files.value = selectedFiles;
-        // listFormData.value = event.target.files[0];
     };
 
     const getFileUrl = (file) => {
-        return URL.createObjectURL(file);
+        return "http://localhost:3000/getImage/" + file
     };
 
     return { reinitForm, handleInput, handleFileChange, getFileUrl, listFormData, selectSuggestion, showField, callChangeHandlers, validateField };

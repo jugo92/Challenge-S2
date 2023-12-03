@@ -30,7 +30,9 @@ const instance = window.location.pathname.substring(1);
 let isUpdateItem = ref(null);
 
 import {apiService} from "../services/apiService.ts";
-import {forEach} from "lodash";
+import {forEach, isEmpty} from "lodash";
+import path from "path";
+import fs from "fs";
 
 
 //////////////////////////////////
@@ -95,7 +97,9 @@ const getRequestBody = (formConfig) => {
             formProduct.append('price', formConfig.find(field => field.name === 'prixTTC').value)
             formProduct.append('state',formConfig.find(field => field.name === 'state').value)
             formProduct.append('promotion', formConfig.find(field => field.name === 'promotion').value || 0)
-            formProduct.append('image', formConfig.find(field => field.name === 'files').value.name)
+            if(formConfig.find(field => field.name === 'images').value !== undefined) {
+                formProduct.append('image', formConfig.find(field => field.name === 'files').value.name)
+            }
             formProduct.append('isPublished', formConfig.find(field => field.name === 'isPublished').isChecked)
             formProduct.append('resolution', formConfig.find(field => field.name === 'resolution').value)
             formProduct.append('size', formConfig.find(field => field.name === 'size').value)
@@ -118,7 +122,11 @@ const getRequestBody = (formConfig) => {
             formMarque.append('file', formConfig.find(field => field.name === 'files').value)
             formMarque.append('name', formConfig.find(field => field.name === 'name').value)
             formMarque.append('description', formConfig.find(field => field.name === 'description').value)
-            formMarque.append('image', formConfig.find(field => field.name === 'files').value.name)
+            if(formConfig.find(field => field.name == "images").value != undefined) {
+                formMarque.append('image', formConfig.find(field => field.name === 'files').value.name)
+            }else{
+                formMarque.append('image', "")
+            }
             return formMarque
         case "categories":
             return {
@@ -165,7 +173,7 @@ const getInstanceForm = (instance, formConfig, data) => {
         case 'marques':
             formConfig.value.find(field => field.name === 'id').value = data ? data._id : null;
             formConfig.value.find(field => field.name === 'name').value = data ? data.name : '';
-            formConfig.value.find(field => field.name === 'images').value = data ? data.image : '';
+            formConfig.value.find(field => field.name === 'images').value = data || data != "undefined" ? data.image : '';
             formConfig.value.find(field => field.name === 'files').value = data ? data.image : '';
             formConfig.value.find(field => field.name === 'description').value = data ? data.description : '';
             break;
@@ -190,7 +198,7 @@ const getInstanceFormConfig = (instance) => {
                     value: '',
                     placeholder: 'Saisissez le nom du produit...' ,
                     required: true,
-                    changeHandlers: [],
+                    changeHandlers: [isExist],
                     validationError: '',
                     validationSchema: z.string()
                         .min(3, { message: 'Le nom doit contenir au moins 3 caractères' })
@@ -548,7 +556,7 @@ const getInstanceFormConfig = (instance) => {
                     value: '',
                     placeholder: 'Saisissez le nom de la marque...' ,
                     required: true,
-                    changeHandlers: [],
+                    changeHandlers: [isExist],
                     validationError: '',
                     validationSchema: z.string()
                         .min(3, { message: 'Le nom doit contenir au moins 3 caractères' })
@@ -575,11 +583,11 @@ const getInstanceFormConfig = (instance) => {
                     label: 'Ajouter une ou plusieurs images',
                     type: 'file',
                     name: 'images',
-                    showCondition: () => true
+                    showCondition: () => formConfig.value.find(field => field.name == "images").value === ""
                 },
                 {
                     name: 'files',
-                    value: 'test'
+                    value: ''
                 },
                 {
                     name: 'id',
@@ -602,7 +610,7 @@ const getInstanceFormConfig = (instance) => {
                     value: '',
                     placeholder: 'Saisissez le nom de la catégorie...' ,
                     required: true,
-                    changeHandlers: [],
+                    changeHandlers: [isExist],
                     validationError: '',
                     validationSchema: z.string()
                         .min(3, { message: 'Le nom doit contenir au moins 3 caractères' })
@@ -654,7 +662,7 @@ const fetchListOfItems = async () => {
             for (const property of includedProperties) {
                 if(property.includes('.')){
                     if(item.hasOwnProperty(property.split('.')[0])){
-                    filteredItem[property] = item[property.split('.')[0]][property.split('.')[1]]
+                        filteredItem[property] = item[property.split('.')[0]][property.split('.')[1]]
                     }else{
                         filteredItem[property] = '';
                     }
@@ -688,11 +696,8 @@ const createInstance = async (data) => {
         //     continue;
         // }
         //TODO : vérifier si l'instance existe déjà
-        // if(await isExistingProduct() && !formConfig.id) {
-        //   field.validationError = { message: 'Ce produit existe déjà' };
-        //   return;
-        // }
     }
+    // isExist();
 
 
     // if (formConfig.value.some(field => field.validationError)) {
@@ -700,6 +705,7 @@ const createInstance = async (data) => {
     // }
 
     const requestBody = getRequestBody(formConfig.value);
+    if(requestBody.get("image") == "undefined") requestBody.set("image", "")
     if(!isUpdateItem) {
         apiService.create(instance, requestBody)
             .then(res =>{
@@ -725,7 +731,6 @@ const fetchOptions = async (field, callback) => {
     }
 };
 
-const marques = ref([]);
 const stateOptions = {
     'Neuf': 1,
     'Occasion': 2,
@@ -734,13 +739,11 @@ const stateOptions = {
 };
 
 const openModalInstance = async (instance, isUpdate, data) => {
-    console.log(data)
     isUpdateItem = isUpdate;
     if(isUpdateItem === false) {
         formConfig.value = getInstanceFormConfig(instance);
         if (instance === 'products') {
             await fetchOptions('marques', (data) => {
-                // marques.value = data;
                 const brandsField = formConfig.value.find(field => field.name === 'brands');
                 brandsField.options = data;
             });
@@ -767,13 +770,23 @@ const openModalInstance = async (instance, isUpdate, data) => {
             forEach(data, (item) => {
                 apiService.delete(instance, item)
                     .then(res =>{
-                        console.log(res)
                         afterInstanceSave()
                     });
             });
         }
     }
 };
+
+const isExist = () => {
+    const nameField = formConfig.value.find(field => field.name === 'name');
+    apiService.getAll(instance, `name=${nameField.value}`)
+        .then(res =>
+        {
+            if(res.length > 0) {
+                nameField.validationError = { message: 'Ce nom existe déjà' };
+            }
+        })
+}
 
 const updatePrixHT = () => {
     const prixTTCField = formConfig.value.find(field => field.name === 'prixTTC');
@@ -804,7 +817,6 @@ onMounted(async () => {
     formConfig.value = getInstanceFormConfig(instance);
     if(instance === 'products') {
         await fetchOptions('marques', (data) => {
-            // marques.value = data;
             const brandsField = formConfig.value.find(field => field.name === 'brands');
             brandsField.options = data;
         });
