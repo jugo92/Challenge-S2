@@ -10,7 +10,7 @@
             :formConfig="formConfig"
         />
         <div>
-            <TabBuilder :columns="tableColumns" :data="tableData" @open="openModalCreate" />
+            <TabBuilder :columns="tableColumns" :data="tableData" @open="openModalInstance" />
         </div>
     </div>
 </template>
@@ -30,6 +30,7 @@ const instance = window.location.pathname.substring(1);
 let isUpdateItem = ref(null);
 
 import {apiService} from "../services/apiService.ts";
+import {forEach} from "lodash";
 
 
 //////////////////////////////////
@@ -70,13 +71,11 @@ const tableData = ref([])
 const getIncludedProperties = (instance) => {
     switch (instance) {
         case 'products':
-            return ['id', 'name', 'Category.name', 'Marque.name', 'price', 'quantity', 'state', 'promotion', 'tva', 'isPublished'];
+            return ['_id', 'name', 'Category.name', 'Marque.name', 'price', 'quantity', 'state', 'promotion', 'tva', 'isPublished'];
         case 'marques':
-            return ['id', 'name', 'description', 'image'];
+            return ['_id', 'name', 'description', 'image'];
         case 'categories':
-            return ['id', 'name', 'description'];
-        case 'tvas':
-            return ['id', 'rate'];
+            return ['_id', 'name', 'description'];
         default:
             return;
     }
@@ -85,22 +84,34 @@ const getIncludedProperties = (instance) => {
 const getRequestBody = (formConfig) => {
     switch (instance) {
         case "products":
-            const promotionField = formConfig.find(field => field.name === 'promotion');
-            const selectedPromotion = promotionField["value"]
             const formProduct = new FormData();
             formProduct.append('file', formConfig.find(field => field.name === 'files').value)
             formProduct.append('CategoryId', formConfig.find(field => field.name === 'categories').value)
-            formProduct.append('MarqueId', formConfig.find(field => field.name === 'brands').value)
-            formProduct.append('CaracteristiqueId', "018c0d75-1908-7d35-accb-6a22d6c617b8")
-            formProduct.append('TvaId', '018c0d73-2021-7eab-a6a2-193a0a78cab8')
+            formProduct.append('MarqueId', formConfig.find(field => field.name === 'brands').value )
+            formProduct.append('tva', formConfig.find(field => field.name === 'tva').value)
             formProduct.append('name',  formConfig.find(field => field.name === 'name').value)
             formProduct.append('description', formConfig.find(field => field.name === 'description').value)
             formProduct.append('quantity', formConfig.find(field => field.name === 'quantite').value)
             formProduct.append('price', formConfig.find(field => field.name === 'prixTTC').value)
-            formProduct.append('deliveryDate', 0)
             formProduct.append('state',formConfig.find(field => field.name === 'state').value)
-            formProduct.append('promotion', selectedPromotion.id || 0)
+            formProduct.append('promotion', formConfig.find(field => field.name === 'promotion').value || 0)
             formProduct.append('image', formConfig.find(field => field.name === 'files').value.name)
+            formProduct.append('isPublished', formConfig.find(field => field.name === 'isPublished').isChecked)
+            formProduct.append('resolution', formConfig.find(field => field.name === 'resolution').value)
+            formProduct.append('size', formConfig.find(field => field.name === 'size').value)
+            formProduct.append('storage', formConfig.find(field => field.name === 'storage').value)
+            formProduct.append('loudspeaker', formConfig.find(field => field.name === 'loudspeaker').value)
+            formProduct.append('frontcamera', formConfig.find(field => field.name === 'frontcamera').value)
+            formProduct.append('backcamera', formConfig.find(field => field.name === 'backcamera').value)
+            formProduct.append('weight', formConfig.find(field => field.name === 'weight').value)
+            formProduct.append('width', formConfig.find(field => field.name === 'width').value)
+            formProduct.append('height', formConfig.find(field => field.name === 'height').value)
+            formProduct.append('battery', formConfig.find(field => field.name === 'battery').value)
+            formProduct.append('code', formConfig.find(field => field.name === 'code').value)
+            formProduct.append('accesories', formConfig.find(field => field.name === 'accesories').value)
+            formProduct.append('operatingSystem', formConfig.find(field => field.name === 'os').value)
+            formProduct.append('cpu', formConfig.find(field => field.name === 'cpu').value)
+            formProduct.append('gpu', formConfig.find(field => field.name === 'gpu').value)
             return formProduct
         case "marques":
             const formMarque = new FormData();
@@ -120,28 +131,46 @@ const getRequestBody = (formConfig) => {
 };
 
 const getInstanceForm = (instance, formConfig, data) => {
-    console.log("data", data);
     switch (instance) {
         case 'products':
-            formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
+            formConfig.value.find(field => field.name === 'id').value = data ? data._id : null;
             formConfig.value.find(field => field.name === 'name').value = data ? data.name : '';
             formConfig.value.find(field => field.name === 'description').value = data ? data.description : '';
             formConfig.value.find(field => field.name === 'quantite').value = data ? data.quantity : 0;
             formConfig.value.find(field => field.name === 'prixTTC').value = data ? data.price : 0;
             formConfig.value.find(field => field.name === 'state').value = data ? stateOptions[data.state] : 0;
             formConfig.value.find(field => field.name === 'promotion').value = data ? data.promotion : 0;
-            formConfig.value.find(field => field.name === 'brands').value = data ? data.MarqueId : null;
-            formConfig.value.find(field => field.name === 'tvas').value = data ? data.TvaId : null;
-            formConfig.value.find(field => field.name === 'categories').value = data ? data.CategoryId : null;
+            formConfig.value.find(field => field.name === 'brands').value = data ? data.Marque.id : null;
+            formConfig.value.find(field => field.name === 'tva').value = data ? data.tva : null;
+            formConfig.value.find(field => field.name === 'categories').value = data ? data.Category.id : null;
+            formConfig.value.find(field => field.name === 'isPublished').isChecked = data ? data.isPublished : false;
+            formConfig.value.find(field => field.name === 'resolution').value = data ? data.resolution : '';
+            formConfig.value.find(field => field.name === 'size').value = data ? data.size : '';
+            formConfig.value.find(field => field.name === 'storage').value = data ? data.storage : '';
+            formConfig.value.find(field => field.name === 'loudspeaker').value = data ? data.loudspeaker : '';
+            formConfig.value.find(field => field.name === 'frontcamera').value = data ? data.frontcamera : '';
+            formConfig.value.find(field => field.name === 'backcamera').value = data ? data.backcamera : '';
+            formConfig.value.find(field => field.name === 'weight').value = data ? data.weight : '';
+            formConfig.value.find(field => field.name === 'width').value = data ? data.width : '';
+            formConfig.value.find(field => field.name === 'height').value = data ? data.height : '';
+            formConfig.value.find(field => field.name === 'battery').value = data ? data.battery : '';
+            formConfig.value.find(field => field.name === 'code').value = data ? data.code : '';
+            formConfig.value.find(field => field.name === 'accesories').value = data ? data.accesories : '';
+            formConfig.value.find(field => field.name === 'os').value = data ? data.operatingSystem : '';
+            formConfig.value.find(field => field.name === 'cpu').value = data ? data.cpu : '';
+            formConfig.value.find(field => field.name === 'gpu').value = data ? data.gpu : '';
+            formConfig.value.find(field => field.name === 'files').value = data ? data.image : '';
+            formConfig.value.find(field => field.name === 'images').value = data ? data.image : '';
             break;
         case 'marques':
-            formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
+            formConfig.value.find(field => field.name === 'id').value = data ? data._id : null;
             formConfig.value.find(field => field.name === 'name').value = data ? data.name : '';
-            formConfig.value.find(field => field.name === 'image').value = data ? data.image : '';
+            formConfig.value.find(field => field.name === 'images').value = data ? data.image : '';
+            formConfig.value.find(field => field.name === 'files').value = data ? data.image : '';
             formConfig.value.find(field => field.name === 'description').value = data ? data.description : '';
             break;
         case 'categories':
-            formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
+            formConfig.value.find(field => field.name === 'id').value = data ? data._id : null;
             formConfig.value.find(field => field.name === 'name').value = data ? data.name : '';
             formConfig.value.find(field => field.name === 'description').value = data ? data.description : '';
             break;
@@ -190,7 +219,7 @@ const getInstanceFormConfig = (instance) => {
                     optionsType: 'dynamic',
                     options: [],
                     labelKey: 'name',
-                    valueKey: 'id',
+                    valueKey: '_id',
                     required: true,
                     changeHandlers: [],
                     showCondition: () => true
@@ -198,13 +227,13 @@ const getInstanceFormConfig = (instance) => {
                 {
                     label: 'Marque',
                     type: 'select',
-                    optionsType: 'static',
+                    optionsType: 'dynamic',
                     options: [],
                     name: 'brands',
                     value: '',
                     // valueId: '',
                     labelKey: 'name',
-                    valueKey: 'id',
+                    valueKey: '_id',
                     placeholder: 'Saisissez le nom de la marque...',
                     required: true,
                     showCondition: () => true,
@@ -438,7 +467,7 @@ const getInstanceFormConfig = (instance) => {
                 {
                     label: "Accessoires",
                     type: "text",
-                    name: "accessories",
+                    name: "accesories",
                     value: "",
                     placeholder: "Saisissez les accessoires du produit...",
                     required: true,
@@ -613,17 +642,22 @@ const getInstanceFormConfig = (instance) => {
 /////////////////////////////
 ///   FONCTIONS OUTILS   ///
 ////////////////////////////
-
+let currentPage = 1;
+let limit = 2;
 const fetchListOfItems = async () => {
     const includedProperties = getIncludedProperties(instance);
     try {
-        const response = await fetch('http://localhost:3000/api/' + instance);
+        const response = await fetch('http://localhost:3000/api/' + instance + "?page=" + currentPage + "&limit=" + limit);
         const data = await response.json();
-        const tab = data.map((item) => {
+        tableData.value = data.map((item) => {
             const filteredItem = {};
             for (const property of includedProperties) {
                 if(property.includes('.')){
-                    filteredItem[property] = item[property.split('.')[0]][property.split('.')[1]] || ''
+                    if(item.hasOwnProperty(property.split('.')[0])){
+                    filteredItem[property] = item[property.split('.')[0]][property.split('.')[1]]
+                    }else{
+                        filteredItem[property] = '';
+                    }
                 }
                 else  {
                     filteredItem[property] = item[property] || '';
@@ -631,29 +665,19 @@ const fetchListOfItems = async () => {
             }
             return filteredItem;
         });
-        return tab
     } catch (error) {
         console.error('Erreur lors de la récupération des produits depuis l\'API', error);
     }
 };
 
-const updateTableData = async () => {
-    const data = await fetchListOfItems();
-    tableData.value = data;
-};
-
-// watch(() => tableData.value, () => {
-//     fetchListOfItems();
-// })
-
 const afterInstanceSave = () => {
     isModalVisible.value = false;
-    tableData.value = fetchListOfItems();
+    setTimeout(() => {
+        fetchListOfItems();
+    }, 500);
 }
 
 const createInstance = async (data) => {
-    console.log("createInstance formconfig", formConfig )
-    console.log("createInstance listFormData", listFormData )
     for (const field of formConfig.value) {
         // if (!field.value && field.required) {
         //     field.validationError = { message: 'Ce champ est obligatoire' };
@@ -708,19 +732,17 @@ const stateOptions = {
     'Reconditionne': 3,
     'Seconde Main': 4
 };
-const openModalCreate = async (instance, isUpdate, data) => {
+
+const openModalInstance = async (instance, isUpdate, data) => {
+    console.log(data)
     isUpdateItem = isUpdate;
-    if(!isUpdateItem) {
+    if(isUpdateItem === false) {
         formConfig.value = getInstanceFormConfig(instance);
         if (instance === 'products') {
             await fetchOptions('marques', (data) => {
                 // marques.value = data;
                 const brandsField = formConfig.value.find(field => field.name === 'brands');
                 brandsField.options = data;
-            });
-            await fetchOptions('tvas', (data) => {
-                const tvasField = formConfig.value.find(field => field.name === 'tvas');
-                tvasField.options = data;
             });
             await fetchOptions('categories', (data) => {
                 const categoriesField = formConfig.value.find(field => field.name === 'categories');
@@ -730,16 +752,26 @@ const openModalCreate = async (instance, isUpdate, data) => {
         openModal();
         return;
     }
-    else{
+    else if(isUpdateItem === true){
         apiService.getOne(instance, data)
             .then(data => {
-                formConfig.value.filter(field => field.name === 'id').value = data.id ;
+                formConfig.value.filter(field => field.name === '_id').value = data.id ;
                 getInstanceForm(instance, formConfig, data);
                 openModal();
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+    }else{
+        if (confirm('Voulez-vous vraiment supprimer les élèments sélectionnés ?')) {
+            forEach(data, (item) => {
+                apiService.delete(instance, item)
+                    .then(res =>{
+                        console.log(res)
+                        afterInstanceSave()
+                    });
+            });
+        }
     }
 };
 
@@ -770,23 +802,18 @@ let formConfig = ref([]);
 
 onMounted(async () => {
     formConfig.value = getInstanceFormConfig(instance);
-    // if(instance === 'products') {
-    //     await fetchOptions('marques', (data) => {
-    //         // marques.value = data;
-    //         const brandsField = formConfig.value.find(field => field.name === 'brands');
-    //         brandsField.options = data;
-    //     });
-    //     await fetchOptions('tvas', (data) => {
-    //         const tvasField = formConfig.value.find(field => field.name === 'tvas');
-    //         tvasField.options = data;
-    //     });
-    //     await fetchOptions('categories', (data) => {
-    //         const categoriesField = formConfig.value.find(field => field.name === 'categories');
-    //         categoriesField.options = data;
-    //     });
-    // }
-    // await fetchListOfItems();
-    updateTableData()
+    if(instance === 'products') {
+        await fetchOptions('marques', (data) => {
+            // marques.value = data;
+            const brandsField = formConfig.value.find(field => field.name === 'brands');
+            brandsField.options = data;
+        });
+        await fetchOptions('categories', (data) => {
+            const categoriesField = formConfig.value.find(field => field.name === 'categories');
+            categoriesField.options = data;
+        });
+    }
+    await fetchListOfItems();
     for (const field of formConfig.value) {
         if (field.validationSchema) {
             watch(() => field.value, async () => {

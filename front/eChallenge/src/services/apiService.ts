@@ -45,7 +45,6 @@ export const apiService = {
         return fetch(API_URL_BASE + instance + '/' + id, {
             method: 'DELETE'
         })
-            .then(response => response.json());
     },
 
 };

@@ -8,6 +8,8 @@ require("dotenv").config({ path: ".env" });
 require("./src/Mongo/db");
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
+const path = require('path');
+const fs = require('fs');
 const port = process.env.PORT;
 const {
   User,
@@ -43,6 +45,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
+
+app.get('/getImage/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, 'uploads', imageName);
+
+  // Vérifiez si le fichier image existe
+  if (fs.existsSync(imagePath)) {
+    // Renvoyer l'image au client avec le bon type MIME
+    res.sendFile(imagePath);
+  } else {
+    res.status(404).send('Image non trouvée');
+  }
+});
 
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {

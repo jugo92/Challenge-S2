@@ -21,7 +21,7 @@
       <tr class="bg-white hover:bg-gray-50" v-for="row in sortedData" :key="row.id">
         <td class="w-4 p-4">
           <div class="flex items-center">
-            <input :id="row.id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row.id" @change="getSelectedProducts">
+            <input :id="row._id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row._id" @change="getSelectedInstances">
           </div>
         </td>
         <td v-for="(value, key, index) in Object.entries(row).slice(1)" :key="index" :class="{[columnsStyleObject[value[0]]] : columnsStyleObject.hasOwnProperty(value[0]) }">
@@ -56,6 +56,7 @@ import {Icon} from "@iconify/vue";
 import {forEach} from "lodash";
 import FormBuilder from "../Form/FormBuilder.vue";
 import {useModal} from "../Modal/useModal.ts";
+import {apiService} from "../../services/apiService.ts";
 const { isModalVisible, openModal, closeModal } = useModal();
 const emit = defineEmits();
 interface TableColumn {
@@ -122,15 +123,18 @@ const sortedData = computed(() => {
 
 const selectedItems = ref([]);
 
-const getSelectedProducts = () => {
-  selectedItems.value = [];
-  const checkboxes = document.querySelectorAll('.table-input-checkbox');
-  checkboxes.forEach((checkbox) => {
-    if (checkbox.checked) {
-      selectedItems.value.push(checkbox.id);
-    }
-  });
+const getSelectedInstances = () => {
+    selectedItems.value = [];
+    const checkboxes = document.querySelectorAll('.table-input-checkbox');
+    checkboxes.forEach((checkbox) => {
+        if (checkbox.checked) {
+            selectedItems.value.push(checkbox.id);
+        }
+    });
+    console.log("getselectedinstances", selectedItems)
+    return selectedItems.value;
 };
+
 
 const selectAll = () => {
   const allItem = document.getElementById('all-item');
@@ -160,15 +164,10 @@ const unselectAllItems = () => {
 };
 
 const deleteSelectedItems = () => {
+    console.log("deleteSelectedItems" ,selectedItems.value)
   if (confirm('Voulez-vous vraiment supprimer les produits sélectionnés ?')) {
     forEach(selectedItems.value, (item) => {
-      fetch(`http://localhost:3000/api/products/${item}`, {
-        method: 'DELETE',
-      }).then(() => {
-        location.reload();
-      }).catch((error) => {
-        console.log(error);
-      });
+        apiService.delete(instance, selectedItems.value)
     });
   }
 };
@@ -208,7 +207,9 @@ const actionsConfig = ref([
     label: 'Supprimer',
     buttonType: 'button',
     buttonClass: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline',
-    buttonClick: deleteSelectedItems,
+    buttonClick: () => {
+        emit('open', instance, null, getSelectedInstances());
+    },
     showCondition: () => selectedItems.value.length > 0
   }
 ])
