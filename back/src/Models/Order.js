@@ -1,7 +1,4 @@
-const OrderStatus = require("../Enum/orderStatus");
-
 const { DataTypes, Model } = require("sequelize");
-const userMongo = require("../dtos/denormalization/userMongo");
 const orderMongo = require("../dtos/denormalization/orderMongo");
 
 module.exports = function (connection) {
@@ -12,27 +9,9 @@ module.exports = function (connection) {
     }
     static addHooks(db) {
       Order.addHook("afterCreate", async order => {
-        userMongo(
-          order.UserId,
-          db.User,
-          db.Order,
-          db.ProductOrder,
-          db.Product,
-          db.Payment,
-          db.Invoice
-        );
         orderMongo(order.id, db.Order, db.User);
       });
       Order.addHook("afterUpdate", order => {
-        userMongo(
-          order.UserId,
-          db.User,
-          db.Order,
-          db.ProductOrder,
-          db.Product,
-          db.Payment,
-          db.Invoice
-        );
         orderMongo(order.id, db.Order, db.User);
       });
     }

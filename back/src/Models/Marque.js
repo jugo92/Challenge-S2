@@ -1,7 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
-const genericMongo = require("../dtos/denormalization/genericMongo");
-const MarqueMongo = require("../Mongo/Marque");
 
 module.exports = function (connection) {
   class Marque extends Model {
@@ -14,7 +12,6 @@ module.exports = function (connection) {
           db.Marque,
           db.Category
         );
-        genericMongo(marque.id, db.Marque, MarqueMongo);
       });
       Marque.addHook("afterUpdate", marque => {
         productMongo(
@@ -24,7 +21,6 @@ module.exports = function (connection) {
           db.Marque,
           db.Category
         );
-        genericMongo(marque.id, db.Marque, MarqueMongo);
       });
       Marque.addHook("afterDestroy", marque => {
          productMongo(
@@ -35,7 +31,6 @@ module.exports = function (connection) {
           db.Category,
           "destroy"
         );
-        genericMongo(marque.id, db.Marque, MarqueMongo);
       });
     }
   }

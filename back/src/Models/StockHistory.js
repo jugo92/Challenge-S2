@@ -1,5 +1,4 @@
 const { DataTypes, Model } = require("sequelize");
-const stockMongo = require("../dtos/denormalization/stockMongo")
 module.exports = function (connection) {
   class StockHistory extends Model {
     static associate(db) {
@@ -8,11 +7,6 @@ module.exports = function (connection) {
     }
     static addHooks(db) {
       StockHistory.addHook("afterCreate", stock => {
-        stockMongo(
-          stock.id,
-          db.StockHistory,
-          db.Product
-        );
       });
     }
   }

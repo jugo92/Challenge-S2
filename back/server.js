@@ -6,8 +6,8 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 require("./src/Mongo/db");
-const path = require('path');
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const path = require('path');
@@ -21,7 +21,7 @@ const {
   Payment,
   Refund,
   Category,
-  StockHistory
+  StockHistory,
 } = require("./src/Models");
 
 app.use(cors());
@@ -32,15 +32,10 @@ const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
-const users = require("./src/Mongo/User");
-const marques = require("./src/Mongo/Marque");
-const categories = require("./src/Mongo/Category");
 const orders = require("./src/Mongo/Order");
 const payments = require("./src/Mongo/Payment");
-const refunds = require("./src/Mongo/Refund");
 const products = require("./src/Mongo/Product");
-const stocks = require("./src/Mongo/StockHistory");
-const multerMiddleware = require('./src/Middlewares/upload')
+const multerMiddleware = require("./src/Middlewares/upload");
 
 app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
@@ -80,8 +75,7 @@ app.get('/getImage/:imageName', (req, res) => {
 //   res.send('Image uploadée avec succès !');
 // });
 
-
-const createMongoMethods = (collection) => {
+const createMongoMethods = collection => {
   const ms = new MongoService(collection);
 
   return {
@@ -90,33 +84,16 @@ const createMongoMethods = (collection) => {
   };
 };
 
-const genericUserService = new GenericService(User);
-const serviceUserProxy = new Proxy(genericUserService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(users)) {
-      return createMongoMethods(users)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
   routePrefix + "/users",
-  new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
+  new GenericRouter(new GenericController(new GenericService(User))).getRouter()
 );
 
-const genericMarqueService = new GenericService(Marque);
-const serviceMarqueProxy = new Proxy(genericMarqueService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(marques)) {
-      return createMongoMethods(marques)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
-  routePrefix + "/marques",multerMiddleware,
+  routePrefix + "/marques",
+  multerMiddleware,
   new GenericRouter(
-    new GenericController(serviceMarqueProxy)
+    new GenericController(new GenericService(Marque))
   ).getRouter()
 );
 
@@ -131,9 +108,7 @@ const serviceOrderProxy = new Proxy(genericOrderService, {
 });
 app.use(
   routePrefix + "/orders",
-  new GenericRouter(
-    new GenericController(serviceOrderProxy)
-  ).getRouter()
+  new GenericRouter(new GenericController(serviceOrderProxy)).getRouter()
 );
 
 const genericPaymentService = new GenericService(Payment);
@@ -147,24 +122,13 @@ const servicePaymentProxy = new Proxy(genericPaymentService, {
 });
 app.use(
   routePrefix + "/payments",
-  new GenericRouter(
-    new GenericController(servicePaymentProxy)
-  ).getRouter()
+  new GenericRouter(new GenericController(servicePaymentProxy)).getRouter()
 );
 
-const genericCategoryService = new GenericService(Category);
-const serviceCategoryProxy = new Proxy(genericCategoryService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(categories)) {
-      return createMongoMethods(categories)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
   routePrefix + "/categories",
   new GenericRouter(
-    new GenericController(serviceCategoryProxy)
+    new GenericController(new GenericService(Category))
   ).getRouter()
 );
 
@@ -178,41 +142,23 @@ const serviceProductProxy = new Proxy(genericProductService, {
   },
 });
 app.use(
-  routePrefix + "/products",multerMiddleware,
-  new GenericRouter(
-    new GenericController(serviceProductProxy)
-  ).getRouter()
+  routePrefix + "/products",
+  multerMiddleware,
+  new GenericRouter(new GenericController(serviceProductProxy)).getRouter()
 );
 
-const genericStockHistoryService = new GenericService(StockHistory);
-const serviceStockHistoryProxy = new Proxy(genericStockHistoryService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(stocks)) {
-      return createMongoMethods(stocks)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
-  routePrefix + "/stocks",multerMiddleware,
+  routePrefix + "/stocks",
+  multerMiddleware,
   new GenericRouter(
-    new GenericController(serviceStockHistoryProxy)
+    new GenericController(new GenericService(StockHistory))
   ).getRouter()
 );
 
-const genericRefundService = new GenericService(Refund);
-const serviceRefundProxy = new Proxy(genericRefundService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(refunds)) {
-      return createMongoMethods(refunds)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
   routePrefix + "/refunds",
   new GenericRouter(
-    new GenericController(serviceRefundProxy)
+    new GenericController(new GenericService(Refund))
   ).getRouter()
 );
 

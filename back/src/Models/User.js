@@ -1,7 +1,6 @@
 const { Model, DataTypes } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
 const crypto = require("crypto");
-const userMongo = require("../dtos/denormalization/userMongo");
 const fs = require("fs").promises;
 module.exports = function (connection) {
   class User extends Model {
@@ -16,27 +15,9 @@ module.exports = function (connection) {
           .replace("{{name}}", user.lastname.toUpperCase())
           .replace("{{confirmLink}}", verifyRoute + user.token);
         await sendMail(user.email, "Vérifiez votre compte", null, content);
-        userMongo(
-          user.id,
-          db.User,
-          db.Order,
-          db.ProductOrder,
-          db.Product,
-          db.Payment,
-          db.Invoice
-        );
       });
-      User.addHook("afterUpdate", user =>
-        userMongo(
-          user.id,
-          db.User,
-          db.Order,
-          db.ProductOrder,
-          db.Product,
-          db.Payment,
-          db.Invoice
-        )
-      );
+      // User.addHook("afterUpdate", user => 
+      // );
     }
   }
 
