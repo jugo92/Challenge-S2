@@ -53,35 +53,8 @@ const generateDataFacture = async OrderId => {
   };
 };
 
-const getNotificationUsersByType = async(NotificationUser, User,Product,Category,type, productId=null, categoryId=null) => {
-  console.log('LE PRODUCT ID : ', productId);
-  console.log('Le category ID : ', categoryId)
-  console.log('TYPE : ', type)
-  const notificationUsersType = await NotificationUser.findAll({
-    where:{
-      type_id: type,
-      ProductId: productId,
-      CategoryId: categoryId
-    },
-    include: [
-      {
-        model: User,
-      },
-      {
-        model: Product,
-      },
-      {
-        model: Category
-      }
-    ],
-  })
-  console.log("NOTIF : ", notificationUsersType)
-  return notificationUsersType
-}
-
 module.exports = {
   isPasswordExpired,
   base64_encode,
-  generateDataFacture,
-  getNotificationUsersByType
+  generateDataFacture
 };
