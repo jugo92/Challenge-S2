@@ -2,7 +2,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import RegisterVue from "../components/Register.vue";
 import LoginVue from "../components/Login.vue";
-import TestVue from "../components/TestForm.vue";
 import unauthorized from "../pages/unauthorized-page.vue";
 import Products from "../components/Products.vue";
 import HomePage from "../pages/home-page.vue";
@@ -85,19 +84,19 @@ const router = createRouter({
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
-            path: "/marques",
+            path: "/admin/marques",
             name: "ShowAllMarques",
             component: ShowAll,
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
-            path: "/categories",
+            path: "/admin/categories",
             name: "ShowAllCategories",
             component: ShowAll,
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
-            path: "/users",
+            path: "/admin/users",
             name: "ShowAllUsers",
             component: ShowAll,
             props: (route) => ({ instance: route.path.substring(1) })
