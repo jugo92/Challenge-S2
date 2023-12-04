@@ -20,7 +20,8 @@ const {
   Product,
   Payment,
   Refund,
-  Category
+  Category,
+  StockHistory
 } = require("./src/Models");
 
 app.use(cors());
@@ -38,6 +39,7 @@ const orders = require("./src/Mongo/Order");
 const payments = require("./src/Mongo/Payment");
 const refunds = require("./src/Mongo/Refund");
 const products = require("./src/Mongo/Product");
+const stocks = require("./src/Mongo/StockHistory");
 const multerMiddleware = require('./src/Middlewares/upload')
 
 app.use(cookieParser());
@@ -179,6 +181,22 @@ app.use(
   routePrefix + "/products",multerMiddleware,
   new GenericRouter(
     new GenericController(serviceProductProxy)
+  ).getRouter()
+);
+
+const genericStockHistoryService = new GenericService(StockHistory);
+const serviceStockHistoryProxy = new Proxy(genericStockHistoryService, {
+  get(target, prop, receiver) {
+    if (prop in createMongoMethods(stocks)) {
+      return createMongoMethods(stocks)[prop];
+    }
+    return Reflect.get(target, prop, receiver);
+  },
+});
+app.use(
+  routePrefix + "/stocks",multerMiddleware,
+  new GenericRouter(
+    new GenericController(serviceStockHistoryProxy)
   ).getRouter()
 );
 
