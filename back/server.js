@@ -1,13 +1,10 @@
 const express = require("express");
 const app = express();
-const multer = require("multer");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 require("./src/Mongo/db");
-const path = require("path");
-const fs = require("fs");
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const path = require('path');
@@ -44,36 +41,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
-
-app.get('/getImage/:imageName', (req, res) => {
-  const imageName = req.params.imageName;
-  const imagePath = path.join(__dirname, 'uploads', imageName);
-
-  // Vérifiez si le fichier image existe
-  if (fs.existsSync(imagePath)) {
-    // Renvoyer l'image au client avec le bon type MIME
-    res.sendFile(imagePath);
-  } else {
-    res.status(404).send('Image non trouvée');
-  }
-});
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/'); // Le dossier où les fichiers seront enregistrés
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + '-' + file.originalname); // Nom du fichier
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-
-// // Route pour traiter l'upload d'image
-// app.post('/upload', upload.single('image'), (req, res) => {
-//   console.log("reqFile", req.file);
-//   res.send('Image uploadée avec succès !');
-// });
 
 const createMongoMethods = collection => {
   const ms = new MongoService(collection);
