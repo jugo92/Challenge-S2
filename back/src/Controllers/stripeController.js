@@ -7,12 +7,13 @@ const {
   ProductOrder,
   Payment,
   Invoice,
-  User
+  User,
 } = require("../Models/");
 const { uuidv7 } = require("uuidv7");
 const PdfService = require("../Services/pdfService");
 const { sendMail } = require("../Controllers/mailController");
 const ValidationError = require("../errors/ValidationError");
+const fs = require("fs").promises;
 module.exports.initPayment = async (req, res, next) => {
   try {
     const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
@@ -183,12 +184,14 @@ module.exports.getEventPayment = async (req, res) => {
     await pdfService.invoicePdf();
 
     //sendMail with invoice
-    console.log("le user : ", req.user);
+    let content = await fs.readFile(`mails/validateOrder.txt`, "utf8");
+    content = content.replace("{{name}}", user.firstname)
+
     await sendMail(
-      user,
-      "validateOrder",
-      "Votre facture",
-      "./invoice/invoice_" + orderId + ".pdf"
+      user.email,
+      "Votre Facture",
+      "./invoice/invoice_" + orderId + ".pdf",
+      content
     );
   }
   res.json({

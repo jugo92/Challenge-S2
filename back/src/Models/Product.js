@@ -1,8 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
-const { getNotificationUsersByType } = require("../Helper/Utils");
-const { sendNotification } = require("../Controllers/mailController");
-
+const fs = require("fs").promises;
+const { sendMail, sendNotification } = require("../Controllers/mailController");
 module.exports = function (connection) {
   class Product extends Model {
     static associate(db) {
@@ -17,94 +16,77 @@ module.exports = function (connection) {
       );
       Product.addHook("beforeUpdate", async product => {
         const productBeforeUpdate = await Product.findByPk(product.id);
-
         if (product.quantity < productBeforeUpdate.quantity_alert) {
           const admins = await db.User.findAll({
             where: {
               role: "admin",
             },
           });
-          console.log("admin : ", admins);
+          let content = await fs.readFile(`mails/quantityAlert.txt`, "utf8");
+          content = content.replace("{{product_name}}", product.name);
           admins.forEach(async admin => {
-            await sendNotification(
-              "quantityAlert",
-              "Quantité en alerte",
-              admin,
-              product,
+            let contentWithName = content.replace("{{name}}", admin.firstname);
+            await sendMail(
+              admin.email,
+              "Quantité alerte",
               null,
-              5
+              contentWithName
             );
           });
         }
+
         if (product.isPublished) {
           if (
             productBeforeUpdate.quantity < product.quantity &&
             product.isPublished
           ) {
-            const notificationUsers = await getNotificationUsersByType(
-              db.NotificationUser,
-              db.User,
-              db.Product,
-              db.Category,
-              1,
-              product.id,
-              null
+            let content = await fs.readFile(
+              `mails/restockProductNotification.txt`,
+              "utf8"
             );
-            notificationUsers.forEach(async notification => {
-              await sendNotification(
-                "restockProductNotification",
-                "Produit restock",
-                notification.User,
-                notification.Product,
-                notification.Category,
-                1
-              );
-            });
+            await sendNotification(
+              content,
+              "Restock de produit",
+              product.id,
+              null,
+              1,
+              db.User,
+              db.NotificationUser
+            );
           }
           if (product.price != productBeforeUpdate.price) {
-            const notificationUsers = await getNotificationUsersByType(
-              db.NotificationUser,
-              db.User,
-              db.Product,
-              db.Category,
-              2,
-              product.id,
-              null
+            let content = await fs.readFile(
+              `mails/variousPriceProductNotification.txt`,
+              "utf8"
             );
-            notificationUsers.forEach(async notification => {
-              await sendNotification(
-                "variousPriceProductNotification",
-                "Modification de prix",
-                notification.User,
-                notification.Product,
-                notification.Category,
-                2
-              );
-            });
+            content = content.replace("{{new_price}}", product.price)
+            await sendNotification(
+              content,
+              "Nouveau prix !",
+              product.id,
+              null,
+              2,
+              db.User,
+              db.NotificationUser
+            );
           }
           if (
             product.CategoryId != productBeforeUpdate.CategoryId &&
             product.CategoryId != null
           ) {
-            const notificationUsers = await getNotificationUsersByType(
-              db.NotificationUser,
-              db.User,
-              db.Product,
-              db.Category,
-              3,
-              null,
-              product.CategoryId
+            let content = await fs.readFile(
+              `mails/newCategoryProductNotification.txt`,
+              "utf8"
             );
-            notificationUsers.forEach(async notification => {
-              await sendNotification(
-                "newCategoryProductNotification",
-                "Nouveau Produit",
-                notification.User,
-                notification.Product,
-                notification.Category,
-                3
-              );
-            });
+            await sendNotification(
+              content,
+              "Nouveau Produit !",
+              null,
+              product.CategoryId,
+              3,
+              db.User,
+              db.NotificationUser
+            );
           }
         }
       });
