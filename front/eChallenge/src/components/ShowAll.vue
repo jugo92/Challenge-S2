@@ -3,20 +3,20 @@
         <span class="font-bold text-2xl">List of {{$route.path.substring(1)}}</span>
 
         <Modal
-            title="test"
+            :title = instance
             content="formBuilder"
             :show="isModalVisible"
             @close="closeModal"
             :formConfig="formConfig"
         />
         <div>
-            <TabBuilder :columns="tableColumns" :data="tableData" @open="openModalInstance" />
+            <TabBuilder :columns="tableColumns" :data="tableData" @open="openModalInstance" :update="fetchListOfItems" :pageIndex="pageIndex"/>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue';
+import {onMounted, provide, reactive, ref, watch} from 'vue';
 import { z } from "zod";
 import {useModal} from "./Modal/useModal.ts";
 import {useForm} from "./Form/formHelper.ts";
@@ -24,13 +24,12 @@ import TabBuilder from "./Table/TableBuilder.vue";
 import Modal from "./Modal/Modal.vue";
 
 const { isModalVisible, openModal, closeModal } = useModal();
-const { reinitForm, validateField, handleFileChange, listFormData } = useForm()
 
 const instance = window.location.pathname.substring(1);
 let isUpdateItem = ref(null);
 
 import {apiService} from "../services/apiService.ts";
-import {forEach, isEmpty} from "lodash";
+import {forEach, isEmpty, random} from "lodash";
 import path from "path";
 import fs from "fs";
 
@@ -650,12 +649,10 @@ const getInstanceFormConfig = (instance) => {
 /////////////////////////////
 ///   FONCTIONS OUTILS   ///
 ////////////////////////////
-let currentPage = 1;
-let limit = 2;
 const fetchListOfItems = async () => {
     const includedProperties = getIncludedProperties(instance);
     try {
-        const response = await fetch('http://localhost:3000/api/' + instance + "?page=" + currentPage + "&limit=" + limit);
+        const response = await fetch('http://localhost:3000/api/' + instance + "?page=" + pageIndex.currentPage + "&limit=" + pageIndex.limit);
         const data = await response.json();
         tableData.value = data.map((item) => {
             const filteredItem = {};
@@ -812,6 +809,10 @@ const updatePrixTTCAfterPromotion = () => {
 };
 
 let formConfig = ref([]);
+const pageIndex = reactive({
+    limit: 1,
+    currentPage: 1,
+})
 
 onMounted(async () => {
     formConfig.value = getInstanceFormConfig(instance);

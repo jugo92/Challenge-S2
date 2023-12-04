@@ -1,5 +1,7 @@
 import { z } from "zod";
-import { ref } from "vue";
+import {apiService} from "../../services/apiService.ts";
+import {inject, provide, ref} from "vue";
+import {forEach} from "lodash";
 interface FormField {
     label: string;
     type: 'text' | 'textarea' | 'select' | 'number' | 'label' | 'button' | 'search' | 'checkbox' | 'email' | 'file';
@@ -28,6 +30,7 @@ interface FormField {
 }
 
 export function useForm(formConfig: FormField[]) {
+    const instance = inject('instance');
     const listFormData = ref([]);
     const showField = (field: FormField) => {
         return !field.showCondition || (field.showCondition && field.showCondition());

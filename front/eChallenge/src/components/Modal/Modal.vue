@@ -16,13 +16,13 @@ const closeModal = () => {
         <div v-if="show" class="overlay"></div>
         <!-- Modal -->
         <div v-if="show" id="default-modal" tabindex="-1" aria-hidden="true" class="ab overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-10 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-            <div class="m-auto p-4 w-full max-w-2xl max-h-full">
+            <div class="m-auto p-4 w-full max-h-full" :class="{['max-w-2xl'] : formConfig.length<10, ['max-w-6xl'] : formConfig.length>10}">
                 <!-- Modal content -->
                 <div class="bg-white rounded-lg shadow">
                     <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            {{ props.title }}
+                            {{ props.title }} {{ formConfig.length }}
                         </h3>
                         <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal" @click="closeModal(); reinitForm(formConfig)">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -33,7 +33,7 @@ const closeModal = () => {
                     </div>
                     <!-- Modal body -->
                     <div class="p-4 md:p-5 space-y-4" v-if="content=='formBuilder'">
-                      <FormBuilder :formFields="formConfig" format="column"/>
+                      <FormBuilder :formFields="formConfig" format="row"/>
                     </div>
                     <!-- Modal footer -->
                     <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">

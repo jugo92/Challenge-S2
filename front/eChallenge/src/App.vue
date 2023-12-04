@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue';
+import {onMounted, provide} from "vue";
 // import TopBar from './components/TopBar.vue';
 
-
+onMounted(() => {
+    const instance = window.location.pathname.substring(1)
+    provide('instance', instance)
+});
 </script>
 
 <template>
@@ -14,4 +18,3 @@ import Navbar from './components/Navbar.vue';
         </div>
     </div>
 </template>
-
