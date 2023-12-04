@@ -1,0 +1,18 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajout de Produit à une Catégorie</title>
+</head>
+<body>
+    <div>
+        <h2>Ajout de Produit à une Catégorie</h2>
+        <p>Bonjour {{name}},</p>
+        <p>Nous sommes ravis de vous informer qu'un nouveau produit a été ajouté à la catégorie que vous suivez.</p>
+        <p><a href="METTRE LE LIEN WARNING">Découvrez la nouvelle collection ici</a></p>
+        <p>Restez à jour avec nos derniers ajouts et continuez à profiter de nos produits de qualité.</p>
+        <p>Merci de faire partie de notre communauté.</p>
+        <p>Cordialement,<br>Votre équipe Oh'PC</p>
+    </div>
+</body>
+</html>

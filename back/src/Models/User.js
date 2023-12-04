@@ -165,22 +165,6 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      product_category_alert:{
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      restock_product_alert: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      change_price_alert : {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      newsletter_alert : {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      }
     },
     {
       sequelize: connection,
