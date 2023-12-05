@@ -180,9 +180,11 @@ module.exports = function (connection) {
 
   User.addHook("beforeUpdate", async function (user, { fields }) {
     if (fields.includes("password")) {
+      const token = crypto.randomBytes(30).toString("hex");
       const bcrypt = require("bcryptjs");
       const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
       user.password = hash;
+      user.token = token;
     }
   });
 
