@@ -1,4 +1,4 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import { onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -11,7 +11,7 @@ const router = useRouter();
 <template>
     <div id="app">
         <Navbar />
-<!--    <TopBar />-->
+ <!--   <TopBar />-->
         <div class="min-w-fit my-20 md:mx-20 lg:mx-52 m-5">
             <router-view></router-view>
         </div>

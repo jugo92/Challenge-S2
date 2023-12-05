@@ -80,7 +80,7 @@
                     <div class="pl-1">
                  
                     </div>
-                     <p  class="text-center">  {{ user.firstname }} {{ user.lastname }}</p>
+                     <!-- <p  class="text-center">  {{ user.firstname }} {{ user.lastname }}</p> -->
                   
 
                     <div class="block flex-grow-0 flex-shrink-0 h-10 w-12 pl-5">

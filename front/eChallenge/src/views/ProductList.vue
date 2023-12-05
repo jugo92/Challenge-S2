@@ -9,19 +9,9 @@ const itemsPerPage = 24;
 const currentPage = ref(1);
 const cart = ref([]);
 
-
-
 const performSearch = () => {
   store.commit('setFilterPost', filterPost.value);
 };
-
-
-onMounted(async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-  const data = await response.json();
-  posts.value = data;
-  
-});
 
 const paginatedPosts = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
@@ -37,7 +27,6 @@ const changePage = (page) => {
   }
 };
 
-
 const store = useStore(); 
 const addToCart = (product) => {
   if(store.state.isLoggedIn){
@@ -45,20 +34,19 @@ const addToCart = (product) => {
 }else{
   router.push('/login');
 }
-
 };
+onMounted(async () => {
+  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+  const data = await response.json();
+  posts.value = data;
+  
+});
 
 </script>
 
 <template>
-
 <h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
-
 <Filter :filteredProperties="filteredProperties" @update-filter="updateFilter" />
-
-
-    </div>
-
     <section class="mt-12">
       <div class="px-4 mx-auto max-w-7xl">
         <div class="flex flex-wrap -mx-4">
@@ -67,7 +55,7 @@ const addToCart = (product) => {
               <RouterLink :to="`/products/${post.id}`">
                 <div class="relative overflow-hidden">
                   <div class="mb-5 overflow-hidden">
-                    <img class="object-cover w-full mx-auto transition-all rounded h-72 hover:scale-110" src="https://zupimages.net/up/23/46/fife.jpg" alt="">
+                    <img class="object-cover w-full mx-auto transition-all rounded h-72 hover:scale-110" src="https://zupimages.net/up/23/46/fife.jpg" alt="" />
                   </div>
                 </div>
               </RouterLink>
@@ -85,6 +73,9 @@ const addToCart = (product) => {
                   </button>
               </div>
             </div>
+          </div>
+          </div>
+        </div>
       </section>
  
   <div class="flex flex-wrap justify-center">
@@ -94,8 +85,7 @@ const addToCart = (product) => {
       <li
         v-if="currentPage > 1"
         @click="changePage(currentPage - 1)"
-        class="cursor-pointer border border-gray-300 rounded-full text-gray-500 hover:bg-gray-200 hover:border-gray-200 bg-white"
-      >
+        class="cursor-pointer border border-gray-300 rounded-full text-gray-500 hover:bg-gray-200 hover:border-gray-200 bg-white">
         <a class="w-8 h-8 flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -150,7 +140,6 @@ const addToCart = (product) => {
    
   </div>
 </template>
-
 
 
 <style scoped>

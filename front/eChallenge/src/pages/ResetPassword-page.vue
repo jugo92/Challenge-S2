@@ -1,12 +1,9 @@
 <script setup>
-import FormBuilder from '../components/FormBuilder.vue';
 import {useStore} from 'vuex';
 import {ref} from 'vue';
+import FormBuilder from '../components/Form/FormBuilder.vue';
 
 const store = useStore();
-
-
-
 const submitButtonText = 'Réinitialiser le mot de passe';
 
 const fields = [

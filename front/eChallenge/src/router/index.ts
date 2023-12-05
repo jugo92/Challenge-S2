@@ -78,7 +78,7 @@ const router = createRouter({
             component: LoginVue,
         },
         {
-            path: "/products",
+            path: "/admin/products",
             name: "ShowAllProducts",
             component: ShowAll,
             props: (route) => ({ instance: route.path.substring(1) })

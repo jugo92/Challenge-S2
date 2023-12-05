@@ -4,7 +4,7 @@
   import { ref, onMounted } from 'vue';
   import { Icon } from '@iconify/vue';
   import {useStore} from 'vuex';
-  import FormBuilder from '../components/FormBuilder.vue';
+  import FormBuilder from '../components/Form/FormBuilder.vue';
 
   const store = useStore();
   const messageSuccess = ref(false);
