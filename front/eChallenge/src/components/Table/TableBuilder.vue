@@ -36,9 +36,9 @@
     <nav class="pagination" aria-label="Table navigation">
       <span>
     <select v-model="props.pageIndex.limit" id="selectOption" @change="props.update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-32 p-2.5">
-      <option value="1" selected>10 par page</option>
-      <option value="2">20 par page</option>
-      <option value="5">50 par page</option>
+      <option value="2" selected>10 par page</option>
+      <option value="20">20 par page</option>
+      <option value="50">50 par page</option>
       <option value="">Tout</option>
     </select>
       </span>
@@ -87,7 +87,15 @@ const instance = currentPath.substring(currentPath.lastIndexOf('/') + 1);
 const filteredData = computed(() => {
     let filteredData = [...props.data];
     for (const key in filters.value) {
-        if (filters.value[key]) {
+        if(filters.value[key] && key.includes(".")){
+            const [firstKey, secondKey] = key.split(".");
+            filteredData = filteredData.filter((row) => {
+                   console.log(row)
+               if(row) {
+                String(row[firstKey][secondKey]).toLowerCase().includes(filters.value[key].toLowerCase())
+               }
+            });
+        } else if (filters.value[key]) {
             filteredData = filteredData.filter((row) =>
                 String(row[key]).toLowerCase().includes(filters.value[key].toLowerCase())
             );

@@ -42,8 +42,8 @@ const getTableColumns = (instance) => {
         case 'products':
             return [
                 { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
-                { key: 'category', label: 'Catégorie', filter: true },
-                { key: 'brands', label: 'Marque', filter: true },
+                { key: 'Category.name', label: 'Catégorie', filter: true },
+                { key: 'brandS', label: 'Marque', filter: true },
                 { key: 'price', label: 'Prix', filter: true },
                 { key: 'quantity', label: 'Quantité', filter: true },
                 { key: 'state', label: 'État', filter: true },
@@ -322,13 +322,6 @@ const getInstanceFormConfig = (instance) => {
                     showCondition: () => true
                 },
                 {
-                    label: 'Publier',
-                    type: 'checkbox',
-                    name: 'isPublished',
-                    isChecked: false,
-                    showCondition: () => true
-                },
-                {
                     label: "Résolution",
                     type: "text",
                     name: "resolution",
@@ -527,6 +520,13 @@ const getInstanceFormConfig = (instance) => {
                     label: 'Ajouter une image',
                     type: 'file',
                     name: 'images',
+                    showCondition: () => true
+                },
+                {
+                    label: 'Publier',
+                    type: 'checkbox',
+                    name: 'isPublished',
+                    isChecked: false,
                     showCondition: () => true
                 },
                 {
@@ -787,14 +787,13 @@ const isExist = () => {
 
 const updatePrixHT = () => {
     const prixTTCField = formConfig.value.find(field => field.name === 'prixTTC');
-    const tvasField = formConfig.value.find(field => field.name === 'tvas');
-    const selectedTva = tvasField.options.find(option => option.id === tvasField.value);
+    const tvasField = formConfig.value.find(field => field.name ===
+        'tva');
 
-    const prixTTC = prixTTCField.value || 0;
-    const tva = selectedTva ? selectedTva.taux : 0;
+    console.log("updateprixht : ", prixTTCField, tvasField)
 
-    const prixHT = prixTTC - (prixTTC * tva / 100);
-    formConfig.value.find(field => field.name === 'prixHT').value = prixHT.toFixed(2);
+    // const prixHT = prixTTC - (prixTTC * tva / 100);
+    // formConfig.value.find(field => field.name === 'prixHT').value = prixHT.toFixed(2);
 };
 
 const updatePrixTTCAfterPromotion = () => {
@@ -810,7 +809,7 @@ const updatePrixTTCAfterPromotion = () => {
 
 let formConfig = ref([]);
 const pageIndex = reactive({
-    limit: 1,
+    limit: 2,
     currentPage: 1,
 })
 

@@ -1,21 +1,23 @@
 <template>
     <div class="mx-auto w-full p-6 rounded-md">
-        <form enctype="multipart/form-data" class="grid grid-cols-2">
-            <div v-for="(field, index) in formFields" :key="index" :class="{['grid grid-cols-2 gap-5 flex'] : format==='row', ['flex flex-col w-full'] : format==='column'}" class="mb-2">
+        <form enctype="multipart/form-data" :class="{['grid grid-cols-2'] : format==='row'}">
+            <div v-for="(field, index) in formFields" :key="index" :class="{['px-4'] : format==='row', ['flex flex-col w-full'] : format==='column'}" class="mb-4">
                 <temsplate class="col-span-1">
                     <template v-if="field.type !== 'button'">
                         <!-- Label -->
-                        <template v-if="field.type === 'label' && showField(field)">
+                        <template v-if="field.type === 'label' && showField(field)" class="h-full">
+                            <div class="justify-center items-center flex h-full">
                             <label :for="field.name" class="block text-gray-700 text-sm mb-2">
                                 <b>{{ field.label }}</b>&nbsp; {{ field.value }} €
                             </label>
+                            </div>
                         </template>
                         <template v-if="field.type === 'checkbox' && showField(field)">
                             <label :for="field.name" class="block text-gray-700 text-sm mb-2">
                                 <input :type="field.type" :id="field.name" :name="field.name" v-model="field.isChecked" class="mr-2 leading-tight"> <b>{{ field.label }}</b>&nbsp;
                             </label>
                         </template>
-                        <template v-else-if="field.type !== 'button' && showField(field)">
+                        <template v-else-if="field.type !== 'button'&& field.type !== 'label' && showField(field)">
                             <label :for="field.name" class="block text-gray-700 text-sm font-bold mb-2">{{ field.label }} <span class="text-red-600" v-if="field.required">*</span></label>
                         </template>
 
