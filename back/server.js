@@ -5,8 +5,6 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config({ path: ".env" });
 require("./src/Mongo/db");
-const { Op } = require('sequelize');
-const { sendMail } = require("./src/Controllers/mailController");
 const ValidationError = require("./src/errors/ValidationError");
 const Security = require("./src/Routes/security");
 const path = require('path');
@@ -36,50 +34,10 @@ const payments = require("./src/Mongo/Payment");
 const products = require("./src/Mongo/Product");
 const multerMiddleware = require("./src/Middlewares/upload");
 const cron = require("node-cron");
-const fs = require("fs").promises;
+const { initCron } = require("./src/Cron/index");
 
 cron.schedule("*/5 * * * * *", async () => {
-  try {
-    const maintenant = new Date();
-    const debut60Jours = new Date(maintenant);
-    debut60Jours.setHours(0, 0, 0, 0); // Début de la journée (00:00:00)
-
-    const fin59Jours = new Date(maintenant);
-    fin59Jours.setHours(23, 59, 59, 999); // Fin du 59e jour (23:59:59.999)
-
-    const fin60Jours = new Date(maintenant);
-    fin60Jours.setDate(maintenant.getDate() - 58);
-    fin60Jours.setHours(23, 59, 59, 999); // Fin du 60e jour (23:59:59.999)
-
-    const users = await User.findAll({
-      where: {
-        lastPasswordChange: {
-          [Op.between]: [debut60Jours, fin60Jours],
-        },
-      },
-    });
-    console.log(users);
-
-    // const content = await fs.readFile(
-    //   `mails/remindPasswordChange.txt`,
-    //   "utf8"
-    // );
-
-    // for (const user of users) {
-    //   const contentWithName = content.replace(
-    //     "{{name}}",
-    //     user.firstname.toUpperCase()
-    //   );
-    //   await sendMail(
-    //     user.email,
-    //     "Ca fait 60 jours",
-    //     null,
-    //     contentWithName
-    //   );
-    // }
-  } catch (error) {
-    console.error("Erreur lors de l'exécution du cron job :", error);
-  }
+  initCron();
 });
 
 app.use(cookieParser());
