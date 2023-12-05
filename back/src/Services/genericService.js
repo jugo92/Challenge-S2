@@ -7,10 +7,25 @@ class GenericService {
   }
 
   async getAll(req, res) {
-    const models = await this.Model.findAll({
-      where: req.query,
-    });
-    return res.status(200).json(models);
+    const { page: reqPage, limit: reqLimit, ...filters } = req.query;
+    const page = parseInt(reqPage) || 1;
+    const limit = parseInt(reqLimit) || 10;
+    const offset = (page - 1) * limit;
+
+    try {
+      // Récupérer les modèles avec la pagination
+      const models = await this.Model.findAll({
+        where: filters,
+        limit,
+        offset,
+      });
+
+      const countTotal = await this.Model.count({ where: filters });
+      return res.status(200).json({ models, countTotal });
+    } catch (error) {
+      console.error("Une erreur s'est produite :", error);
+      return res.status(500).json({ error: "Erreur interne du serveur" });
+    }
   }
 
   async getById(req, res) {

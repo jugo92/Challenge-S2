@@ -5,6 +5,8 @@ const PaymentSchema = new connection.Schema({
   amount: Number,
   status: String,
   User: Object,
+  Invoice: Object,
+  Order: Object
 });
 
 const Payment = new connection.model("Payment", PaymentSchema);

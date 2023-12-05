@@ -3,7 +3,7 @@ module.exports = async (
   modelId,
   key,
   Product,
-  Marque,
+  Brand,
   Category,
   event = "update"
 ) => {
@@ -16,7 +16,7 @@ module.exports = async (
         model: Category,
       },
       {
-        model: Marque,
+        model: Brand,
       },
     ],
   });
@@ -62,7 +62,7 @@ module.exports = async (
       operatingSystem: product.dataValues.operatingSystem,
       cpu: product.dataValues.cpu,
       gpu: product.dataValues.gpu,
-      Marque: product.dataValues.Marque?.dataValues,
+      Brand: product.dataValues.Brand?.dataValues,
       Category: product.dataValues.Category?.dataValues,
     };
 

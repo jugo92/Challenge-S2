@@ -1,0 +1,17 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification de Restock</title>
+</head>
+<body>
+    <div>
+        <h2>Notification de Restock</h2>
+        <p>Bonjour {{name}},</p>
+        <p>Le produit que vous avez demandé est à nouveau disponible en stock. Ne manquez pas cette opportunité !</p>
+        <p><a href="METTRE LE LIEN WARNING">Cliquez ici pour voir le produit</a></p>
+        <p>Merci de faire partie de notre communauté.</p>
+        <p>Cordialement,<br>Votre équipe Oh'PC</p>
+    </div>
+</body>
+</html>

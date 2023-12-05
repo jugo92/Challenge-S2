@@ -9,7 +9,10 @@ const OrderSchema = new connection.Schema({
   city: String,
   zip: String,
   phone: String,
+  tracking_url: String,
   User: Object,
+  Invoice:Object,
+  Products: Array
 });
 
 const Order = new connection.model("Order", OrderSchema);

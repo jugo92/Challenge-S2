@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const multer = require("multer");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -14,11 +13,12 @@ const port = process.env.PORT;
 const {
   User,
   Order,
-  Marque,
+  Brand,
   Product,
   Payment,
   Refund,
-  Category
+  Category,
+  StockHistory,
 } = require("./src/Models");
 
 app.use(cors());
@@ -29,14 +29,16 @@ const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
-const users = require("./src/Mongo/User");
-const marques = require("./src/Mongo/Marque");
-const categories = require("./src/Mongo/Category");
 const orders = require("./src/Mongo/Order");
 const payments = require("./src/Mongo/Payment");
-const refunds = require("./src/Mongo/Refund");
 const products = require("./src/Mongo/Product");
-const multerMiddleware = require('./src/Middlewares/upload')
+const multerMiddleware = require("./src/Middlewares/upload");
+const cron = require("node-cron");
+const { initCron } = require("./src/Cron/index");
+
+// cron.schedule("*/5 * * * * *", async () => {
+//   initCron();
+// });
 
 app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
@@ -46,37 +48,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
 
-app.get('/getImage/:imageName', (req, res) => {
-  const imageName = req.params.imageName;
-  const imagePath = path.join(__dirname, 'uploads', imageName);
-
-  // Vérifiez si le fichier image existe
-  if (fs.existsSync(imagePath)) {
-    // Renvoyer l'image au client avec le bon type MIME
-    res.sendFile(imagePath);
-  } else {
-    res.status(404).send('Image non trouvée');
-  }
-});
-
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, 'uploads/'); // Le dossier où les fichiers seront enregistrés
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, Date.now() + '-' + file.originalname); // Nom du fichier
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-
-// // Route pour traiter l'upload d'image
-// app.post('/upload', upload.single('image'), (req, res) => {
-//   console.log("reqFile", req.file);
-//   res.send('Image uploadée avec succès !');
-// });
-
-const createMongoMethods = (collection) => {
+const createMongoMethods = collection => {
   const ms = new MongoService(collection);
 
   return {
@@ -85,33 +57,16 @@ const createMongoMethods = (collection) => {
   };
 };
 
-const genericUserService = new GenericService(User);
-const serviceUserProxy = new Proxy(genericUserService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(users)) {
-      return createMongoMethods(users)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
   routePrefix + "/users",
-  new GenericRouter(new GenericController(serviceUserProxy)).getRouter()
+  new GenericRouter(new GenericController(new GenericService(User))).getRouter()
 );
 
-const genericMarqueService = new GenericService(Marque);
-const serviceMarqueProxy = new Proxy(genericMarqueService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(marques)) {
-      return createMongoMethods(marques)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
-  routePrefix + "/marques",multerMiddleware,
+  routePrefix + "/brands",
+  multerMiddleware,
   new GenericRouter(
-    new GenericController(serviceMarqueProxy)
+    new GenericController(new GenericService(Brand))
   ).getRouter()
 );
 
@@ -126,9 +81,7 @@ const serviceOrderProxy = new Proxy(genericOrderService, {
 });
 app.use(
   routePrefix + "/orders",
-  new GenericRouter(
-    new GenericController(serviceOrderProxy)
-  ).getRouter()
+  new GenericRouter(new GenericController(serviceOrderProxy)).getRouter()
 );
 
 const genericPaymentService = new GenericService(Payment);
@@ -142,24 +95,13 @@ const servicePaymentProxy = new Proxy(genericPaymentService, {
 });
 app.use(
   routePrefix + "/payments",
-  new GenericRouter(
-    new GenericController(servicePaymentProxy)
-  ).getRouter()
+  new GenericRouter(new GenericController(servicePaymentProxy)).getRouter()
 );
 
-const genericCategoryService = new GenericService(Category);
-const serviceCategoryProxy = new Proxy(genericCategoryService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(categories)) {
-      return createMongoMethods(categories)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
   routePrefix + "/categories",
   new GenericRouter(
-    new GenericController(serviceCategoryProxy)
+    new GenericController(new GenericService(Category))
   ).getRouter()
 );
 
@@ -173,25 +115,23 @@ const serviceProductProxy = new Proxy(genericProductService, {
   },
 });
 app.use(
-  routePrefix + "/products",multerMiddleware,
+  routePrefix + "/products",
+  multerMiddleware,
+  new GenericRouter(new GenericController(serviceProductProxy)).getRouter()
+);
+
+app.use(
+  routePrefix + "/stocks",
+  multerMiddleware,
   new GenericRouter(
-    new GenericController(serviceProductProxy)
+    new GenericController(new GenericService(StockHistory))
   ).getRouter()
 );
 
-const genericRefundService = new GenericService(Refund);
-const serviceRefundProxy = new Proxy(genericRefundService, {
-  get(target, prop, receiver) {
-    if (prop in createMongoMethods(refunds)) {
-      return createMongoMethods(refunds)[prop];
-    }
-    return Reflect.get(target, prop, receiver);
-  },
-});
 app.use(
   routePrefix + "/refunds",
   new GenericRouter(
-    new GenericController(serviceRefundProxy)
+    new GenericController(new GenericService(Refund))
   ).getRouter()
 );
 
