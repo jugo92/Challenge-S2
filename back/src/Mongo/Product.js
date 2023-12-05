@@ -26,7 +26,7 @@ const ProductSchema = new connection.Schema({
   operatingSystem: String,
   cpu: String,
   gpu: String,
-  Marque: Object,
+  Brand: Object,
   Category: Object,
 });
 

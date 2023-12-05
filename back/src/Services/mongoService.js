@@ -11,7 +11,10 @@ class MongoService {
       .skip((page - 1) * limit)
       .limit(limit);
     const models = await query.exec();
-    return res.status(200).json(models);
+    const countQuery = this.Model.countDocuments(filters);
+
+    const countTotal = await countQuery.exec();
+    return res.status(200).json({ models, countTotal });
   }
 
   async getById(req, res) {
@@ -19,11 +22,11 @@ class MongoService {
       const model = await this.Model.findById(req.params.id);
       if (!model) {
         return res.status(404);
-      } 
+      }
       res.status(200).json(model);
     } catch (error) {
-      console.error('Erreur lors de la récupération', error);
-      res.status(500).json({ message: 'Erreur serveur' });
+      console.error("Erreur lors de la récupération", error);
+      res.status(500).json({ message: "Erreur serveur" });
     }
   }
 }

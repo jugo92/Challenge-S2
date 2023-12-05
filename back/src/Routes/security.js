@@ -7,6 +7,8 @@ const { uuidv7 } = require("uuidv7");
 const { isPasswordExpired } = require("../Helper/Utils");
 const { sendMail } = require("../Controllers/mailController");
 const router = new Router();
+const fs = require("fs").promises;
+const crypto = require("crypto");
 
 router.post("/login", async (req, res, next) => {
   try {
@@ -31,7 +33,14 @@ router.post("/login", async (req, res, next) => {
         })
       );
     }
-    if(!user.isVerified) {
+    if(!user.isActive){
+      return next(
+        new ValidationError({
+          isActive: "Votre compte est désactivé.",
+        })
+      )
+    }
+    if (!user.isVerified) {
       return next(
         new ValidationError({
           accountLocked: "Votre compte n'a pas ete verifie",
@@ -39,22 +48,10 @@ router.post("/login", async (req, res, next) => {
       );
     }
 
-    
     if (user.loginAttempts >= 3) {
       return next(
         new ValidationError({
           accountLocked: "Compte bloque",
-        })
-      );
-    }
-
-    if (
-      user.lastPasswordChange &&
-      isPasswordExpired(user.lastPasswordChange, 60)
-    ) {
-      return next(
-        new ValidationError({
-          expired: "Mot de passe expire.",
         })
       );
     }
@@ -67,8 +64,6 @@ router.post("/login", async (req, res, next) => {
         })
       );
     }
-    //check if acc is verified
-
     await user.update({ loginAttempts: 0 });
 
     const token = createToken(user);
@@ -110,15 +105,17 @@ router.post("/forget-password", async (req, res, next) => {
   try {
     const user = await User.findOne({
       where: {
-        email: req.body.email
-      }
-    })
-    console.log(user)
-    if(user !== null){
-      sendMail(user, 'forgetPassword')
-       res.status(200);
-    }else{
-       res.status(400).send();
+        email: req.body.email,
+      },
+    });
+    if (user !== null) {
+      let content = await fs.readFile(`mails/forgetPassword.txt`, "utf8");
+      const token = crypto.randomBytes(30).toString("hex");
+      content = content.replace("{{your_token}}", token);
+      sendMail(user.email, "Reinitialiser votre mot de passe", null, content);
+      res.status(200).send();
+    } else {
+      res.status(200).send();
     }
   } catch (error) {
     if (

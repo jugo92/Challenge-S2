@@ -47,7 +47,7 @@ const generateDataFacture = async OrderId => {
         description: productOrder.dataValues.Product.dataValues.name,
         price: productOrder.dataValues.Product.dataValues.price,
         "tax-rate":
-          productOrder.dataValues.Product.dataValues.tva.dataValues.rate,
+          productOrder.dataValues.Product.tva,
       };
     }),
   };
@@ -56,5 +56,5 @@ const generateDataFacture = async OrderId => {
 module.exports = {
   isPasswordExpired,
   base64_encode,
-  generateDataFacture,
+  generateDataFacture
 };

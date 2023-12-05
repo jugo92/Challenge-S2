@@ -1,8 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
-const genericMongo = require("../dtos/denormalization/genericMongo");
-const CategoryMongo = require("../Mongo/Category");
-
 module.exports = function (connection) {
   class Category extends Model {
     static addHooks(db) {
@@ -11,31 +8,28 @@ module.exports = function (connection) {
           category.id,
           "CategoryId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category
         );
-        genericMongo(category.id, db.Category, CategoryMongo);
       });
       Category.addHook("afterUpdate", category => {
         productMongo(
           category.id,
           "CategoryId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category
         );
-        genericMongo(category.id, db.Cateory, CategoryMongo);
       });
       Category.addHook("afterDestroy", category => {
         productMongo(
           null,
           "CategoryId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category,
           "destroy"
         );
-        genericMongo(category.id, db.Category, CategoryMongo);
       });
     }
   }

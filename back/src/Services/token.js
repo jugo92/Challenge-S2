@@ -6,6 +6,7 @@ exports.createToken = function (user) {
       id: user.id,
       firstname: user.firstname,
       lastname: user.lastname,
+      email: user.email
     },
     process.env.JWT_SECRET,
     {

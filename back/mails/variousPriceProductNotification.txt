@@ -1,0 +1,19 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changement de Prix</title>
+</head>
+<body>
+    <div>
+        <h2>Changement de Prix</h2>
+        <p>Bonjour {{name}},</p>
+        <p>Le prix du produit auquel vous êtes abonné a récemment changé. Voici les détails :</p>
+        <p>Nouveau Prix: {{new_price}}</p>
+        <p><a href="NE PAS OUBLIER LE LIEN WARNING">Cliquez ici pour voir le produit</a></p>
+        <p>Nous espérons que cela ne vous cause aucun inconvénient et que vous continuerez à apprécier nos produits.</p>
+        <p>Merci de faire partie de notre communauté.</p>
+        <p>Cordialement,<br>Votre équipe Oh'PC</p>
+    </div>
+</body>
+</html>

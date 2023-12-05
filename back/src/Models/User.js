@@ -1,33 +1,23 @@
 const { Model, DataTypes } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
 const crypto = require("crypto");
-const userMongo = require("../dtos/denormalization/userMongo");
+const fs = require("fs").promises;
 module.exports = function (connection) {
   class User extends Model {
     static addHooks(db) {
       User.addHook("afterCreate", async user => {
-        await sendMail(user.dataValues, "validateUserAccount");
-        userMongo(
-          user.id,
-          db.User,
-          db.Order,
-          db.ProductOrder,
-          db.Product,
-          db.Payment,
-          db.Invoice
+        const verifyRoute = "http://localhost:3000/api/verify/";
+        let content = await fs.readFile(
+          `mails/validateUserAccount.txt`,
+          "utf8"
         );
+        content = content
+          .replace("{{name}}", user.lastname.toUpperCase())
+          .replace("{{confirmLink}}", verifyRoute + user.token);
+        await sendMail(user.email, "Vérifiez votre compte", null, content);
       });
-      User.addHook("afterUpdate", user =>
-        userMongo(
-          user.id,
-          db.User,
-          db.Order,
-          db.ProductOrder,
-          db.Product,
-          db.Payment,
-          db.Invoice
-        )
-      );
+      // User.addHook("afterUpdate", user => 
+      // );
     }
   }
 
@@ -37,26 +27,26 @@ module.exports = function (connection) {
       firstname: {
         type: DataTypes.STRING(45),
         validate: {
-          len: [2, 45], 
+          len: [2, 45],
         },
-        allowNull: false
+        allowNull: false,
       },
       lastname: {
         type: DataTypes.STRING(45),
         validate: {
-          len: [2, 45], 
+          len: [2, 45],
         },
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: DataTypes.TEXT,
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: 'L\'adresse e-mail ne peut pas être vide.',
+            msg: "L'adresse e-mail ne peut pas être vide.",
           },
           isEmail: {
-            msg: 'Veuillez fournir une adresse e-mail valide.',
+            msg: "Veuillez fournir une adresse e-mail valide.",
           },
         },
       },
@@ -65,10 +55,13 @@ module.exports = function (connection) {
         allowNull: false,
         validate: {
           isStrongPassword(value) {
-            const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
-      
+            const strongPasswordRegex =
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+
             if (!strongPasswordRegex.test(value)) {
-              throw new Error('Le mot de passe doit avoir au moins 12 caractères avec au moins une majuscule, un chiffre et un caractère spécial.');
+              throw new Error(
+                "Le mot de passe doit avoir au moins 12 caractères avec au moins une majuscule, un chiffre et un caractère spécial."
+              );
             }
           },
         },
@@ -82,11 +75,11 @@ module.exports = function (connection) {
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: 'L\'adresse ne peut pas être vide.',
+            msg: "L'adresse ne peut pas être vide.",
           },
           len: {
             args: [2, 255], // Ajustez les valeurs minimales et maximales selon vos besoins
-            msg: 'L\'adresse doit avoir entre 2 et 255 caractères.',
+            msg: "L'adresse doit avoir entre 2 et 255 caractères.",
           },
         },
       },
@@ -95,11 +88,11 @@ module.exports = function (connection) {
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: 'L\'adresse ne peut pas être vide.',
+            msg: "L'adresse ne peut pas être vide.",
           },
           len: {
             args: [2, 255], // Ajustez les valeurs minimales et maximales selon vos besoins
-            msg: 'La ville doit avoir entre 2 et 255 caractères.',
+            msg: "La ville doit avoir entre 2 et 255 caractères.",
           },
         },
       },
@@ -108,11 +101,11 @@ module.exports = function (connection) {
         allowNull: false,
         validate: {
           notEmpty: {
-            msg: 'Le code postal ne peut pas être vide.',
+            msg: "Le code postal ne peut pas être vide.",
           },
           is: {
             args: /^\d{5}$/, // Exemple pour un code postal à 5 chiffres, ajustez selon vos besoins
-            msg: 'Le code postal doit avoir le format correct.',
+            msg: "Le code postal doit avoir le format correct.",
           },
         },
       },
@@ -122,11 +115,11 @@ module.exports = function (connection) {
         unique: true,
         validate: {
           notEmpty: {
-            msg: 'Le numero de telephone ne peut pas être vide.',
+            msg: "Le numero de telephone ne peut pas être vide.",
           },
           is: {
             args: /^\d{10}$/,
-            msg: 'Le numero de telephone doit avoir le format correct.',
+            msg: "Le numero de telephone doit avoir le format correct.",
           },
         },
       },
@@ -150,7 +143,7 @@ module.exports = function (connection) {
       isVerified: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       loginAttempts: {
         type: DataTypes.INTEGER,
@@ -165,6 +158,11 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      isActive:{
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      }
     },
     {
       sequelize: connection,
@@ -182,9 +180,11 @@ module.exports = function (connection) {
 
   User.addHook("beforeUpdate", async function (user, { fields }) {
     if (fields.includes("password")) {
+      const token = crypto.randomBytes(30).toString("hex");
       const bcrypt = require("bcryptjs");
       const hash = await bcrypt.hash(user.password, await bcrypt.genSalt(10));
       user.password = hash;
+      user.token = token;
     }
   });
 

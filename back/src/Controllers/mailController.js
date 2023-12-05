@@ -4,21 +4,7 @@ const mailCompany = process.env.MAIL_USER;
 const password = process.env.MAIL_PASSWORD;
 const port = process.env.MAIL_PORT;
 const host = process.env.MAIL_HOST;
-const fs = require("fs");
-const crypto = require("crypto");
-const verifyRoute = "http://localhost:3000/api/verify/";
-
-const htmlResources = "./htmlResources.json";
-let htmlData = null;
-function readFileCallback(err, content) {
-  if (err) {
-    console.error(err);
-    return;
-  }
-  htmlData = JSON.parse(content);
-}
-fs.readFile(htmlResources, readFileCallback);
-
+const fs = require("fs").promises;
 const transporter = nodemailer.createTransport({
   host: host,
   port: port,
@@ -28,33 +14,30 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-module.exports.sendMail = async (user, type) => {
+module.exports.sendMail = async (
+  mail,
+  subject,
+  attachementPath = null,
+  content
+) => {
   try {
-    let { subject, content } = htmlData[type];
-
-    switch (type) {
-      case "validateUserAccount":
-        console.log("USER : ", user.lastname);
-        content = content
-          .replace("{{name}}", user.lastname.toUpperCase())
-          .replace("{{confirmLink}}", verifyRoute + user.token)
-          .replace("{{emailSupport}}", mailCompany);
-        break;
-      case "forgetPassword":
-        const token = crypto.randomBytes(30).toString("hex");
-        content = content
-          .replace("{{your_token}}", token)
-        break;
-      default:
-        break;
-    }
+    let masterMail = await fs.readFile(`mails/masterMail.txt`, "utf8");
+    masterMail = masterMail.replace("{{content}}", content);
 
     const mailOptions = {
       from: mailCompany,
-      to: user.email,
+      to: mail,
       subject: subject,
-      html: content,
+      html: masterMail,
+      attachments: [],
     };
+
+    if (attachementPath) {
+      mailOptions.attachments.push({
+        filename: "facture.pdf",
+        path: attachementPath,
+      });
+    }
 
     return new Promise((resolve, reject) => {
       transporter.sendMail(mailOptions, (err, info) => {
@@ -73,5 +56,43 @@ module.exports.sendMail = async (user, type) => {
   } catch (error) {
     console.error(error);
     return { success: false, error: "Internal server error" };
+  }
+};
+module.exports.sendNotification = async (
+  content,
+  subject,
+  productId,
+  categoryId,
+  type,
+  User,
+  NotificationUser
+) => {
+  try {
+    const notificationUsers = await NotificationUser.findAll({
+      where: {
+        CategoryId: categoryId,
+        ProductId: productId,
+        type_id: type,
+      },
+      include: [
+        {
+          model: User,
+        },
+      ], 
+    });
+    notificationUsers.forEach(async notification => {
+      let contentWithName = content.replace(
+        "{{name}}",
+        notification.User.firstname.toUpperCase()
+      );
+      await this.sendMail(
+        notification.User.email,
+        subject,
+        null,
+        contentWithName
+      );
+    });
+  } catch (err) {
+    console.log("Error : ", err);
   }
 };
