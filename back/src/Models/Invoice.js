@@ -5,6 +5,8 @@ module.exports = function (connection) {
     static associate(db) {
       Invoice.belongsTo(db.Order);
       db.Order.belongsTo(Invoice);
+      Invoice.belongsTo(db.Payment);
+      db.Payment.belongsTo(Invoice);
     }
   }
 

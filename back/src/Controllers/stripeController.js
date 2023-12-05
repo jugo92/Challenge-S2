@@ -34,12 +34,12 @@ module.exports.initPayment = async (req, res, next) => {
     await Promise.all(
       req.body.items.map(async item => {
         const product = await Product.findByPk(item.id, {});
-        if(!product.dataValues.isPublished){
+        if (!product.dataValues.isPublished) {
           return next(
-          new ValidationError({
-            accountLocked: "Produit non publie.",
-          })
-          )
+            new ValidationError({
+              accountLocked: "Produit non publie.",
+            })
+          );
         }
         await ProductOrder.create({
           id: uuidv7(),
@@ -83,6 +83,7 @@ module.exports.initPayment = async (req, res, next) => {
       currency: "EUR",
       OrderId: order.id,
       UserId: req.user.id,
+      amount: req.body.TTC
     });
 
     await Order.update(
@@ -111,6 +112,13 @@ module.exports.getEventPayment = async (req, res) => {
     res.status(400).json({ success: false });
     return;
   }
+  console.log("EVENT RECUE : ", event.type)
+  if(event.type === "charge.failed"){
+    console.log("FAILED CHARGE : ", event.data.object);
+  }
+  if(event.type === "payment_intent.payment_failed"){
+    console.log("PAYMENT INTENTE FAILED : ", event.data.object)
+  }
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const orderId = session.client_reference_id;
@@ -118,27 +126,29 @@ module.exports.getEventPayment = async (req, res) => {
 
     const user = await User.findOne({
       where: {
-        email: order.email
-      }
-    })
+        email: order.email,
+      },
+    });
 
     const invoice = await Invoice.create({
       id: uuidv7(),
       path: `invoice_${orderId}.pdf`,
       OrderId: orderId,
+      PaymentId: order.PaymentId,
     });
 
     await Payment.update(
       {
         status: PaymentStatus.Succeeded,
         payment_stripe_id: session.payment_intent,
+        InvoiceId: invoice.id,
       },
       { where: { OrderId: orderId }, individualHooks: true }
     );
 
     const bodySendcloud = {
       parcel: {
-        name:"parcel",
+        name: "parcel",
         address: order.dataValues.address,
         city: order.dataValues.city,
         country: "FR",
@@ -185,7 +195,7 @@ module.exports.getEventPayment = async (req, res) => {
 
     //sendMail with invoice
     let content = await fs.readFile(`mails/validateOrder.txt`, "utf8");
-    content = content.replace("{{name}}", user.firstname)
+    content = content.replace("{{name}}", user.firstname);
 
     await sendMail(
       user.email,

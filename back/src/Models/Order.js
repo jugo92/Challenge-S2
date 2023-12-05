@@ -9,10 +9,10 @@ module.exports = function (connection) {
     }
     static addHooks(db) {
       Order.addHook("afterCreate", async order => {
-        orderMongo(order.id, db.Order, db.User);
+        orderMongo(order.id, db.Order, db.User, db.Invoice, db.ProductOrder, db.Product, db.Payment);
       });
       Order.addHook("afterUpdate", order => {
-        orderMongo(order.id, db.Order, db.User);
+        orderMongo(order.id, db.Order, db.User, db.Invoice, db.ProductOrder, db.Product, db.Payment);
       });
     }
   }

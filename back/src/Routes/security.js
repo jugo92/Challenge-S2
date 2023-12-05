@@ -33,6 +33,13 @@ router.post("/login", async (req, res, next) => {
         })
       );
     }
+    if(!user.isActive){
+      return next(
+        new ValidationError({
+          isActive: "Votre compte est désactivé.",
+        })
+      )
+    }
     if (!user.isVerified) {
       return next(
         new ValidationError({
@@ -45,17 +52,6 @@ router.post("/login", async (req, res, next) => {
       return next(
         new ValidationError({
           accountLocked: "Compte bloque",
-        })
-      );
-    }
-
-    if (
-      user.lastPasswordChange &&
-      isPasswordExpired(user.lastPasswordChange, 60)
-    ) {
-      return next(
-        new ValidationError({
-          expired: "Mot de passe expire.",
         })
       );
     }
@@ -112,7 +108,6 @@ router.post("/forget-password", async (req, res, next) => {
         email: req.body.email,
       },
     });
-    console.log(user);
     if (user !== null) {
       let content = await fs.readFile(`mails/forgetPassword.txt`, "utf8");
       const token = crypto.randomBytes(30).toString("hex");

@@ -2,6 +2,7 @@ const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
 const fs = require("fs").promises;
 const { sendMail, sendNotification } = require("../Controllers/mailController");
+const { uuidv7 } = require("uuidv7");
 module.exports = function (connection) {
   class Product extends Model {
     static associate(db) {
@@ -16,6 +17,15 @@ module.exports = function (connection) {
       );
       Product.addHook("beforeUpdate", async product => {
         const productBeforeUpdate = await Product.findByPk(product.id);
+        if (product.quantity != productBeforeUpdate.quantity) {
+          await db.StockHistory.create({
+            id: uuidv7(),
+            ProductId: product.id,
+            quantity: product.quantity,
+            movement:
+              product.quantity > productBeforeUpdate.quantity ? "enter" : "out",
+          });
+        }
         if (product.quantity < productBeforeUpdate.quantity_alert) {
           const admins = await db.User.findAll({
             where: {
@@ -59,7 +69,7 @@ module.exports = function (connection) {
               `mails/variousPriceProductNotification.txt`,
               "utf8"
             );
-            content = content.replace("{{new_price}}", product.price)
+            content = content.replace("{{new_price}}", product.price);
             await sendNotification(
               content,
               "Nouveau prix !",

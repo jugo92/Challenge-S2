@@ -158,6 +158,11 @@ module.exports = function (connection) {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      isActive:{
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      }
     },
     {
       sequelize: connection,
