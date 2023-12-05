@@ -7,37 +7,60 @@ import { ref, onMounted, watch } from 'vue';
 import Navbar from '../components/Navbar.vue';
 
 const route = useRoute();
-const postId = ref(Number(route.params.id));
-
-
 const posts = ref([]);
-console.log("les posts", posts.value);
-
 const post = ref(null);
 const error = ref(null);
 
+
+
 function getPostById(id) {
-    return posts.value.find(post => post.id === id);
+    return posts.value.find(post => post._id === id);
 }
 
 watch(() => {
-    postId.value = Number(route.params.id);
-    post.value = getPostById(postId.value);
+  const postId = route.params.id;
+  if(postId !== undefined && postId !== null && postId !== "" ){
+    post.value= getPostById(postId);
+  }else{
+    console.error('InvalidpostId', postId);
+  }
 });
+
 
 const loadData = async () => {
     try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+        const response = await fetch('http://localhost:3000/api/products');
         if (!response.ok) {
             throw new Error('Failed to fetch data');
         }
         posts.value = await response.json();
-        post.value = getPostById(postId.value);
+        const postIdNumber = parseInt(route.params.id, 10);
+        if (!isNaN(postIdNumber)) {
+            post.value = getPostById(postIdNumber);
+        } else {
+            console.error('Invalid postId:', route.params.id);
+        }
     } catch (err) {
         console.error('Error fetching data:', err);
         error.value = err.message;
     }
 };
+
+const updateProductNotification = async (product) => {
+  try {
+    await store.dispatch('updateProductNotification', {
+      productId: product._id,
+      receiveNotifications: product.receiveNotifications,
+    });
+  } catch (error) {
+    console.error('Error updating product notification:', error);
+  }
+};
+
+
+
+
+
 
 onMounted(loadData);
 
@@ -68,7 +91,7 @@ const addToCart = (product) => {
 </path>
 </svg>
 </a>
-<img class="object-contain w-full lg:h-full" src="https://i.postimg.cc/0jwyVgqz/Microprocessor1-removebg-preview.png" alt="">
+<img v-if="post" class="object-contain w-full lg:h-full" :src="post.image" alt="">
 <a class="absolute right-0 transform lg:mr-2 top-1/2 translate-1/2" href="#">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-5 h-5 text-blue-500 bi bi-chevron-right dark:text-blue-200" viewBox="0 0 16 16">
 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z">
@@ -77,48 +100,41 @@ const addToCart = (product) => {
 </a>
 </div>
 <div class="flex-wrap hidden -mx-2 md:flex">
-<div class="w-1/2 p-2 sm:w-1/4">
-<a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300" href="#">
-<img class="object-contain w-full lg:h-28" src="https://i.postimg.cc/Z5KhRkD6/download-1-removebg-preview.png" alt="">
-</a>
-</div>
-<div class="w-1/2 p-2 sm:w-1/4">
-<a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300" href="#">
-<img class="object-contain w-full lg:h-28" src="https://i.postimg.cc/8kJBrw03/download-removebg-preview.png" alt="">
-</a>
-</div>
-<div class="w-1/2 p-2 sm:w-1/4">
-<a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300" href="#">
-<img class="object-contain w-full lg:h-28" src="https://i.postimg.cc/0jwyVgqz/Microprocessor1-removebg-preview.png" alt="">
-</a>
-</div>
-<div class="w-1/2 p-2 sm:w-1/4">
-<a class="block border border-gray-200 hover:border-blue-400 dark:border-gray-700 dark:hover:border-blue-300" href="#">
-<img class="object-contain w-full lg:h-28" src="https://i.postimg.cc/0N4Kk1PN/black-microprocessors-removebg-preview.png" alt="">
-</a>
-</div>
+
 </div>
 </div>
 </div>
 <div class="w-full px-4 md:w-1/2">
 <div class="lg:pl-20">
 <div class="mb-6 ">
-<span class="px-2.5 py-0.5 text-xs text-blue-600 bg-blue-100 dark:bg-gray-700 rounded-xl dark:text-gray-200">Details : {{ post ? post.id : 'Loading' }}</span>
-<h2 class="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-black md:text-2xl dark:text-black">
-    Post Title: {{ post ? post.title : 'Loading' }}
-</h2>
+    <div class="mb-6">
+
+<p v-if="post" class="mt-2 text-sm text-gray-500 font-bold dark:text-gray-400">Quantité disponible en stock: {{ post.quantity }}</p>
+<div v-if="post && post.quantity === 0">
+    <input type="checkbox" v-model="post.notifyWhenAvailable" class="mr-2"> Avertissez-moi lorsque le produit est disponible
+</div>
+<div v-if="post">
+  <input type="checkbox" v-model="post.receiveNotifications" @change="updateProductNotification(post)">
+  Recevoir des notifications si le prix change
+</div>
+
+</div>
+<span v-if="post" class="px-2.5 py-0.5 text-xs text-blue-600 bg-blue-100 dark:bg-gray-700 rounded-xl dark:text-gray-200">{{ post.state }}</span>
+<h2 v-if="post" class="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-black md:text-2xl dark:text-black">
+            {{ post.name }}
+        </h2>
 <div class="flex flex-wrap items-center mb-6">
-<a class="mb-4 text-xs underline hover:text-blue-600 dark:text-black dark:hover:text-black lg:mb-0" href="#">
-    Body: {{ post ? post.body : 'Loading' }}
+<a v-if="post" class="mb-4 text-xs underline hover:text-blue-600 dark:text-black dark:hover:text-black lg:mb-0" href="#">
+   {{ post.description }}
 </a>
 </div>
 <p class="inline-block text-2xl font-semibold text-black dark:text-black ">
-<span>€: 0</span>
-<span class="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">€ 00</span>
+<span v-if="post">{{ post.price }} €</span>
+<!-- <span class="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">€ 00</span> -->
 </p>
 </div>
 <div class="mb-6">
-<h2 class="mb-2 text-lg font-bold text-gray-700 dark:text-black">System Specs :</h2>
+<h2 class="mb-2 text-lg font-bold text-gray-700 dark:text-black">Spécifications du système :</h2>
 <div class="bg-gray-100 dark:bg-black rounded-xl">
 <div class="p-3 lg:p-5 ">
 <div class="p-2 rounded-xl lg:p-6 dark:bg-gray-800 bg-gray-50">
