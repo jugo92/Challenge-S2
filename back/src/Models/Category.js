@@ -8,7 +8,7 @@ module.exports = function (connection) {
           category.id,
           "CategoryId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category
         );
       });
@@ -17,7 +17,7 @@ module.exports = function (connection) {
           category.id,
           "CategoryId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category
         );
       });
@@ -26,7 +26,7 @@ module.exports = function (connection) {
           null,
           "CategoryId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category,
           "destroy"
         );

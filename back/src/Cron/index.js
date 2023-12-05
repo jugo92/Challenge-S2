@@ -1,9 +1,8 @@
 const cron = require("node-cron");
 const fs = require("fs").promises;
-const { User } = require("../Models/index");
+const { User, Order } = require("../Models/index");
 const { Op } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
-const Order = require("../Mongo/Order");
 module.exports.initCron = () => {
   remindChangePassword();
   invalidOrer();

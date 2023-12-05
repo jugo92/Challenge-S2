@@ -6,14 +6,14 @@ const { uuidv7 } = require("uuidv7");
 module.exports = function (connection) {
   class Product extends Model {
     static associate(db) {
-      Product.belongsTo(db.Marque);
+      Product.belongsTo(db.Brand);
       Product.belongsTo(db.Category);
-      db.Marque.hasMany(Product);
+      db.Brand.hasMany(Product);
       db.Category.hasMany(Product);
     }
     static addHooks(db) {
       Product.addHook("afterCreate", product =>
-        productMongo(product.id, "id", db.Product, db.Marque, db.Category)
+        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
       );
       Product.addHook("beforeUpdate", async product => {
         const productBeforeUpdate = await Product.findByPk(product.id);
@@ -101,10 +101,10 @@ module.exports = function (connection) {
         }
       });
       Product.addHook("afterUpdate", product =>
-        productMongo(product.id, "id", db.Product, db.Marque, db.Category)
+        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
       );
       Product.addHook("afterDestroy", product =>
-        productMongo(product.id, "id", db.Product, db.Marque, db.Category)
+        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
       );
     }
   }

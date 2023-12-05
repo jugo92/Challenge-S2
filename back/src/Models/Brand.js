@@ -2,32 +2,32 @@ const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
 
 module.exports = function (connection) {
-  class Marque extends Model {
+  class Brand extends Model {
     static addHooks(db) {
-      Marque.addHook("afterCreate", marque => {
+      Brand.addHook("afterCreate", brand => {
         productMongo(
-          marque.id,
-          "MarqueId",
+          brand.id,
+          "BrandId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category
         );
       });
-      Marque.addHook("afterUpdate", marque => {
+      Brand.addHook("afterUpdate", brand => {
         productMongo(
-          marque.id,
-          "MarqueId",
+          brand.id,
+          "BrandId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category
         );
       });
-      Marque.addHook("afterDestroy", marque => {
+      Brand.addHook("afterDestroy", brand => {
          productMongo(
           null,
-          "MarqueId",
+          "BrandId",
           db.Product,
-          db.Marque,
+          db.Brand,
           db.Category,
           "destroy"
         );
@@ -35,7 +35,7 @@ module.exports = function (connection) {
     }
   }
 
-  Marque.init(
+  Brand.init(
     {
       id: { type: DataTypes.UUID, primaryKey: true },
       name: {
@@ -60,8 +60,8 @@ module.exports = function (connection) {
     },
     {
       sequelize: connection,
-      tableName: "Marque",
+      tableName: "Brand",
     }
   );
-  return Marque;
+  return Brand;
 };

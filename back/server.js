@@ -13,7 +13,7 @@ const port = process.env.PORT;
 const {
   User,
   Order,
-  Marque,
+  Brand,
   Product,
   Payment,
   Refund,
@@ -36,9 +36,9 @@ const multerMiddleware = require("./src/Middlewares/upload");
 const cron = require("node-cron");
 const { initCron } = require("./src/Cron/index");
 
-cron.schedule("*/5 * * * * *", async () => {
-  initCron();
-});
+// cron.schedule("*/5 * * * * *", async () => {
+//   initCron();
+// });
 
 app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
@@ -63,10 +63,10 @@ app.use(
 );
 
 app.use(
-  routePrefix + "/marques",
+  routePrefix + "/brands",
   multerMiddleware,
   new GenericRouter(
-    new GenericController(new GenericService(Marque))
+    new GenericController(new GenericService(Brand))
   ).getRouter()
 );
 
