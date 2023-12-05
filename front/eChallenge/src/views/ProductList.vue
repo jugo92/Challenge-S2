@@ -1,22 +1,83 @@
 <script setup>
-import { ref, onMounted, computed} from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
-import { RouterLink } from "vue-router";
-import Navbar from '../composable/store';
+import { RouterLink, useRouter } from 'vue-router';
+import { Icon } from '@iconify/vue';
+import ProductCard from '../components/ProductCard.vue';
+import Filter from '../components/Filter.vue';
 
+const store = useStore();
 const posts = ref([]);
 const itemsPerPage = 24;
 const currentPage = ref(1);
-const cart = ref([]);
+const selectedState = ref(null);
+const router = useRouter();
+const triSelected = ref("default"); 
+const isSearchResultsVisible = ref(false);
+const isSearchActive = ref(false);
+const filterPost = ref([]);
+
 
 const performSearch = () => {
   store.commit('setFilterPost', filterPost.value);
 };
 
+
+onMounted(async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/products');
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
+    }
+
+    posts.value = await response.json();
+ 
+    filteredPosts.value = [...posts.value];
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
+});
+
+
+
+
+
+
+const updateFilter = ({ property, values }) => {
+  if (Array.isArray(values)) {
+    filteredPosts.value = posts.value.filter(product => {
+      if (property === 'state') {
+        return values.includes(product[property]);
+      } else {
+        return values.includes(product[property].name);
+      }
+    });
+
+    currentPage.value = 1;
+  } else {
+    console.error('Values is not an array:', values);
+  }
+};
+
+
+
+const filteredPosts = computed(() => {
+  
+  return posts.value.filter(post =>
+    selectedState.value ? post.state === selectedState.value : true
+  );
+});
+
+
+
 const paginatedPosts = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return posts.value.slice(startIndex, endIndex);
+  const filteredPosts = posts.value.filter(post =>
+    selectedState.value ? post.state === selectedState.value : true
+  );
+
+  return filteredPosts.slice(startIndex, endIndex);
 });
 
 const totalPages = computed(() => Math.ceil(posts.value.length / itemsPerPage));
@@ -27,56 +88,31 @@ const changePage = (page) => {
   }
 };
 
-const store = useStore(); 
 const addToCart = (product) => {
-  if(store.state.isLoggedIn){
-    store.commit('addToCart', product);
-}else{
-  router.push('/login');
-}
-};
-onMounted(async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-  const data = await response.json();
-  posts.value = data;
   
-});
+    store.commit('addToCart', product);
+}
+
 
 </script>
 
-<template>
-<h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
-<Filter :filteredProperties="filteredProperties" @update-filter="updateFilter" />
-    <section class="mt-12">
-      <div class="px-4 mx-auto max-w-7xl">
-        <div class="flex flex-wrap -mx-4">
-          <div v-for="(post, index)  in paginatedPosts" :key="post.id" class="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/4 px-4 mb-4 mobile">
-            <div class="relative overflow-hidden bg-white shadow rounded-xl ">
-              <RouterLink :to="`/products/${post.id}`">
-                <div class="relative overflow-hidden">
-                  <div class="mb-5 overflow-hidden">
-                    <img class="object-cover w-full mx-auto transition-all rounded h-72 hover:scale-110" src="https://zupimages.net/up/23/46/fife.jpg" alt="" />
-                  </div>
-                </div>
-              </RouterLink>
-              <p class="px-5 mb-4 font-bold dark:text-black">{{ post.title }}</p>
-              <div class="flex">
-                <div class="w-1/2 px-5 pb-3">
-                  <p class="text-lg font-bold text-blue-500 dark:text-blue-300">
-                    299.99€
-                  </p>
-                  <span class="block -mt-1 text-xs font-semibold text-gray-400 line-through">399.99€</span>
-                </div>
 
-                <button  @click="addToCart(post)"  class="flex-1 text-sm text-white transition-all bg-blue-500 rounded-r-none hover:bg-blue-600 rounded-t-xl text-center text-l">
-                 Ajouter au panier
-                  </button>
+<template>
+
+<h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
+
+<Filter :filteredProperties="filteredProperties" @update-filter="updateFilter" />
+
+
+      <section class="mt-12">
+            <div class="px-4 mx-auto max-w-7xl">
+              <div class="flex flex-wrap -mx-4">
+                <ProductCard v-for="(post, index) in paginatedPosts" :key="post.id" :product="post" :addToCart="addToCart" />
               </div>
             </div>
-          </div>
-          </div>
-        </div>
       </section>
+
+
  
   <div class="flex flex-wrap justify-center">
 
@@ -85,7 +121,8 @@ onMounted(async () => {
       <li
         v-if="currentPage > 1"
         @click="changePage(currentPage - 1)"
-        class="cursor-pointer border border-gray-300 rounded-full text-gray-500 hover:bg-gray-200 hover:border-gray-200 bg-white">
+        class="cursor-pointer border border-gray-300 rounded-full text-gray-500 hover:bg-gray-200 hover:border-gray-200 bg-white"
+      >
         <a class="w-8 h-8 flex items-center justify-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -136,10 +173,12 @@ onMounted(async () => {
       </li>
     </ul>
 
+
   </div>
    
   </div>
 </template>
+
 
 
 <style scoped>
@@ -150,9 +189,6 @@ onMounted(async () => {
   margin-top: 2rem;
   margin: 0 0.5rem;
 }
-h2{
-  margin-top: 2%;
-}
 .filtre{
 margin-left: auto;
 margin-right: auto;
@@ -162,11 +198,12 @@ margin-right: auto;
 
   .content {
   display: flex;
+margin-left: auto;
+margin-right: auto;
   justify-content: center;
   align-items: center;
   margin-top: 2rem;
   margin: 0 0.5rem;
-  margin-inline-start:auto;
 }
 
 .filtre{
@@ -183,8 +220,3 @@ margin-right: auto;
 }
 
 </style>
-
-
-
-
-
