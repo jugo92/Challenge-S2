@@ -1,7 +1,7 @@
 
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { ref, onMounted, watch } from 'vue';
 import Navbar from '../components/Navbar.vue';
@@ -50,7 +50,7 @@ const addToCart = (product) => {
         store.commit('addToCart', product);
     }else{
         router.push('/login');
-    }
+        }
 };
 </script>
 
@@ -198,6 +198,7 @@ Frequency
 <span class="text-gray-600 dark:text-gray-700"> Livraison gratuite</span>
 </p>
 </div>
+
 <div class="mb-6 "></div>
 <div class="flex flex-wrap items-center mb-6">
 <div class="mb-4 mr-4 lg:mb-0">

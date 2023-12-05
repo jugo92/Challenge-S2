@@ -41,6 +41,7 @@
                     </svg>
                 </div>
             </div>
+            <button @click="search">Rechercher</button>
         </div>
     </div>
 </div>

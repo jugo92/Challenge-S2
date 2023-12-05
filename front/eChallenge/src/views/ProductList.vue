@@ -11,9 +11,8 @@ const cart = ref([]);
 
 
 
-const activateSearch = () => {
-  isSearchActive.value = true;
-  isSearchResultsVisible.value = true; 
+const performSearch = () => {
+  store.commit('setFilterPost', filterPost.value);
 };
 
 
@@ -52,26 +51,10 @@ const addToCart = (product) => {
 </script>
 
 <template>
- <div v-if="searchTerm !== ''" class="search-results">
-      <router-link v-for="result in searchSuggestions" :key="result.id" :to="{ name: 'ProductDetails', params: { id: result.id } }">
-        <div @click="selectSearchResult(result)">
-          {{ result.name }}
-        </div>
-      </router-link>
-    </div>
 
 <h2 class="text-2xl font-bold text-center text-black underline decoration-sky-500">Les produits</h2>
-  <div>
-  
 
-<div class="flex mt-8 filtre">
-  <div class="relative flex items-center">
-  <Icon icon="lets-icons:filter" class="text-2xl icon" />
-  <select v-model="selectedState" @change="updateFilter" class="p-2 border rounded-md">
-    <option value="default">Tous les états</option>
-    <option v-for="state in uniqueStates" :key="state" :value="state">{{ state }}</option>
-  </select>
-</div>
+<Filter :filteredProperties="filteredProperties" @update-filter="updateFilter" />
 
 
     </div>
@@ -102,10 +85,10 @@ const addToCart = (product) => {
                   </button>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
+      </section>
+ 
+  <div class="flex flex-wrap justify-center">
+
     <div class="content">
       <ul class="flex items-center space-x-1 font-light">
       <li
