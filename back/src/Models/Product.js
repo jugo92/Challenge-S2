@@ -212,23 +212,6 @@ module.exports = function (connection) {
         defaultValue: false,
         allowNull: false,
       },
-      tva: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            msg: "La quantité doit être un nombre entier.",
-          },
-          min: {
-            args: [0],
-            msg: "La tva ne peut pas être négative.",
-          },
-          max: {
-            args: [50],
-            msg: "La tva ne peut pas dépasser 50.",
-          },
-        },
-      },
       resolution: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -248,11 +231,7 @@ module.exports = function (connection) {
       frontcamera: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
-      backcamera: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      },²
       weight: {
         type: DataTypes.STRING,
         allowNull: false,

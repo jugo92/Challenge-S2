@@ -51,7 +51,7 @@ module.exports.initPayment = async (req, res, next) => {
         storeItems.set(product.dataValues.id, {
           priceInCents:
             product.dataValues.price * 100 +
-            product.dataValues.price * 100 * (product.dataValues.tva / 100),
+            product.dataValues.price * 100 * 0.2,
           name: product.dataValues.name,
         });
       })

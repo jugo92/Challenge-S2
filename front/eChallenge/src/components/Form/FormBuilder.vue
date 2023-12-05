@@ -22,23 +22,23 @@
                         </template>
 
                         <!-- Input Text -->
-                        <template v-if="(field.type === 'text' || field.type === 'email' || field.type === 'number') && showField(field)">
-                            <input
-                                :type="field.type"
-                                :id="field.name"
-                                :name="field.name"
-                                v-model="field.value"
-                                @input="callChangeHandlers(field.changeHandlers); handleInput(field)"
-                                :required="field.required"
-                                :placeholder="field.placeholder"
-                                :min="field.min"
-                                :max="field.max"
-                                class="form form-input-text"
-                            />
-                        </template>
+                        <template v-if="(field.type === 'text' || field.type === 'email' || field.type === 'number' || field.type === 'password') && showField(field)">
+                        <input
+                            :type="field.type"
+                            :id="field.name"
+                            :name="field.name"
+                            v-model="field.value"
+                            @input="callChangeHandlers(field.changeHandlers); handleInput(field)"
+                            :required="field.required"
+                            :placeholder="field.placeholder"
+                            :min="field.min"
+                            :max="field.max"
+                            class="form form-input-text"
+                        />
+                    </template>
 
-                        <!--Input Date -->
-                        <template v-else-if="field.type === 'date' && showField(field)">
+                    <!--Input Date -->
+                    <template v-else-if="field.type === 'date' && showField(field)">
                             <input
                                 :type="field.type"
                                 :id="field.name"
