@@ -46,7 +46,6 @@ module.exports = async (
       state: product.dataValues.state,
       promotion: product.dataValues.promotion,
       isPublished: event === "destroy" ? 0 : product.dataValues.isPublished,
-      tva: product.dataValues.tva,
       resolution: product.dataValues.resolution,
       size: product.dataValues.size,
       storage: product.dataValues.storage,
