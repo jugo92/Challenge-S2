@@ -1,3 +1,128 @@
+
+<script setup lang="ts">
+import { computed, reactive, ref } from 'vue';
+import { useRouter } from "vue-router";
+import { z } from "zod";
+import Button from "./Button.vue";
+import { useToast } from "vue-toast-notification";
+
+
+const router = useRouter();
+const toast = useToast();
+
+const api = 'http://localhost:3000/api';
+
+const user = reactive({
+  gender: 'Homme',
+  firstname: '',
+  lastname: '',
+  email: '',
+  confirm_email: '',
+  password: '',
+  confirm_password: '',
+  birthdate: '',
+  phone: '',
+  address: '',
+  country:'France',
+  zip: '',
+  city: ''
+});
+
+
+
+const emailSchema = z.string().email({
+  message: "Email invalide"
+});
+
+const passwordSchema = z.string().regex(/[a-z]/, {
+  message: "Lettre minuscule manquante "
+}).regex(/[A-Z]/, {
+  message: "Lettre majuscule manquante"
+}).regex(/\d/, {
+  message: "Nombre manquant"
+}).regex(/[^a-zA-Z0-9]/, {
+  message: "Symbole manquant"
+}).min(8, {
+  message: "Mot de passe trop court (8 caractères minimum)"
+});
+
+const emailError = computed(() => {
+  const parsedEmail = emailSchema.safeParse(user.email);
+  if (parsedEmail.success) {
+    return "";
+  }
+  return parsedEmail.error.issues[0].message;
+});
+
+const emailConfirmationError = computed(() => {
+  if (user.email !== user.confirm_email) {
+    return "Les emails ne correspondent pas";
+  }
+  return "";
+});
+
+const passwordError = computed(() => {
+  const parsedPassword = passwordSchema.safeParse(user.password);
+  if (parsedPassword.success) {
+    return "";
+  }
+  return parsedPassword.error.issues[0].message;
+});
+
+const passwordConfirmationError = computed(() => {
+  if (user.password !== user.confirm_password) {
+    return "Les mots de passe ne correspondent pas";
+  }
+  return "";
+});
+
+const acceptTerms = ref(false);
+
+const submitForm = async () => {
+  try {
+    const response = await fetch(api + '/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: user.email,
+        password: user.password,
+        adress: user.address,
+        name: user.firstname,
+        lastname: user.lastname,
+        gender: user.gender,
+        city: user.city,
+        zip: user.zip,
+        phone: user.phone,
+        birthdate: user.birthdate,
+      })
+    });
+
+
+
+    if (response.ok) {
+      const data = await response.json();
+      if (!data.hasOwnProperty('error')) {
+        router.push('/login');
+        toast.success('Un email de confirmation vous a été envoyé');
+      } else {
+        toast.error('Une erreur est survenue');
+        console.error('Erreur côté serveur :', data.error);
+      }
+    } else {
+      toast.error('Une erreur est survenue lors de la requête');
+      console.error('Erreur HTTP :', response.status, response.statusText);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la requête POST :', error);
+  }
+};
+</script>
+
+
+
+
 <template>
   <div class="bg-white">
     <div class="container mx-auto py-8">
@@ -18,12 +143,12 @@
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="email">Email <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email" placeholder="exemple@echallenge.com" type="email" v-model="user.usermail" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email" placeholder="exemple@echallenge.com" type="email" v-model="user.email" required>
             <p class="text-red-600 text-xs italic" v-if="emailError">{{ emailError }}</p>
           </div>
           <div class="mb-3">
             <label class="text-sm font-bold mb-1" for="email-confirmation">Confirmer l'email <span class="text-red-600">*</span></label>
-            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email-confirmation" placeholder="exemple@echallenge.com" type="email" v-model="user.confirm_usermail" required>
+            <input class="border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" id="email-confirmation" placeholder="exemple@echallenge.com" type="email" v-model="user.confirm_email" required>
             <p class="text-red-600 text-xs italic" v-if="emailConfirmationError">{{ emailConfirmationError }}</p>
           </div>
           <div class="mb-3">
@@ -99,121 +224,3 @@
 
 
 
-
-<script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
-import { useRouter } from "vue-router";
-import { z } from "zod";
-import Button from "./Button.vue";
-import { useToast } from "vue-toast-notification";
-
-
-const router = useRouter();
-const toast = useToast();
-
-const api = 'http://localhost:3000/api';
-
-const user = reactive({
-  gender: 'Homme',
-  firstname: '',
-  lastname: '',
-  usermail: '',
-  confirm_usermail: '',
-  password: '',
-  confirm_password: '',
-  birthdate: '',
-  phone: '',
-  address: '',
-  country:'France',
-  zip: '',
-  city: ''
-});
-
-
-const emailSchema = z.string().email({
-  message: "Email invalide"
-});
-
-const passwordSchema = z.string().regex(/[a-z]/, {
-  message: "Lettre minuscule manquante "
-}).regex(/[A-Z]/, {
-  message: "Lettre majuscule manquante"
-}).regex(/\d/, {
-  message: "Nombre manquant"
-}).regex(/[^a-zA-Z0-9]/, {
-  message: "Symbole manquant"
-}).min(8, {
-  message: "Mot de passe trop court (8 caractères minimum)"
-});
-
-const emailError = computed(() => {
-  const parsedEmail = emailSchema.safeParse(user.usermail);
-  if (parsedEmail.success) {
-    return "";
-  }
-  return parsedEmail.error.issues[0].message;
-});
-
-const emailConfirmationError = computed(() => {
-  if (user.usermail !== user.confirm_usermail) {
-    return "Les emails ne correspondent pas";
-  }
-  return "";
-});
-
-const passwordError = computed(() => {
-  const parsedPassword = passwordSchema.safeParse(user.password);
-  if (parsedPassword.success) {
-    return "";
-  }
-  return parsedPassword.error.issues[0].message;
-});
-
-const passwordConfirmationError = computed(() => {
-  if (user.password !== user.confirm_password) {
-    return "Les mots de passe ne correspondent pas";
-  }
-  return "";
-});
-
-const acceptTerms = ref(false);
-
-const submitForm = async () => {
-  try {
-    const response = await fetch(api + '/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: user.usermail,
-        password: user.password,
-        adress: user.address,
-        name: user.firstname,
-        lastname: user.lastname,
-        gender: user.gender,
-        city: user.city,
-        zip: user.zip,
-        phone: user.phone,
-        dateofbirth: user.birthdate,
-      })
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      if (!data.hasOwnProperty('error')) {
-        router.push('/login');
-        toast.success('Un email de confirmation vous a été envoyé');
-      } else {
-        toast.error('Une erreur est survenue');
-        console.error('Erreur côté serveur :', data.error);
-      }
-    } else {
-      toast.error('Une erreur est survenue lors de la requête');
-      console.error('Erreur HTTP :', response.status, response.statusText);
-    }
-  } catch (error) {
-    console.error('Erreur lors de la requête POST :', error);
-  }
-};
-</script>

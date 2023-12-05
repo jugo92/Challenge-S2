@@ -26,7 +26,8 @@ import Modal from "./Modal/Modal.vue";
 const { isModalVisible, openModal, closeModal } = useModal();
 const { reinitForm, validateField, handleFileChange, listFormData } = useForm()
 
-const instance = window.location.pathname.substring(1);
+const splitUrl = window.location.pathname.split("/");
+const instance = splitUrl[splitUrl.length - 1];
 let isUpdateItem = ref(null);
 
 import {apiService} from "../services/apiService.ts";
@@ -39,6 +40,7 @@ import fs from "fs";
 ///   DEFINITION DES DONNEES  ///
 ////////////////////////////////
 const getTableColumns = (instance) => {
+    console.log("gettablecolumns",instance)
     switch (instance){
         case 'products':
             return [
@@ -55,7 +57,7 @@ const getTableColumns = (instance) => {
         case 'marques':
             return [
                 { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
-                { key: 'description', label: 'Description', filter: true, style: 'font-bold' },
+                { key: 'description', label: 'Description', filter: true, },
                 { key: 'image', label: 'Image', filter: true },
             ];
         case 'categories':
@@ -139,6 +141,7 @@ const getRequestBody = (formConfig) => {
 };
 
 const getInstanceForm = (instance, formConfig, data) => {
+    console.log(data)
     switch (instance) {
         case 'products':
             formConfig.value.find(field => field.name === 'id').value = data ? data._id : null;
@@ -148,9 +151,9 @@ const getInstanceForm = (instance, formConfig, data) => {
             formConfig.value.find(field => field.name === 'prixTTC').value = data ? data.price : 0;
             formConfig.value.find(field => field.name === 'state').value = data ? stateOptions[data.state] : 0;
             formConfig.value.find(field => field.name === 'promotion').value = data ? data.promotion : 0;
-            formConfig.value.find(field => field.name === 'brands').value = data ? data.Marque.id : null;
+            formConfig.value.find(field => field.name === 'brands').value = data && data.Marque ? data.Marque.id : null;
             formConfig.value.find(field => field.name === 'tva').value = data ? data.tva : null;
-            formConfig.value.find(field => field.name === 'categories').value = data ? data.Category.id : null;
+            formConfig.value.find(field => field.name === 'categories').value = data && data.Category ? data.Category.id : null;
             formConfig.value.find(field => field.name === 'isPublished').isChecked = data ? data.isPublished : false;
             formConfig.value.find(field => field.name === 'resolution').value = data ? data.resolution : '';
             formConfig.value.find(field => field.name === 'size').value = data ? data.size : '';
@@ -651,7 +654,7 @@ const getInstanceFormConfig = (instance) => {
 ///   FONCTIONS OUTILS   ///
 ////////////////////////////
 let currentPage = 1;
-let limit = 2;
+let limit = 10;
 const fetchListOfItems = async () => {
     const includedProperties = getIncludedProperties(instance);
     try {
@@ -705,7 +708,9 @@ const createInstance = async (data) => {
     // }
 
     const requestBody = getRequestBody(formConfig.value);
-    if(requestBody.get("image") == "undefined") requestBody.set("image", "")
+    if(requestBody instanceof FormData){
+        if(requestBody.get("image") == "undefined") requestBody.set("image", "")
+    }
     if(!isUpdateItem) {
         apiService.create(instance, requestBody)
             .then(res =>{

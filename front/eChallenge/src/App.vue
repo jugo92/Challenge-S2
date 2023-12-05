@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import Navbar from './components/Navbar.vue';
-// import TopBar from './components/TopBar.vue';
+import { onMounted } from 'vue';
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 
+const store = useStore();
+const router = useRouter();
 
 </script>
 
 <template>
     <div id="app">
         <Navbar />
-<!--    <TopBar />-->
+ <!--   <TopBar />-->
         <div class="min-w-fit my-20 md:mx-20 lg:mx-52 m-5">
             <router-view></router-view>
         </div>

@@ -13,6 +13,7 @@
     "@ncform/ncform": "^1.7.9",
     "@ncform/ncform-common": "^1.7.9",
     "@tailwindcss/forms": "^0.5.7",
+    "@stripe/stripe-js": "^2.2.0",
     "@vee-validate/zod": "^4.11.8",
     "@vueform/vueform": "^1.5.3",
     "dotenv": "^16.3.1",
@@ -22,7 +23,9 @@
     "vue-form-generator": "^2.3.4",
     "vue-router": "^4.2.5",
     "vue-toast-notification": "3.0",
+    "vue3-carousel": "^0.3.1",
     "vuelidate": "^0.7.7",
+    "vuex": "^4.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

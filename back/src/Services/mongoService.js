@@ -14,7 +14,8 @@ class MongoService {
     const countQuery = this.Model.countDocuments(filters);
 
     const countTotal = await countQuery.exec();
-    return res.status(200).json({ models, countTotal });
+    res.set('X-Total-Count', countTotal);
+    return res.status(200).json(models);
   }
 
   async getById(req, res) {
