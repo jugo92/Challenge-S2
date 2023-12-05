@@ -160,16 +160,10 @@ const store = createStore({
       state.filterPost = filterPost;
     },
 
-    setUserOrdersById(state, { userId, orders }) {
-      const userIndex = state.user.findIndex(user => user._id === userId);
-      if (userIndex !== -1) {
-        state.user[userIndex].Orders = orders;
-      }
+    setOrders(state, orders) {
+      state.orders = orders;
     },
 
-    setUserOrders(state, { orders }) {
-      state.user.Orders = orders;
-    },
   },
 
   actions: {
@@ -347,32 +341,29 @@ const store = createStore({
         console.error("Error fetching products:", error);
       }
     },
-    async fetchUserOrders({ commit, state }) {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/api/users/${user._id}`,
+    
+    async fetchOrders({ commit, rootState }) {
+      if (rootState.isLoggedIn) {
+        try {
+          const response = await fetch("http://localhost:3000/api/orders", 
           {
+            method: "GET",
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${rootState.token}`,
             },
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch orders");
           }
-        );
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch user orders");
+          const orders = await response.json();
+          commit("setOrders", orders);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
         }
-
-        const userData = await response.json();
-        console.log("User Data:", userData);
-        const { Orders } = userData;
-        console.log("Orders (dans fetchUserOrders):", Orders);
-
-        commit("setUserOrdersById", { userId: state.user._id, orders: Orders });
-
-        return Orders;
-      } catch (error) {
-        console.error("Error fetching user orders:", error);
-        throw error;
+      } else {
+        console.warn("User is not logged in");
       }
     },
   },
