@@ -1,7 +1,5 @@
-<!-- ProductList.vue -->
-
 <template>
-  <div>
+  <div class="w-full flex flex-wrap">
     <div v-for="product in products" :key="product.id">
       <ProductCard :product="product" />
     </div>

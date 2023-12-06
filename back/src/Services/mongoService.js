@@ -4,38 +4,22 @@ class MongoService {
   }
 
   async getAll(req, res) {
-    const { page: reqPage, limit: reqLimit, productName, description, minPrice, maxPrice } = req.query;
-    // console.log("LES FILTRES : ", filters)
+    const {
+      page: reqPage,
+      limit: reqLimit,
+      name,
+      description,
+      minPrice,
+      maxPrice,
+      categories,
+      marques,
+      promotions
+    } = req.query;
     const page = parseInt(reqPage) || 1;
     const limit = parseInt(reqLimit) || 10;
-
-      // Créez un objet pour stocker les filtres non vides
-  const filterObject = {};
-
-  // Ajoutez uniquement les filtres non vides à l'objet
-  if (productName) {
-    filterObject.name = new RegExp(productName, 'i');
-  }
-
-  if (description) {
-    filterObject.description = new RegExp(description, 'i');
-  }
-  let min = parseInt(minPrice)
-  if (Number.isInteger(min)) {
-    console.log("ici : ", min)
-    filterObject.price = filterObject.price || {};
-    filterObject.price.$gte = min;
-  }
-
-  console.log(typeof maxPrice)
-  if (Number.isInteger(maxPrice)) {
-    console.log("LA : ", maxPrice)
-    filterObject.price = filterObject.price || {};
-    filterObject.price.$lte = maxPrice;
-  }
-  
-  console.log(filterObject)
-
+    let filterObject = {}
+    filterObject = buildFilterObject(name, description, minPrice, maxPrice, categories,marques, promotions);
+    console.log("FILTER OBJECT : ", filterObject)
     const query = this.Model.find(filterObject)
       .skip((page - 1) * limit)
       .limit(limit);
@@ -43,7 +27,7 @@ class MongoService {
     const countQuery = this.Model.countDocuments(filterObject);
 
     const countTotal = await countQuery.exec();
-    res.set('X-Total-Count', countTotal);
+    res.set("X-Total-Count", countTotal);
     return res.status(200).json(models);
   }
 
@@ -60,5 +44,44 @@ class MongoService {
     }
   }
 }
+
+const buildFilterObject = (name, description, minPrice, maxPrice, categories, marques, promotions) => {
+  let filterObject = {};
+  console.log("LES MARQUES : ", marques)
+  console.log("LA PROMOTION  : ", promotions)
+  if (name) {
+    filterObject.name = new RegExp(name, "i");
+  }
+  if (description) {
+    filterObject.description = new RegExp(description, "i");
+  }
+  let minPriceParsed = parseInt(minPrice);
+  if (minPriceParsed) {
+    filterObject.price = filterObject.price || {};
+    filterObject.price.$gte = minPriceParsed;
+  }
+  let maxPriceParsed = parseInt(maxPrice);
+  if (maxPriceParsed) {
+    filterObject.price = filterObject.price || {};
+    filterObject.price.$lte = maxPriceParsed;
+  }
+
+  if (categories) {
+    const categoriesArray = categories.split(',').map(category => category.trim());
+    filterObject['Category.name'] = { $in: categoriesArray };
+  }
+
+  if (marques) {
+    const brandArray = marques.split(',').map(marque => marque.trim());
+    filterObject['Brand.name'] = { $in: brandArray };
+  }
+  console.log("PROMOTIONS : ", promotions)
+
+  if (promotions === "true") {
+    filterObject.promotion = { $gt: 0 }; 
+  }
+
+  return filterObject;
+};
 
 module.exports = MongoService;

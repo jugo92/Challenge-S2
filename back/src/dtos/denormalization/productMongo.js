@@ -72,9 +72,6 @@ module.exports = async (
         },
       });
       const total = totalCountIncrement - totalCountDecrement;
-
-      console.log("ICI : ", total);
-
       const productMongoData = {
         _id: product.dataValues.id,
         name: product.dataValues.name,

@@ -20,7 +20,9 @@ const {
   Category,
   Stock,
   Basket,
-  ProductBasket
+  ProductBasket,
+  Notification,
+  NotificationUser
 } = require("./src/Models");
 
 app.use(cors());
@@ -50,6 +52,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
 
+app.get('/getImage/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, 'uploads', imageName);
+  if (fs.existsSync(imagePath)) {
+    res.sendFile(imagePath);
+  } else {
+    res.status(404).send('Image non trouvée');
+  }
+});
+
+
 const createMongoMethods = collection => {
   const ms = new MongoService(collection);
 
@@ -69,6 +82,22 @@ app.use(
   multerMiddleware,
   new GenericRouter(
     new GenericController(new GenericService(Brand))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/notifications",
+  multerMiddleware,
+  new GenericRouter(
+    new GenericController(new GenericService(Notification))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/notificationsusers",
+  multerMiddleware,
+  new GenericRouter(
+    new GenericController(new GenericService(NotificationUser))
   ).getRouter()
 );
 

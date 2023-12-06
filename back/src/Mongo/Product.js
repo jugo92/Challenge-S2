@@ -4,7 +4,7 @@ const ProductSchema = new connection.Schema({
   _id: String,
   name: String,
   description: String,
-  price: String,
+  price: Number,
   image: String,
   state: String,
   promotion: Number,

@@ -1,21 +1,19 @@
 
- <template>
-  <div>
-   <Navbar />
-    </div>
-  <div>
-    <div class="top ">
+<template>
+  <div class="w-full">
+    <Navbar />
+    <div class="top">
       <SliderImage />
     </div>
+    <div class="m-5 w-full flex">
+      <section class="w-1/4 bg-gray-200 p-4 h-full col-span-1">
+        <Filters @onFilterChange="applyFilters" :marquesList="marquesList" :categoriesList="categoryList" />
+      </section>
+      <section class="flex w-3/4 p-4">
+        <ProductList :products="filteredProducts" />
+      </section>
+    </div>
   </div>
-  <section>
-      <!-- Filtres -->
-      <Filters @onFilterChange="applyFilters" :marquesList="marquesList" :categoriesList="categoryList" />
-    </section>
-    <section>
-      <ProductList :products="filteredProducts" />
-    </section>
-
 </template>
 
 <script setup lang="ts">
@@ -35,19 +33,21 @@ const filters = ref({
   minPrice: null,
   maxPrice: null,
   description: '',
-  marque: '',
-  category: "" ,
+  marque: [],
+  category: [] ,
+  promotions: null
 });
 
 const applyFilters = (newFilters) => {
-  console.log(newFilters)
   filters.value = { ...newFilters };
-  loadAndSetFilteredProducts();};
+  loadAndSetFilteredProducts();
+};
 
 const loadFilteredProducts = async () => {
   try {
+    console.log("FILTRE : ", filters.value.promotions)
     const response = await fetch(
-      `http://localhost:3000/api/products?page=1&limit=10&productName=${filters.value.productName}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}`
+      `http://localhost:3000/api/products?page=1&limit=10&name=${filters.value.productName}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`
     );
 
     if (!response.ok) {
@@ -55,7 +55,6 @@ const loadFilteredProducts = async () => {
     }
 
     const filteredProducts = await response.json();
-    console.log("DATA RECEIVED  : ", filteredProducts);
     return filteredProducts;
   } catch (error) {
     console.error("Error fetching product details:", error);
@@ -65,7 +64,6 @@ const loadFilteredProducts = async () => {
 
 const loadAndSetFilteredProducts = async () => {
   filteredProducts.value = await loadFilteredProducts();
-  console.log("FILTER PRODUCT : ", filteredProducts.value)
 };
 
 const loadMarqueAndCategory = async () => {
