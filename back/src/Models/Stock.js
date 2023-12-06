@@ -1,7 +1,8 @@
 const { DataTypes, Model } = require("sequelize");
 const { sendNotification, sendMail } = require("../Controllers/mailController");
 const fs = require("fs").promises;
-const productMongo = require("../dtos/denormalization/productMongo")
+const productMongo = require("../dtos/denormalization/productMongo");
+const { getTotalStock } = require("../Helper/Utils");
 module.exports = function (connection) {
   class Stock extends Model {
     static associate(db) {
@@ -20,6 +21,8 @@ module.exports = function (connection) {
           "update",
           db.Stock
         )
+        const total = await getTotalStock(product, db.Stock);
+        console.log("TOTAL : ", total)
         if (total < product.quantity_alert) {
           const admins = await db.User.findAll({
             where: {

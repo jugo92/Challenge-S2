@@ -15,7 +15,6 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
     try {
       basket.value = JSON.parse(localStorage.getItem(BASKET_STORAGE_KEY));
       if (basket.value && basket.value.basketId) {
-        console.log("ici")
         await addToBasketBackend(product, quantity, basket.value.basketId);
       } else {
         const response = await fetch('http://localhost:3000/api/baskets', {

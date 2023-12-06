@@ -154,8 +154,9 @@
 import { Icon } from '@iconify/vue';
 import { RouterLink } from 'vue-router';
 import {ref} from "vue"
+import {basket} from "../services/basketService"
 
-const quantity = ref(1);
+const quantity = ref(basket.value.products.length);
 </script>
 
 
