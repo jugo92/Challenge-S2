@@ -4,13 +4,15 @@
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label for="marque" class="block text-sm font-medium text-gray-700">Marque</label>
-          <select id="marque" name="marque" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          <select @input="updateFilter" v-model="selectMarque" id="marque" name="marque" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <option value="" selected>Sélectionner une marque</option>
             <option v-for="marque in marquesList" :key="marque.id" :value="marque.name">{{ marque.name }}</option>
           </select>
         </div>
         <div>
           <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-          <select id="category" name="category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+          <select @input="updateFilter" v-model="selectCategory" id="category" name="category" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <option value="" disabled selected>Sélectionner une categorie</option>
             <option v-for="category in categoriesList" :key="category.id" :value="category.name">{{ category.name }}</option>
           </select>
         </div>

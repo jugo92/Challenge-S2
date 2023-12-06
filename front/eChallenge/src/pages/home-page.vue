@@ -40,6 +40,7 @@ const filters = ref({
 });
 
 const applyFilters = (newFilters) => {
+  console.log(newFilters)
   filters.value = { ...newFilters };
   loadAndSetFilteredProducts();};
 
