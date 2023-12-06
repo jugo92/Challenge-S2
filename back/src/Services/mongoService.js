@@ -4,14 +4,29 @@ class MongoService {
   }
 
   async getAll(req, res) {
-    const { page: reqPage, limit: reqLimit, ...filters } = req.query;
+    const { page: reqPage, limit: reqLimit, productName, description } = req.query;
+    // console.log("LES FILTRES : ", filters)
     const page = parseInt(reqPage) || 1;
     const limit = parseInt(reqLimit) || 10;
-    const query = this.Model.find(filters)
+
+      // Créez un objet pour stocker les filtres non vides
+  const filterObject = {};
+
+  // Ajoutez uniquement les filtres non vides à l'objet
+  if (productName) {
+    filterObject.name = new RegExp(productName, 'i');
+  }
+
+  if (description) {
+    filterObject.description = new RegExp(description, 'i');
+  }
+  console.log(filterObject)
+
+    const query = this.Model.find(filterObject)
       .skip((page - 1) * limit)
       .limit(limit);
     const models = await query.exec();
-    const countQuery = this.Model.countDocuments(filters);
+    const countQuery = this.Model.countDocuments(filterObject);
 
     const countTotal = await countQuery.exec();
     res.set('X-Total-Count', countTotal);

@@ -12,7 +12,8 @@ module.exports = function (connection) {
         await db.Stock.create({
           id: uuidv7(),
           movement: "reservation",
-          quantity: productBasket.quantity
+          quantity: productBasket.quantity,
+          ProductId : productBasket.ProductId
         })
       }
       );

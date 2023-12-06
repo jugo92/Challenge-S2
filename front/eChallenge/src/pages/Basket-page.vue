@@ -1,29 +1,27 @@
-// Basket.vue
 <script setup>
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import Navbar from "../components/Navbar.vue";
+import {removeFromBasket, checkAndAddToBasket, basket} from "../services/basketService"
 
 const store = useStore();
 const router = useRouter();
-const cart = computed(() => store.state.cart);
+const cart = computed(() => basket.value.products);
 const loading = ref(false);
 
 
 const decrementQuantity = (product) => {
-  if (product.quantity > 1) {
-    store.commit('updateQuantity', { id: product.id, quantity: product.quantity - 1 });
-  }
+  removeFromBasket(product);
 };
 
 const incrementQuantity = (product) => {
-  store.commit('updateQuantity', { id: product.id, quantity: product.quantity + 1 });
+  checkAndAddToBasket(product, 1)
 };
 
 const total = computed(() => {
-  return cart.value.reduce((acc, product) => {
-    return acc + product.price * product.quantity;
+  return basket.value.products.reduce((acc, product) => {
+    return acc + product.productData.price * product.quantity;
   }, 0).toFixed(2);
 });
 </script>
@@ -53,18 +51,17 @@ const total = computed(() => {
                                 <td class="py-4">
                                     <div class="flex items-center">
                                         <img class="h-16 w-16 mr-4" src="https://via.placeholder.com/150" alt="Product image">
-                                        <span class="font-semibold"> {{ product.title }}</span>
                                     </div>
                                 </td>
-                                <td class="py-4">19.99€</td>
+                                <td class="py-4">{{ product.productData.price }}</td>
                                 <td class="py-4">
                                     <div class="flex items-center">
-                                        <button class="border rounded-md py-2 px-4 mr-2">-</button>
-                                        <span class="text-center w-8">1</span>
-                                        <button class="border rounded-md py-2 px-4 ml-2">+</button>
+                                        <button  @click="decrementQuantity(product.productData)" class="border rounded-md py-2 px-4 mr-2">-</button>
+                                        <span class="text-center w-8">{{ product.quantity }}</span>
+                                        <button @click="checkAndAddToBasket(product.productData)" class="border rounded-md py-2 px-4 ml-2">+</button>
                                     </div>
                                 </td>
-                                <td class="py-4">19.99€</td>
+                                <td class="py-4">{{ product.productData.price * product.quantity }}</td>
                             </tr>
                        
                         </tbody>
@@ -82,7 +79,7 @@ const total = computed(() => {
                     <hr class="my-2">
                     <div class="flex justify-between mb-2">
                         <span class="font-semibold">Total</span>
-                        <span class="font-semibold">21.98€</span>
+                        <span class="font-semibold">{{ total }}</span>
                     </div>
                     <button @click="goToRecap" :disabled="loading" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full cursor-pointer">Paiement</button>
 

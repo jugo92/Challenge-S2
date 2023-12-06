@@ -12,11 +12,18 @@ module.exports = function (connection) {
     }
     static addHooks(db) {
       Product.addHook("afterCreate", product =>
-        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
       );
       Product.addHook("beforeUpdate", async product => {
         const productBeforeUpdate = await Product.findByPk(product.id);
-
 
         if (product.isPublished) {
           if (
@@ -74,10 +81,26 @@ module.exports = function (connection) {
         }
       });
       Product.addHook("afterUpdate", product =>
-        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
       );
       Product.addHook("afterDestroy", product =>
-        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
       );
     }
   }

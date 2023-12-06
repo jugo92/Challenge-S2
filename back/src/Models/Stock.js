@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const { sendNotification, sendMail } = require("../Controllers/mailController");
 const { Op } = require("sequelize");
-const fs = require("fs").promises
+const fs = require("fs").promises;
 module.exports = function (connection) {
   class Stock extends Model {
     static associate(db) {
@@ -13,7 +13,7 @@ module.exports = function (connection) {
         const product = await db.Product.findByPk(stock.ProductId);
         const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
 
-        const totalCountIncrement = await Stock.sum('quantity', {
+        const totalCountIncrement = await Stock.sum("quantity", {
           where: {
             ProductId: product.id,
             [Op.or]: [
@@ -27,13 +27,13 @@ module.exports = function (connection) {
             ],
           },
         });
-        const totalCountDecrement = await Stock.sum('quantity', {
+        const totalCountDecrement = await Stock.sum("quantity", {
           where: {
             ProductId: product.id,
             [Op.or]: [
               { movement: "decrement" },
               {
-                movement: "order"
+                movement: "order",
               },
               {
                 movement: "reservation",
@@ -44,7 +44,8 @@ module.exports = function (connection) {
             ],
           },
         });
-        const total = totalCountIncrement - totalCountDecrement
+        const total = totalCountIncrement - totalCountDecrement;
+
         if (total < product.quantity_alert) {
           const admins = await db.User.findAll({
             where: {
