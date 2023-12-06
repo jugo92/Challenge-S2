@@ -58,7 +58,7 @@ app.get('/getImage/:imageName', (req, res) => {
   if (fs.existsSync(imagePath)) {
     res.sendFile(imagePath);
   } else {
-    res.status(404).send('Image non trouvée');
+    res.sendFile(path.join(__dirname, 'uploads', "default.jpg"));
   }
 });
 

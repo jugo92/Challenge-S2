@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require("sequelize");
 const { sendNotification, sendMail } = require("../Controllers/mailController");
-const { Op } = require("sequelize");
 const fs = require("fs").promises;
+const productMongo = require("../dtos/denormalization/productMongo")
 module.exports = function (connection) {
   class Stock extends Model {
     static associate(db) {
@@ -11,41 +11,15 @@ module.exports = function (connection) {
     static addHooks(db) {
       Stock.addHook("afterCreate", async stock => {
         const product = await db.Product.findByPk(stock.ProductId);
-        const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-
-        const totalCountIncrement = await Stock.sum("quantity", {
-          where: {
-            ProductId: product.id,
-            [Op.or]: [
-              { movement: "increment" },
-              {
-                movement: "reservation",
-                createdAt: {
-                  [Op.gt]: fifteenMinutesAgo,
-                },
-              },
-            ],
-          },
-        });
-        const totalCountDecrement = await Stock.sum("quantity", {
-          where: {
-            ProductId: product.id,
-            [Op.or]: [
-              { movement: "decrement" },
-              {
-                movement: "order",
-              },
-              {
-                movement: "reservation",
-                createdAt: {
-                  [Op.lt]: fifteenMinutesAgo,
-                },
-              },
-            ],
-          },
-        });
-        const total = totalCountIncrement - totalCountDecrement;
-
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
         if (total < product.quantity_alert) {
           const admins = await db.User.findAll({
             where: {

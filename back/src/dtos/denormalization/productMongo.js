@@ -1,5 +1,5 @@
+const { getTotalStock } = require("../../Helper/Utils");
 const ProductMongo = require("../../Mongo/Product");
-const { Op } = require("sequelize");
 module.exports = async (
   modelId,
   key,
@@ -39,39 +39,7 @@ module.exports = async (
 
   const productMongoInstances = await Promise.all(
     products.map(async product => {
-      const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-      const totalCountIncrement = await Stock.sum("quantity", {
-        where: {
-          ProductId: product.id,
-          [Op.or]: [
-            { movement: "increment" },
-            {
-              movement: "reservation",
-              createdAt: {
-                [Op.gt]: fifteenMinutesAgo,
-              },
-            },
-          ],
-        },
-      });
-      const totalCountDecrement = await Stock.sum("quantity", {
-        where: {
-          ProductId: product.id,
-          [Op.or]: [
-            { movement: "decrement" },
-            {
-              movement: "order",
-            },
-            {
-              movement: "reservation",
-              createdAt: {
-                [Op.lt]: fifteenMinutesAgo,
-              },
-            },
-          ],
-        },
-      });
-      const total = totalCountIncrement - totalCountDecrement;
+      const total = await getTotalStock(product, Stock);
       const productMongoData = {
         _id: product.dataValues.id,
         name: product.dataValues.name,
