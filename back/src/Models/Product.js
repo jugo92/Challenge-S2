@@ -1,8 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
 const fs = require("fs").promises;
-const { sendMail, sendNotification } = require("../Controllers/mailController");
-const { uuidv7 } = require("uuidv7");
+const { sendNotification } = require("../Controllers/mailController");
 module.exports = function (connection) {
   class Product extends Model {
     static associate(db) {
@@ -17,33 +16,7 @@ module.exports = function (connection) {
       );
       Product.addHook("beforeUpdate", async product => {
         const productBeforeUpdate = await Product.findByPk(product.id);
-        if (product.quantity != productBeforeUpdate.quantity) {
-          await db.StockHistory.create({
-            id: uuidv7(),
-            ProductId: product.id,
-            quantity: product.quantity,
-            movement:
-              product.quantity > productBeforeUpdate.quantity ? "enter" : "out",
-          });
-        }
-        if (product.quantity < productBeforeUpdate.quantity_alert) {
-          const admins = await db.User.findAll({
-            where: {
-              role: "admin",
-            },
-          });
-          let content = await fs.readFile(`mails/quantityAlert.txt`, "utf8");
-          content = content.replace("{{product_name}}", product.name);
-          admins.forEach(async admin => {
-            let contentWithName = content.replace("{{name}}", admin.firstname);
-            await sendMail(
-              admin.email,
-              "Quantité alerte",
-              null,
-              contentWithName
-            );
-          });
-        }
+
 
         if (product.isPublished) {
           if (
@@ -231,7 +204,7 @@ module.exports = function (connection) {
       frontcamera: {
         type: DataTypes.STRING,
         allowNull: false,
-      },²
+      },
       weight: {
         type: DataTypes.STRING,
         allowNull: false,

@@ -18,7 +18,9 @@ const {
   Payment,
   Refund,
   Category,
-  StockHistory,
+  Stock,
+  Basket,
+  ProductBasket
 } = require("./src/Models");
 
 app.use(cors());
@@ -122,9 +124,22 @@ app.use(
 
 app.use(
   routePrefix + "/stocks",
-  multerMiddleware,
   new GenericRouter(
-    new GenericController(new GenericService(StockHistory))
+    new GenericController(new GenericService(Stock))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/baskets",
+  new GenericRouter(
+    new GenericController(new GenericService(Basket))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/productsbaskets",
+  new GenericRouter(
+    new GenericController(new GenericService(ProductBasket))
   ).getRouter()
 );
 
