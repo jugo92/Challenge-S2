@@ -138,13 +138,6 @@ module.exports.getEventPayment = async (req, res) => {
     res.status(400).json({ success: false });
     return;
   }
-  console.log("EVENT RECUE : ", event.type);
-  if (event.type === "charge.failed") {
-    console.log("FAILED CHARGE : ", event.data.object);
-  }
-  if (event.type === "payment_intent.payment_failed") {
-    console.log("PAYMENT INTENTE FAILED : ", event.data.object);
-  }
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const orderId = session.client_reference_id;

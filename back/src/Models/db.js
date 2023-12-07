@@ -1,7 +1,8 @@
 const { Sequelize } = require("sequelize");
+require('dotenv').config();
 
-const connection = new Sequelize("challenge-s2", "user", "challenge-s2", {
-  host: "localhost",
+const connection = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
   dialect: "mysql",
 });
 
