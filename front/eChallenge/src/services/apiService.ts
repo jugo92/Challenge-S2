@@ -2,7 +2,9 @@ const API_URL_BASE = import.meta.env.VITE_API_URL;
 
 export const apiService = {
     getAll(instance, params) {
+      console.log("test")
         let url = API_URL_BASE + "/" + instance;
+        console.log("url : ", url)
         if (params) {
             url += '?' + params;
         }

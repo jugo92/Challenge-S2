@@ -28,12 +28,12 @@ const {  validateField } = useForm()
 
 const splitUrl = window.location.pathname.split("/");
 const instance = splitUrl[splitUrl.length - 1];
-let isUpdateItem = ref(null);
+let isUpdateItem:any = ref(null);
 
 import {apiService} from "../services/apiService.ts";
-import {forEach, isEmpty} from "lodash";
-import path from "path";
-import fs from "fs";
+import {forEach} from "lodash";
+// import path from "path";
+// import fs from "fs";
 
 
 //////////////////////////////////
@@ -656,9 +656,9 @@ const getInstanceFormConfig = (instance) => {
 let currentPage = 1;
 let limit = 10;
 const fetchListOfItems = async () => {
-    const includedProperties = getIncludedProperties(instance);
+    const includedProperties:any = getIncludedProperties(instance);
     try {
-        const response = await fetch(import.meta.env.VITE_API_URL + instance + "?page=" + currentPage + "&limit=" + limit);
+        const response = await fetch(import.meta.env.VITE_API_URL + "/" + instance + "?page=" + currentPage + "&limit=" + limit);
         const data = await response.json();
         tableData.value = data.map((item) => {
             const filteredItem = {};
@@ -688,8 +688,8 @@ const afterInstanceSave = () => {
     }, 500);
 }
 
-const createInstance = async (data) => {
-    for (const field of formConfig.value) {
+const createInstance = async () => {
+    // for (const field of formConfig.value) {
         // if (!field.value && field.required) {
         //     field.validationError = { message: 'Ce champ est obligatoire' };
         //     continue;
@@ -698,8 +698,8 @@ const createInstance = async (data) => {
         //     field.value = 0;
         //     continue;
         // }
-        //TODO : vérifier si l'instance existe déjà
-    }
+        // TODO : vérifier si l'instance existe déjà
+    // }
     // isExist();
 
 
@@ -749,11 +749,11 @@ const openModalInstance = async (instance, isUpdate, data) => {
         formConfig.value = getInstanceFormConfig(instance);
         if (instance === 'products') {
             await fetchOptions('marques', (data) => {
-                const brandsField = formConfig.value.find(field => field.name === 'brands');
+                const brandsField:any = formConfig.value.find((field: any) => field.name === 'brands');
                 brandsField.options = data;
             });
             await fetchOptions('categories', (data) => {
-                const categoriesField = formConfig.value.find(field => field.name === 'categories');
+                const categoriesField:any = formConfig.value.find((field:any) => field.name === 'categories');
                 categoriesField.options = data;
             });
         }
@@ -774,7 +774,7 @@ const openModalInstance = async (instance, isUpdate, data) => {
         if (confirm('Voulez-vous vraiment supprimer les élèments sélectionnés ?')) {
             forEach(data, (item) => {
                 apiService.delete(instance, item)
-                    .then(res =>{
+                    .then(_ =>{
                         afterInstanceSave()
                     });
             });
@@ -794,8 +794,8 @@ const isExist = () => {
 }
 
 const updatePrixHT = () => {
-    const prixTTCField = formConfig.value.find(field => field.name === 'prixTTC');
-    const tvasField = formConfig.value.find(field => field.name === 'tvas');
+    const prixTTCField:any = formConfig.value.find((field:any) => field.name === 'prixTTC');
+    const tvasField:any = formConfig.value.find((field:any) => field.name === 'tvas');
     const selectedTva = tvasField.options.find(option => option.id === tvasField.value);
 
     const prixTTC = prixTTCField.value || 0;
@@ -806,27 +806,27 @@ const updatePrixHT = () => {
 };
 
 const updatePrixTTCAfterPromotion = () => {
-    const promotionField = formConfig.value.find(field => field.name === 'promotion');
+    const promotionField:any = formConfig.value.find((field:any) => field.name === 'promotion');
     const selectedPromotion = promotionField.options.find(option => option.id === promotionField.value);
 
-    const prixTTCField = formConfig.value.find(field => field.name === 'prixTTC');
+    const prixTTCField:any = formConfig.value.find((field:any) => field.name === 'prixTTC');
     const prixTTC = prixTTCField.value || 0;
 
     const prixTTCAfterPromotion = (1 - selectedPromotion.value / 100) * prixTTC;
     formConfig.value.find(field => field.name === 'prixTTCAfterPromotion').value = prixTTCAfterPromotion.toFixed(2);
 };
 
-let formConfig = ref([]);
+let formConfig:any = ref([]);
 
 onMounted(async () => {
     formConfig.value = getInstanceFormConfig(instance);
     if(instance === 'products') {
         await fetchOptions('marques', (data) => {
-            const brandsField = formConfig.value.find(field => field.name === 'brands');
+            const brandsField:any = formConfig.value.find((field:any) => field.name === 'brands');
             brandsField.options = data;
         });
         await fetchOptions('categories', (data) => {
-            const categoriesField = formConfig.value.find(field => field.name === 'categories');
+            const categoriesField:any = formConfig.value.find((field:any) => field.name === 'categories');
             categoriesField.options = data;
         });
     }

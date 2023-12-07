@@ -24,7 +24,7 @@
             <input :id="row._id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row._id" @change="getSelectedInstances">
           </div>
         </td>
-        <td v-for="(value, key, index) in Object.entries(row).slice(1)" :key="index" :class="{[columnsStyleObject[value[0]]] : columnsStyleObject.hasOwnProperty(value[0]) }">
+        <td v-for="(value, _ , index) in Object.entries(row).slice(1)" :key="index" :class="{[columnsStyleObject[value[0]]] : columnsStyleObject.hasOwnProperty(value[0]) }">
           <p class="text-center">
             {{ value[1] == "undefined" || value[1] == "" ? "-" : value[1] }}
           </p>
@@ -53,22 +53,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import {Icon} from "@iconify/vue";
-import {forEach} from "lodash";
 import FormBuilder from "../Form/FormBuilder.vue";
-import {useModal} from "../Modal/useModal.ts";
-import {apiService} from "../../services/apiService.ts";
-const { isModalVisible, openModal, closeModal } = useModal();
 const emit = defineEmits();
-interface TableColumn {
-  key: string;
-  label: string;
-  filter?: boolean;
-  style?: string;
-}
-
-interface TableRow {
-  [key: string]: string | number;
-}
 
 const props = defineProps(['columns', 'data', 'formConfig']);
 
@@ -121,12 +107,12 @@ const sortedData = computed(() => {
   }
 });
 
-const selectedItems = ref([]);
+const selectedItems:any = ref([]);
 
 const getSelectedInstances = () => {
     selectedItems.value = [];
     const checkboxes = document.querySelectorAll('.table-input-checkbox');
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach((checkbox:any) => {
         if (checkbox.checked) {
             selectedItems.value.push(checkbox.id);
         }
@@ -137,7 +123,7 @@ const getSelectedInstances = () => {
 
 
 const selectAll = () => {
-  const allItem = document.getElementById('all-item');
+  const allItem:any = document.getElementById('all-item');
   if (allItem.checked) {
     selectAllItems();
   } else {
@@ -149,7 +135,7 @@ const selectAll = () => {
 const selectAllItems = () => {
   selectedItems.value = [];
   const checkboxes = document.querySelectorAll('.table-input-checkbox');
-  checkboxes.forEach((checkbox) => {
+  checkboxes.forEach((checkbox:any) => {
     checkbox.checked = true;
     selectedItems.value.push(checkbox.id);
   });
@@ -157,20 +143,20 @@ const selectAllItems = () => {
 
 const unselectAllItems = () => {
   const checkboxes = document.querySelectorAll('.table-input-checkbox');
-  checkboxes.forEach((checkbox) => {
+  checkboxes.forEach((checkbox:any) => {
     checkbox.checked = false;
   });
   selectedItems.value = [];
 };
 
-const deleteSelectedItems = () => {
-    console.log("deleteSelectedItems" ,selectedItems.value)
-  if (confirm('Voulez-vous vraiment supprimer les produits sélectionnés ?')) {
-    forEach(selectedItems.value, (item) => {
-        apiService.delete(instance, selectedItems.value)
-    });
-  }
-};
+// const deleteSelectedItems = () => {
+//     console.log("deleteSelectedItems" ,selectedItems.value)
+//   if (confirm('Voulez-vous vraiment supprimer les produits sélectionnés ?')) {
+//     forEach(selectedItems.value, (item) => {
+//         apiService.delete(instance, selectedItems.value)
+//     });
+//   }
+// };
 
 const sortByColumn = (columnKey: string) => {
   if (sortColumn.value === columnKey) {

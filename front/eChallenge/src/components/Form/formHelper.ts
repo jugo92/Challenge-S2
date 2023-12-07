@@ -27,7 +27,7 @@ interface FormField {
     validationError: { message: string } | null;
 }
 
-export function useForm(formConfig?: FormField[]) {
+export function useForm() {
     const listFormData = ref([]);
     const showField = (field: FormField) => {
         return !field.showCondition || (field.showCondition && field.showCondition());
@@ -42,11 +42,11 @@ export function useForm(formConfig?: FormField[]) {
         // Réinitialiser les erreurs de validation pour les champs pertinents
         formConfig.value
             .filter(field => field.type !== 'button' && field.validationError != null)
-            .forEach(field => {
-                this.$nextTick(() => {
-                    field.validationError = '';
-                });
-            });
+            // .forEach(field => {
+                // this.$nextTick(() => {
+                //     field.validationError = '';
+                // });
+            // });
 
         // Réinitialiser les valeurs des champs
         fieldsToReset.forEach(fieldName => {

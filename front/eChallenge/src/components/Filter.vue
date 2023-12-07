@@ -118,7 +118,7 @@
  
      <label for="promotions" class="block text-sm font-medium text-gray-700">Promotions</label>
  
-     <select @change="updateFilter" v-model="promotion" id="promotions" name="promotions" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+     <select @change="updateFilter" v-model="promotions" id="promotions" name="promotions" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
  
        <option value="">Toutes</option>
  

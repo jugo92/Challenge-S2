@@ -2,7 +2,7 @@ import { ref } from 'vue';
 
 const BASKET_STORAGE_KEY = 'basket';
 
-const basket = ref({
+const basket:any = ref({
   basketId: null,
   products: [],
 });
@@ -13,7 +13,13 @@ const saveBasketToLocalStorage = () => {
 
 const checkAndAddToBasket = async (product, quantity = 1) => {
     try {
-      basket.value = JSON.parse(localStorage.getItem(BASKET_STORAGE_KEY));
+      const basketData = localStorage.getItem(BASKET_STORAGE_KEY);
+
+      if (basketData !== null) {
+         basket.value = JSON.parse(basketData);
+      } else {
+        basket.value = {basketId: null, products:[]}
+     }
       if (basket.value && basket.value.basketId) {
         await addToBasketBackend(product, quantity, basket.value.basketId);
       } else {
@@ -41,9 +47,9 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
   
   const addToBasketBackend = async (productData, quantity, basketId) => {
     try {
-    const existingProductIndex = basket.value.products.findIndex(product => product.productData._id === productData._id);
+    const existingProductIndex = basket.value.products.findIndex((product:any) => product.productData._id === productData._id);
     if (existingProductIndex !== -1) {
-      const existingProduct = basket.value.products[existingProductIndex];
+      const existingProduct:any = basket.value.products[existingProductIndex];
       existingProduct.quantity += quantity;
        await fetch(`${import.meta.env.VITE_API_URL}/productsbaskets/${existingProduct.productBasketId}`, {
         method: 'PATCH',
@@ -84,8 +90,12 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
 
  const removeFromBasket = async(productData) => {
     try{
-        const storedBasket = JSON.parse(localStorage.getItem(BASKET_STORAGE_KEY));
-        basket.value = storedBasket
+      const basketData = localStorage.getItem(BASKET_STORAGE_KEY);
+      if (basketData !== null) {
+         basket.value = JSON.parse(basketData);
+      } else {
+        basket.value = {basketId: null, products:[]}
+     }
     const productIndex = basket.value.products.findIndex(product => product.productData._id === productData._id);
         console.log(basket.value.products)
         console.log(productIndex)
