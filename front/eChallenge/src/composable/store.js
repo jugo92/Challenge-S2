@@ -1,4 +1,5 @@
 import { createStore } from "vuex";
+import {apiService} from "../services/apiService";
 
 const store = createStore({
   state() {
@@ -262,18 +263,23 @@ const store = createStore({
 
     async updateUser({ commit }, userData) {
       try {
+        console.log("userData:", JSON.stringify(userData));
         const response = await fetch(
-          "http://localhost:3000/api/users/${user+id}",
+          "http://localhost:3000/api/users/"+ userData.id,
           {
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             body: JSON.stringify(userData),
           }
         );
-
+        // let response = null
+        // apiService.update("users", userData, userData._id)
+        //     .then(res => {
+        //         response = res
+        //         console.log(response.data);
+        //     })
         if (!response.ok) {
           throw new Error("Update failed");
         }

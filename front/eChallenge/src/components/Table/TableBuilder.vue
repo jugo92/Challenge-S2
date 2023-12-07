@@ -1,7 +1,7 @@
 <template>
     <FormBuilder :formFields="actionsConfig" format="column"/>
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg z-1">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 table-responsive">
             <thead class="text-xs text-gray-700 uppercase bg-gray-100">
             <tr>
                 <th scope="col" class="p-4">
@@ -21,12 +21,21 @@
             <tr class="bg-white hover:bg-gray-50" v-for="row in sortedData" :key="row.id">
                 <td class="w-4 p-4">
                     <div class="flex items-center">
-                        <input :id="row._id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row._id" @change="getSelectedInstances">
+                        <input v-if="MongoDBInstances.includes(instance)" :id="row._id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row._id" @change="getSelectedInstances">
+                        <input v-else :id="row.id" type="checkbox" class="table table-input-checkbox" :v-model="'item_' + row.id" @change="getSelectedInstances">
                     </div>
                 </td>
                 <td v-for="(value, key, index) in Object.entries(row).slice(1)" :key="index" :class="{[columnsStyleObject[value[0]]] : columnsStyleObject.hasOwnProperty(value[0]) }">
-                    <p class="text-center">
-                        {{ value[1] == "undefined" || value[1] == "" ? "-" : value[1] }}
+                    <p class="text-center" v-if="isDate(value[1])">
+                       {{  formaterDate(value[1]) }}
+                    </p>
+                    <p class="text-center" v-else-if="columnsLinkObject.hasOwnProperty(value[0])">
+                      <router-link :to="{ name: 'UserDetails', params: { id: row.id } }">
+                        {{ value[1] }}
+                      </router-link>
+                    </p>
+                    <p class="text-center" v-else>
+                        {{ value[1] == "undefined" || value[1] == "" ? "false" : value[1] }}
                     </p>
                 </td>
             </tr>
@@ -36,13 +45,13 @@
     <nav class="pagination" aria-label="Table navigation">
       <span>
     <select v-model="props.pageIndex.limit" id="selectOption" @change="props.update" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-32 p-2.5">
-      <option value="2" selected>10 par page</option>
+      <option value="10" selected>10 par page</option>
       <option value="20">20 par page</option>
       <option value="50">50 par page</option>
       <option value="">Tout</option>
     </select>
       </span>
-        <ul class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+        <ul v-if="filteredData.length > 0" class="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
             <li>
                 <span class="pagination-previous">Précédent</span>
             </li>
@@ -62,9 +71,10 @@
 <script setup lang="ts">
 import {ref, computed, inject, onMounted} from 'vue';
 import {Icon} from "@iconify/vue";
-import {forEach} from "lodash";
+import {forEach, isDate} from "lodash";
 import FormBuilder from "../Form/FormBuilder.vue";
 import {apiService} from "../../services/apiService.ts";
+import { format, parseISO, isValid } from 'date-fns';
 
 const emit = defineEmits();
 const props = defineProps(['columns', 'data', 'formConfig', 'update', 'pageIndex']);
@@ -72,6 +82,8 @@ const props = defineProps(['columns', 'data', 'formConfig', 'update', 'pageIndex
 const filters = ref<Record<string, string>>({});
 const sortColumn = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
+
+const MongoDBInstances = ["products", "orders", "payments"]
 
 const nbPages = ref(0);
 
@@ -81,8 +93,25 @@ const columnsStyleObject = columnsWithStyle.reduce((acc, column) => {
     return acc;
 }, {});
 
+const columnsWithLink = props.columns.filter(column => column.link);
+const columnsLinkObject = columnsWithLink.reduce((acc, column) => {
+    acc[column.key] = column.link;
+    return acc;
+}, {});
+
 const currentPath = window.location.pathname;
 const instance = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+const isDate = (date) => {
+  const parsedDate = parseISO(date);
+  return isValid(parsedDate) && parsedDate instanceof Date;
+}
+
+const formaterDate = (date) => {
+  const dateParsee = parseISO(date);
+  return format(dateParsee, 'dd-MM-yyyy à HH:mm');
+}
+
 
 const filteredData = computed(() => {
     let filteredData = [...props.data];
@@ -90,7 +119,6 @@ const filteredData = computed(() => {
         if(filters.value[key] && key.includes(".")){
             const [firstKey, secondKey] = key.split(".");
             filteredData = filteredData.filter((row) => {
-                   console.log(row)
                if(row) {
                 String(row[firstKey][secondKey]).toLowerCase().includes(filters.value[key].toLowerCase())
                }
@@ -101,6 +129,7 @@ const filteredData = computed(() => {
             );
         }
     }
+  console.log("filteredData", filteredData)
     nbPages.value = Math.ceil(filteredData.length / props.pageIndex.limit);
     return filteredData;
 });
@@ -139,7 +168,6 @@ const getSelectedInstances = () => {
             selectedItems.value.push(checkbox.id);
         }
     });
-    console.log("getselectedinstances", selectedItems)
     return selectedItems.value;
 };
 
@@ -161,14 +189,6 @@ const selectAllItems = () => {
         checkbox.checked = true;
         selectedItems.value.push(checkbox.id);
     });
-};
-
-const unselectAllItems = () => {
-    const checkboxes = document.querySelectorAll('.table-input-checkbox');
-    checkboxes.forEach((checkbox) => {
-        checkbox.checked = false;
-    });
-    selectedItems.value = [];
 };
 
 const deleteSelectedItems = () => {

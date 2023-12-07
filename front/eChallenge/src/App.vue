@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Navbar from './components/Navbar.vue';
+import Footer from './components/Footer.vue';
 import {onMounted, provide} from "vue";
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
@@ -14,11 +15,14 @@ onMounted(() => {
 </script>
 
 <template>
-    <div id="app">
-        <Navbar />
-<!--    <TopBar />-->
-        <div class="min-w-fit my-20 md:mx-20 lg:mx-52 m-5">
+    <Navbar/>
+    <div id="app" class="mb-28">
             <router-view></router-view>
-        </div>
+    <Footer class="fixed bottom-0 left-0"/>
     </div>
 </template>
+
+<style>
+@import "./assets/styles.scss";
+
+</style>

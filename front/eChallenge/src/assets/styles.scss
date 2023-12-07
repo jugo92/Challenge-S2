@@ -2,16 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "colors.scss";
-@import "font.scss";
-
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(0, 0, 0, 0.87);
   // background-color: #242424;
 
   font-synthesis: none;
@@ -19,6 +16,18 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+}
+
+
+html{
+  @apply h-full;
+  body {
+    @apply h-full;
+    #app{
+      @apply bg-gray-50 mb-40;
+      color: black;
+    }
+  }
 }
 
 .form{
@@ -69,11 +78,6 @@ main {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -94,7 +98,7 @@ button:focus-visible {
 }
 
 .card {
-  @apply p-8 bg-white rounded shadow-md;
+  @apply p-8 bg-white rounded border border-gray-200 shadow;
 }
 
 .button {

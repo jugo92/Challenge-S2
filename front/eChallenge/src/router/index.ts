@@ -16,6 +16,12 @@ import RecapPageVue from "../pages/Recap-page.vue";
 import SuccessPageVue from "../pages/Success-page.vue";
 import SettingPageVue from "../pages/Setting-page.vue"
 import ResetPasswordVue from "../pages/ResetPassword-page.vue"
+import Dashboard from "../components/Dashboard.vue";
+import UserDetails from "../components/Admin/User.vue";
+import {useModal} from "./../components/Modal/useModal.ts";
+import Recap from "../pages/Recap.vue";
+import VerifyPassword from "../pages/VerifyPassword.vue";
+const { isModalVisible, openModal, closeModal } = useModal();
 
 const router = createRouter({
     history: createWebHistory(),
@@ -31,12 +37,12 @@ const router = createRouter({
             name: "Profile",
             component: ProfilePageVue,
         },
-            
-            {
-                path: "/reset_password",
-                name: "ResetPassword",
-                component: ResetPasswordVue,
-            },
+
+        {
+            path: "/reset_password",
+            name: "ResetPassword",
+            component: ResetPasswordVue,
+        },
         {
             path: "/success",
             name: "Success",
@@ -49,12 +55,17 @@ const router = createRouter({
             component:SettingPageVue,
 
         },
-            
-            {
-                path: "/cart",
-                name: "Basket",
-                component: BasketPageVue,
-            },
+
+        {
+            path: "/cart",
+            name: "Basket",
+            component: BasketPageVue,
+        },
+        {
+            path: "/recap",
+            name: "Recap",
+            component: RecapPageVue,
+        },
         {
             path: "/products",
             name: "ProductList",
@@ -73,9 +84,24 @@ const router = createRouter({
             component: RegisterVue,
         },
         {
+            path: '/new_password',
+            name: 'ResetPassword',
+            component: VerifyPassword,
+        },
+        {
             path: "/login",
             name: "Login",
             component: LoginVue,
+        },
+        {
+            path: "/admin/dashboard",
+            name: "Dashboard",
+            component: Dashboard,
+        },
+        {
+            path: '/admin/usercard/:id',
+            name: 'UserDetails',
+            component: UserDetails,
         },
         {
             path: "/admin/products",
@@ -84,7 +110,7 @@ const router = createRouter({
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
-            path: "/admin/marques",
+            path: "/admin/brands",
             name: "ShowAllMarques",
             component: ShowAll,
             props: (route) => ({ instance: route.path.substring(1) })
@@ -96,7 +122,7 @@ const router = createRouter({
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
-            path: "/admin/users",
+            path: "/admin/users/",
             name: "ShowAllUsers",
             component: ShowAll,
             props: (route) => ({ instance: route.path.substring(1) })
@@ -111,21 +137,26 @@ const router = createRouter({
         //     name: "ProductDetails",
         //     component: ProductDetailsVue,
         // },
-      
-        
+
+
     ],
 });
 
 router.beforeEach((to, from, next) => {
-    // const publicPages = ["/login", "/register"];
-    // const authRequired = !publicPages.includes(to.path);
-    // const loggedIn = localStorage.getItem("user");
-    //
-    // if (authRequired && !loggedIn) {
-    //     return next("/login");
-    // }
-    console.log(to.path);
+    closeModal();
     next();
 });
+
+// router.beforeEach((to, from, next) => {
+// const publicPages = ["/login", "/register"];
+// const authRequired = !publicPages.includes(to.path);
+// const loggedIn = localStorage.getItem("user");
+//
+// if (authRequired && !loggedIn) {
+//     return next("/login");
+// }
+// console.log(to.path);
+//     next();
+// });
 
 export default router;

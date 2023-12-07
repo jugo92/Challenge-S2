@@ -18,17 +18,24 @@ const onSubmit = async (data) => {
 
 const resetPasswordForm = ref([
     {
-        label: "Email",
-        type: "email",
-        name: "email",
-        value: "",
-        placeholder: "Saisissez l'email de l'utilisateur...",
-        required: true,
+        label: "Mot de passe",
+        type: "password",
+        name: "password",
+        value: '',
         validationError: "",
         validationSchema: z.string()
-            .email({ message: "L'email n'est pas valide" })
-            .min(3, { message: "L'email doit contenir au moins 3 caractères" })
-            .max(255, { message: "L'email doit contenir au maximum 255 caractères" }),
+            .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères" })
+            .max(255, { message: "Le mot de passe doit contenir au maximum 255 caractères" }),
+    },
+    {
+        label: "Confirmation du mot de passe",
+        type: "password",
+        name: "password_confirmation",
+        value: '',
+        validationError: "",
+        validationSchema: z.string()
+            .min(8, { message: "Le mot de passe doit contenir au moins 8 caractères" })
+            .max(255, { message: "Le mot de passe doit contenir au maximum 255 caractères" }),
     },
     {
         type: 'button',

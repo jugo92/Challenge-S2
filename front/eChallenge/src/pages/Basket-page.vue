@@ -31,7 +31,6 @@ const total = computed(() => {
 
 
  <template>
-  <Navbar />
 
 <div class=" h-screen py-8 mt-24 mobile_first">
     <div class="container mx-auto px-4">

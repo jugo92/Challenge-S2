@@ -3,8 +3,10 @@ const API_URL_BASE = 'http://localhost:3000/api/';
 export const apiService = {
     getAll(instance, params) {
         let url = API_URL_BASE + instance;
-        if (params) {
-            url += '?' + params;
+        if (params.includes('?')) {
+            url += params;
+        }else if(params.includes("/")){
+            url += params;
         }
         return fetch(url)
             .then(response => response.json());
@@ -32,7 +34,7 @@ export const apiService = {
 
     update(instance, item, id) {
         var myInit = {
-            method: 'PUT', 
+            method: instance === 'users' ? 'PATCH' : 'PUT',
           };
         if(item instanceof FormData){
             myInit.body = item

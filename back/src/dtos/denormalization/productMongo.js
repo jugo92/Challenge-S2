@@ -7,6 +7,7 @@ module.exports = async (
   Category,
   event = "update"
 ) => {
+console.log("test mongo cate", modelId, key)
   const products = await Product.findAll({
     where: {
       [key]: modelId,
@@ -29,10 +30,12 @@ module.exports = async (
       await Product.update({ isPublished: 0 }, { where: { [key]: modelId } });
     }
     //Dans le cas ou on supprime/modifie marque/catagory
-    for (const product of products) {
-      const productId = product.dataValues.id;
-      await ProductMongo.deleteOne({ _id: productId });
-    }
+    const deletePromises = products.map(async product => {
+      const productId = product.id;
+      return ProductMongo.deleteOne({ _id: productId });
+    });
+
+    await Promise.all(deletePromises);
   }
 
   const productMongoInstances = products.map(product => {

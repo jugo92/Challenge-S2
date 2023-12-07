@@ -8,12 +8,13 @@ defineProps<{
 }>()
 
 const colors = {
-    "blue" : "bg-blue-600 hover:bg-blue-800 focus:ring-4",
-    "red" : "bg-red-600 hover:bg-red-800 focus:ring-4",
-    "green" : "bg-green-600 hover:bg-green-800 focus:ring-4",
-    "yellow" : "bg-yellow-600 hover:bg-yellow-800 focus:ring-4",
-    "orange" : "bg-orange-600 hover:bg-orange-800 focus:ring-4",
-    "purple" : "bg-purple-600 hover:bg-purple-800 focus:ring-4",
+    "blue" : "bg-blue-600 hover:bg-blue-800 focus:ring-4 text-white",
+    "red" : "bg-red-600 hover:bg-red-800 focus:ring-4 text-white",
+    "green" : "bg-green-600 hover:bg-green-800 focus:ring-4 text-white",
+    "yellow" : "bg-yellow-600 hover:bg-yellow-800 focus:ring-4 text-white",
+    "orange" : "bg-orange-600 hover:bg-orange-800 focus:ring-4 text-white",
+    "purple" : "bg-purple-600 hover:bg-purple-800 focus:ring-4 text-white",
+    "white" : "bg-white hover:bg-gray-200 focus:ring-4 text-black border border-gray-300",
 }
 
 const buttons = {
@@ -55,14 +56,15 @@ const buttons = {
 <template>
     <router-link v-if="redirect" :to="name ? buttons[name].action : action">
         <button
-            :class="name ? buttons[name].color : colors[color]" class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 w-full">
+            :class="name ? buttons[name].color : colors[color]" class="font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 w-full">
             {{ name ? buttons[name].content : content }}
         </button>
     </router-link>
     <button
         v-else
+        @click="name ? '' : action"
         :class="name ? buttons[name].color : colors[color]"
-        class="text-white font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 w-full" type="button"
+        class="font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 w-full" type="button"
         >
         {{ name ? buttons[name].content : content }}
     </button>

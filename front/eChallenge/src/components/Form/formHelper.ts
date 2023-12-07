@@ -37,12 +37,9 @@ export function useForm(formConfig: FormField[]) {
     };
 
     const reinitForm = (formConfig) => {
-        console.log('Formulaire réinitialisé !');
-        console.log(formConfig);
 
         const fieldsToReset = formConfig.value.filter(field => field.type !== 'button').map(field => field.name);
 
-        // Réinitialiser les erreurs de validation pour les champs pertinents
         formConfig.value
             .filter(field => field.type !== 'button' && field.validationError != null)
             .forEach(field => {
@@ -51,7 +48,6 @@ export function useForm(formConfig: FormField[]) {
                 });
             });
 
-        // Réinitialiser les valeurs des champs
         fieldsToReset.forEach(fieldName => {
             const field = formConfig.value.find(field => field.name === fieldName);
 
@@ -80,7 +76,6 @@ export function useForm(formConfig: FormField[]) {
                         field.value = null;
                         break;
                     default:
-                        // Gérer d'autres types de champs ici si nécessaire
                         break;
                 }
             }
@@ -106,7 +101,8 @@ export function useForm(formConfig: FormField[]) {
     };
 
     const validateField = (field: FormField) => {
-        const result = field.validationSchema?.safeParse(field.value);
+        const value = field.type === 'number' ? Number(field.value) : field.value;
+        const result = field.validationSchema?.safeParse(value);
 
         if (result?.success) {
             // Validation succeeds
@@ -135,5 +131,76 @@ export function useForm(formConfig: FormField[]) {
         return "http://localhost:3000/getImage/" + file
     };
 
-    return { reinitForm, handleInput, handleFileChange, getFileUrl, listFormData, selectSuggestion, showField, callChangeHandlers, validateField };
+    const getRequestBody = (formConfig) => {
+        switch (instance) {
+            case "products":
+                const formProduct = new FormData();
+                formProduct.append('file', formConfig.find(field => field.name === 'files').value)
+                formProduct.append('CategoryId', formConfig.find(field => field.name === 'categories').value)
+                formProduct.append('MarqueId', formConfig.find(field => field.name === 'brands').value )
+                formProduct.append('name',  formConfig.find(field => field.name === 'name').value)
+                formProduct.append('description', formConfig.find(field => field.name === 'description').value)
+                formProduct.append('quantity', formConfig.find(field => field.name === 'quantite').value)
+                formProduct.append('price', formConfig.find(field => field.name === 'prixTTC').value)
+                formProduct.append('state',formConfig.find(field => field.name === 'state').value)
+                formProduct.append('promotion', formConfig.find(field => field.name === 'promotion').value || 0)
+                if(formConfig.find(field => field.name === 'images').value !== undefined) {
+                    formProduct.append('image', formConfig.find(field => field.name === 'files').value.name)
+                }
+                formProduct.append('isPublished', formConfig.find(field => field.name === 'isPublished').isChecked)
+                formProduct.append('resolution', formConfig.find(field => field.name === 'resolution').value)
+                formProduct.append('size', formConfig.find(field => field.name === 'size').value)
+                formProduct.append('storage', formConfig.find(field => field.name === 'storage').value)
+                formProduct.append('loudspeaker', formConfig.find(field => field.name === 'loudspeaker').value)
+                formProduct.append('frontcamera', formConfig.find(field => field.name === 'frontcamera').value)
+                formProduct.append('weight', formConfig.find(field => field.name === 'weight').value)
+                formProduct.append('width', formConfig.find(field => field.name === 'width').value)
+                formProduct.append('height', formConfig.find(field => field.name === 'height').value)
+                formProduct.append('battery', formConfig.find(field => field.name === 'battery').value)
+                formProduct.append('code', formConfig.find(field => field.name === 'code').value)
+                formProduct.append('accesories', formConfig.find(field => field.name === 'accesories').value)
+                formProduct.append('operatingSystem', formConfig.find(field => field.name === 'os').value)
+                formProduct.append('cpu', formConfig.find(field => field.name === 'cpu').value)
+                formProduct.append('gpu', formConfig.find(field => field.name === 'gpu').value)
+                formProduct.append('quantity_alert', formConfig.find(field => field.name === 'quantity_alert').value)
+                return formProduct
+            case "brands":
+                const formMarque = new FormData();
+                formMarque.append('file', formConfig.find(field => field.name === 'files').value)
+                formMarque.append('name', formConfig.find(field => field.name === 'name').value)
+                formMarque.append('description', formConfig.find(field => field.name === 'description').value)
+                if(formConfig.find(field => field.name == "images").value != undefined) {
+                    formMarque.append('image', formConfig.find(field => field.name === 'files').value.name)
+                }else{
+                    formMarque.append('image', "")
+                }
+                return formMarque
+            case "categories":
+                return {
+                    name: formConfig.find(field => field.name === 'name').value,
+                    description: formConfig.find(field => field.name === 'description').value,
+                };
+            case "users":
+                console.log(formConfig.find(field => field.name === 'password').value);
+                return {
+                    firstname: formConfig.find(field => field.name === 'firstname').value,
+                    lastname: formConfig.find(field => field.name === 'lastname').value,
+                    gender: formConfig.find(field => field.name === 'gender').value,
+                    dateOfBirth: formConfig.find(field => field.name === 'dateOfBirth').value,
+                    email: formConfig.find(field => field.name === 'email').value,
+                    phone: formConfig.find(field => field.name === 'phone').value,
+                    address: formConfig.find(field => field.name === 'address').value,
+                    zip: formConfig.find(field => field.name === 'zip').value,
+                    city: formConfig.find(field => field.name === 'city').value,
+                    role: formConfig.find(field => field.name === 'role').value,
+                    isVerified: formConfig.find(field => field.name === 'isVerified').value,
+                    isActive: formConfig.find(field => field.name === 'isActive').value,
+                    // password: formConfig.find(field => field.name === 'password').value,
+                }
+            default:
+                return;
+        }
+    };
+
+    return { reinitForm, handleInput, handleFileChange, getFileUrl, listFormData, selectSuggestion, showField, callChangeHandlers, validateField, getRequestBody };
 }

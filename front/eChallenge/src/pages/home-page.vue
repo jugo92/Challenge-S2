@@ -1,8 +1,5 @@
 
  <template>
-  <div>
-   <Navbar />
-    </div>
 
   <div>
 

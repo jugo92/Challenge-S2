@@ -1,3 +1,4 @@
+
 const { Model, DataTypes } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
 const crypto = require("crypto");
@@ -39,8 +40,9 @@ module.exports = function (connection) {
         allowNull: false,
       },
       email: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING({ length: 255 }),
         allowNull: false,
+        unique: true,
         validate: {
           notEmpty: {
             msg: "L'adresse e-mail ne peut pas être vide.",
@@ -148,6 +150,7 @@ module.exports = function (connection) {
       loginAttempts: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
       lastPasswordChange: {
         type: DataTypes.DATE,

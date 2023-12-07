@@ -2,19 +2,23 @@
     <div class="mx-auto w-full p-6 rounded-md">
         <form enctype="multipart/form-data" :class="{['grid grid-cols-2'] : format==='row'}">
             <div v-for="(field, index) in formFields" :key="index" :class="{['px-4'] : format==='row', ['flex flex-col w-full'] : format==='column'}" class="mb-4">
-                <temsplate class="col-span-1">
                     <template v-if="field.type !== 'button'">
                         <!-- Label -->
                         <template v-if="field.type === 'label' && showField(field)" class="h-full">
                             <div class="justify-center items-center flex h-full">
-                            <label :for="field.name" class="block text-gray-700 text-sm mb-2">
-                                <b>{{ field.label }}</b>&nbsp; {{ field.value }} €
-                            </label>
+                                <label :for="field.name" class="block text-gray-700 text-sm mb-2">
+                                    <b>{{ field.label }}</b>&nbsp; {{ field.value }} €
+                                </label>
                             </div>
                         </template>
-                        <template v-if="field.type === 'checkbox' && showField(field)">
+                        <template v-if="field.type === 'checkbox' && field.name === 'acceptRules' && showField(field)">
                             <label :for="field.name" class="block text-gray-700 text-sm mb-2">
                                 <input :type="field.type" :id="field.name" :name="field.name" v-model="field.isChecked" class="mr-2 leading-tight"> <b>{{ field.label }}</b>&nbsp;
+                            </label>
+                        </template>
+                        <template v-else-if="field.type === 'checkbox' && showField(field)">
+                            <label :for="field.name" class="block text-gray-700 text-sm mb-2">
+                                <input :type="field.type" :id="field.name" :name="field.name" v-model="field.isChecked" class="mr-2 leading-tight"> <b @click="openModal">{{ field.label }}</b>&nbsp;
                             </label>
                         </template>
                         <template v-else-if="field.type !== 'button'&& field.type !== 'label' && showField(field)">
@@ -23,22 +27,22 @@
 
                         <!-- Input Text -->
                         <template v-if="(field.type === 'text' || field.type === 'email' || field.type === 'number' || field.type === 'password') && showField(field)">
-                        <input
-                            :type="field.type"
-                            :id="field.name"
-                            :name="field.name"
-                            v-model="field.value"
-                            @input="callChangeHandlers(field.changeHandlers); handleInput(field)"
-                            :required="field.required"
-                            :placeholder="field.placeholder"
-                            :min="field.min"
-                            :max="field.max"
-                            class="form form-input-text"
-                        />
-                    </template>
+                            <input
+                                :type="field.type"
+                                :id="field.name"
+                                :name="field.name"
+                                v-model="field.value"
+                                @input="callChangeHandlers(field.changeHandlers); handleInput(field)"
+                                :required="field.required"
+                                :placeholder="field.placeholder"
+                                :min="field.min"
+                                :max="field.max"
+                                class="form form-input-text"
+                            />
+                        </template>
 
-                    <!--Input Date -->
-                    <template v-else-if="field.type === 'date' && showField(field)">
+                        <!--Input Date -->
+                        <template v-else-if="field.type === 'date' && showField(field)">
                             <input
                                 :type="field.type"
                                 :id="field.name"
@@ -132,8 +136,7 @@
                         <!-- Error message -->
                         <div class="text-red-600" v-if="field.validationError">{{ field.validationError.message }}</div>
                     </template>
-            </temsplate>
-                </div>
+            </div>
 
             <!-- Buttons -->
             <template v-for="(button, buttonIndex) in formFields" :key="buttonIndex" class="w-full">
@@ -146,10 +149,10 @@
                 >
                     {{ button.label }}
                 </button>
-</template>
+            </template>
 
-</form>
-</div>
+        </form>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -157,13 +160,15 @@
 import {useForm} from "./formHelper.ts";
 import {useModal} from "../Modal/useModal.ts";
 
+const {openModal} = useModal();
 const deleteImage = (formField) => {
     formField.find(field => field.name == "images").value = "";
     console.log("deleteimage formfield after",formField);
 }
 
 const {showField, callChangeHandlers, handleInput, selectSuggestion, getFileUrl, handleFileChange, files} = useForm();
-const props = defineProps(["formFields", "format"]);
+const props = defineProps(["formFields"]);
+const format = props.formFields.length < 10 ? "column" : "row";
 
 </script>
 
