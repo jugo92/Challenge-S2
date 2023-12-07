@@ -47,7 +47,7 @@ const loadFilteredProducts = async () => {
   try {
     console.log("FILTRE : ", filters.value.promotions)
     const response = await fetch(
-      `http://localhost:3000/api/products?page=1&limit=10&name=${filters.value.productName}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`
+      `${import.meta.env.VITE_API_URL}/products?page=1&limit=10&name=${filters.value.productName}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`
     );
 
     if (!response.ok) {
@@ -68,11 +68,11 @@ const loadAndSetFilteredProducts = async () => {
 
 const loadMarqueAndCategory = async () => {
   const responseMarque = await fetch(
-      `http://localhost:3000/api/brands`
+      `${import.meta.env.VITE_API_URL}/brands`
   );
    marquesList.value = await responseMarque.json();
    const responseCategory = await fetch(
-      `http://localhost:3000/api/categories`
+      `${import.meta.env.VITE_API_URL}/categories`
   );
    categoryList.value = await responseCategory.json();
 };

@@ -24,7 +24,7 @@ import TabBuilder from "./Table/TableBuilder.vue";
 import Modal from "./Modal/Modal.vue";
 
 const { isModalVisible, openModal, closeModal } = useModal();
-const { reinitForm, validateField, handleFileChange, listFormData } = useForm()
+const {  validateField } = useForm()
 
 const splitUrl = window.location.pathname.split("/");
 const instance = splitUrl[splitUrl.length - 1];
@@ -658,7 +658,7 @@ let limit = 10;
 const fetchListOfItems = async () => {
     const includedProperties = getIncludedProperties(instance);
     try {
-        const response = await fetch('http://localhost:3000/api/' + instance + "?page=" + currentPage + "&limit=" + limit);
+        const response = await fetch(import.meta.env.VITE_API_URL + instance + "?page=" + currentPage + "&limit=" + limit);
         const data = await response.json();
         tableData.value = data.map((item) => {
             const filteredItem = {};
@@ -713,20 +713,20 @@ const createInstance = async (data) => {
     }
     if(!isUpdateItem) {
         apiService.create(instance, requestBody)
-            .then(res =>{
+            .then( _ =>{
                 afterInstanceSave()
             });
     }else {
         const itemId =  formConfig.value.find(field => field.name === 'id').value;
         apiService.update(instance, requestBody, itemId)
-            .then(res =>{
+            .then( _ =>{
                 afterInstanceSave()
             });
     }
 };
 
 const fetchOptions = async (field, callback) => {
-    const url = `http://localhost:3000/api/${field}`;
+    const url = `${import.meta.env.VITE_API_URL}${field}`;
     try {
         const response = await fetch(url);
         const data = await response.json();

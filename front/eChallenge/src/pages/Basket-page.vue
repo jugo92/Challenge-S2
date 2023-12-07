@@ -10,6 +10,7 @@ const router = useRouter();
 const cart = computed(() => basket.value.products);
 const loading = ref(false);
 
+const imageUrl = `${import.meta.env.VITE_API_URL}/getImage/`
 
 const decrementQuantity = (product) => {
   removeFromBasket(product);
@@ -50,7 +51,7 @@ const total = computed(() => {
                             <tr v-for="(product, index) in cart" :key="index" class="space-y-4">
                                 <td class="py-4">
                                     <div class="flex items-center">
-                                        <img class="h-16 w-16 mr-4" :src="`http://localhost:3000/getImage/${product.image}`" alt="Product image">
+                                        <img class="h-16 w-16 mr-4" :src="`${imageUrl}${product.image}`" alt="Product image">
                                     </div>
                                 </td>
                                 <td class="py-4">{{ product.productData.price }}</td>

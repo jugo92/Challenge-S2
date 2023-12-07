@@ -9,7 +9,7 @@ import {apiService} from "../services/apiService"
 const route = useRoute();
 const product = ref(null);
 const error = ref(null);
-
+const imageUrl = `${import.meta.env.VITE_API_URL}/getImage/`
 
 const loadData = async () => {
     try {
@@ -36,7 +36,6 @@ const updateProductNotification = async (product) => {
 
 onMounted(loadData);
 const store = useStore(); 
-
 const addToCart = (product) => {
     if(store.state.isLoggedIn){
         store.commit('addToCart', product);
@@ -60,7 +59,7 @@ const addToCart = (product) => {
 </path>
 </svg>
 </a>
-<img v-if="product" class="object-contain w-full lg:h-full" :src="`http://localhost:3000/getImage/${product.image}`" alt="">
+<img v-if="product" class="object-contain w-full lg:h-full" :src="`${imageUrl}${product.image}`" alt="">
 <a class="absolute right-0 transform lg:mr-2 top-1/2 translate-1/2" href="#">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-5 h-5 text-blue-500 bi bi-chevron-right dark:text-blue-200" viewBox="0 0 16 16">
 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z">

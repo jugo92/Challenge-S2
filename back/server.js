@@ -66,7 +66,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
 
-app.get('/getImage/:imageName', (req, res) => {
+app.get('/api/getImage/:imageName', (req, res) => {
   const imageName = req.params.imageName;
   const imagePath = path.join(__dirname, 'uploads', imageName);
   if (fs.existsSync(imagePath)) {

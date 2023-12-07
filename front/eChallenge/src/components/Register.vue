@@ -10,7 +10,7 @@ import { useToast } from "vue-toast-notification";
 const router = useRouter();
 const toast = useToast();
 
-const api = 'http://localhost:3000/api';
+const api = import.meta.env.VITE_API_URL;
 
 const user = reactive({
   gender: 'Homme',

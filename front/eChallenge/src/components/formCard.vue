@@ -1,7 +1,7 @@
 <template>
   <div class="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
     <a class="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" :href="`products/${product._id}`">
-      <img class="object-cover" :src="`http://localhost:3000/getImage/${product.image}`" />
+      <img class="object-cover" :src=imageUrl /> 
       <span v-if="product.promotion > 0" class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">{{ product.promotion }} %</span>  
       <!-- <div v-if="product.promotion" class="absolute top-0 right-0 bg-red-500 text-white py-1 px-2 rounded-bl-md rounded-tr-md">Promotion</div> -->
     </a>
@@ -47,7 +47,7 @@ import { defineProps } from 'vue';
 import {checkAndAddToBasket, basket} from "../services/basketService"
 
 const { product } = defineProps(['product']);
-
+const imageUrl = `${import.meta.env.VITE_API_URL}/getImage/${product.image}`
 const addToCart = () => {
   console.log(JSON.parse(localStorage.getItem("basket")))
   checkAndAddToBasket(product, 1)

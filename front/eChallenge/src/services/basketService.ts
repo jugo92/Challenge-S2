@@ -17,7 +17,7 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
       if (basket.value && basket.value.basketId) {
         await addToBasketBackend(product, quantity, basket.value.basketId);
       } else {
-        const response = await fetch('http://localhost:3000/api/baskets', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/baskets`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
     if (existingProductIndex !== -1) {
       const existingProduct = basket.value.products[existingProductIndex];
       existingProduct.quantity += quantity;
-       await fetch(`http://localhost:3000/api/productsbaskets/${existingProduct.productBasketId}`, {
+       await fetch(`${import.meta.env.VITE_API_URL}/productsbaskets/${existingProduct.productBasketId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
       console.log('Quantité mise à jour pour le produit existant');
     } else {
       // Le produit n'existe pas, ajouter une nouvelle entrée dans le panier
-    const response = await fetch('http://localhost:3000/api/productsbaskets', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/productsbaskets`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
       if (basket.value.products[productIndex].quantity > 1) {
         const existingProduct = basket.value.products[productIndex];
         existingProduct.quantity -= 1;
-        await fetch(`http://localhost:3000/api/productsbaskets/${existingProduct.productBasketId}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/productsbaskets/${existingProduct.productBasketId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const checkAndAddToBasket = async (product, quantity = 1) => {
         // La quantité est égale à 1, supprimer l'entrée du panier
         const productBasketId = basket.value.products[productIndex].productBasketId;
         basket.value.products.splice(productIndex, 1);
-        await fetch(`http://localhost:3000/api/productsbaskets/${productBasketId}`, {
+        await fetch(`${import.meta.env.VITE_API_URL}/productsbaskets/${productBasketId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

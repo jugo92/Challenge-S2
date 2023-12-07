@@ -34,7 +34,7 @@ const onSubmit = async (data) => {
 
     const elements = stripe.elements();
 
-    const response = await fetch('http://localhost:3000/api/checkout', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',

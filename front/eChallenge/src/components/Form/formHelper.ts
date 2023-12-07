@@ -27,7 +27,7 @@ interface FormField {
     validationError: { message: string } | null;
 }
 
-export function useForm(formConfig: FormField[]) {
+export function useForm(formConfig?: FormField[]) {
     const listFormData = ref([]);
     const showField = (field: FormField) => {
         return !field.showCondition || (field.showCondition && field.showCondition());
@@ -103,7 +103,7 @@ export function useForm(formConfig: FormField[]) {
     };
 
     const validateField = (field: FormField) => {
-        const result = field.validationSchema?.safeParse(field.value);
+        const result:any = field.validationSchema?.safeParse(field.value);
 
         if (result?.success) {
             // Validation succeeds
@@ -129,7 +129,7 @@ export function useForm(formConfig: FormField[]) {
     };
 
     const getFileUrl = (file) => {
-        return "http://localhost:3000/getImage/" + file
+        return `${import.meta.env.VITE_API_URL}/getImage/` + file
     };
 
     return { reinitForm, handleInput, handleFileChange, getFileUrl, listFormData, selectSuggestion, showField, callChangeHandlers, validateField };

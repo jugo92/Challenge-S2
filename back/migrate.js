@@ -29,4 +29,7 @@ connection
     [options["--type"]]: true,
   })
   .then(() => connection.close())
-  .then(() => console.log("Database synced"));
+  .then(() => {
+    console.log("Database synced")
+    process.exit(); 
+  });
