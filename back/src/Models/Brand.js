@@ -10,7 +10,9 @@ module.exports = function (connection) {
           "BrandId",
           db.Product,
           db.Brand,
-          db.Category
+          db.Category,
+          "update",
+          db.Stock
         );
       });
       Brand.addHook("afterUpdate", brand => {
@@ -19,7 +21,9 @@ module.exports = function (connection) {
           "BrandId",
           db.Product,
           db.Brand,
-          db.Category
+          db.Category,
+          "update",
+          db.Stock
         );
       });
       Brand.addHook("afterDestroy", brand => {
@@ -29,7 +33,8 @@ module.exports = function (connection) {
           db.Product,
           db.Brand,
           db.Category,
-          "destroy"
+          "destroy",
+          db.Stock
         );
       });
     }

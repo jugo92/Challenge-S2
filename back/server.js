@@ -18,7 +18,11 @@ const {
   Payment,
   Refund,
   Category,
-  StockHistory,
+  Stock,
+  Basket,
+  ProductBasket,
+  Notification,
+  NotificationUser
 } = require("./src/Models");
 
 app.use(cors());
@@ -27,6 +31,7 @@ const routePrefix = "/api";
 const stripeRoutes = require("./src/Routes/stripeRoutes");
 const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
+const UserRouter = require("./src/Routes/userRouter")
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const orders = require("./src/Mongo/Order");
@@ -40,6 +45,19 @@ const { initCron } = require("./src/Cron/index");
 //   initCron();
 // });
 
+app.get('/download/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join("invoice", filename);
+
+  // Utiliser res.download pour envoyer le fichier au client en téléchargement
+  res.download(filePath, (err) => {
+    if (err) {
+      // Gérer les erreurs ici (par exemple, fichier non trouvé)
+      res.status(404).send('Fichier non trouvé');
+    }
+  });
+});
+
 app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
 
@@ -47,6 +65,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(routePrefix, Security);
+
+app.get('/getImage/:imageName', (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = path.join(__dirname, 'uploads', imageName);
+  if (fs.existsSync(imagePath)) {
+    res.sendFile(imagePath);
+  } else {
+    res.sendFile(path.join(__dirname, 'uploads', "default.jpg"));
+  }
+});
+
 
 const createMongoMethods = collection => {
   const ms = new MongoService(collection);
@@ -59,7 +88,7 @@ const createMongoMethods = collection => {
 
 app.use(
   routePrefix + "/users",
-  new GenericRouter(new GenericController(new GenericService(User))).getRouter()
+  new UserRouter(new GenericController(new GenericService(User))).getRouter()
 );
 
 app.use(
@@ -67,6 +96,22 @@ app.use(
   multerMiddleware,
   new GenericRouter(
     new GenericController(new GenericService(Brand))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/notifications",
+  multerMiddleware,
+  new GenericRouter(
+    new GenericController(new GenericService(Notification))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/notificationsusers",
+  multerMiddleware,
+  new GenericRouter(
+    new GenericController(new GenericService(NotificationUser))
   ).getRouter()
 );
 
@@ -122,9 +167,22 @@ app.use(
 
 app.use(
   routePrefix + "/stocks",
-  multerMiddleware,
   new GenericRouter(
-    new GenericController(new GenericService(StockHistory))
+    new GenericController(new GenericService(Stock))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/baskets",
+  new GenericRouter(
+    new GenericController(new GenericService(Basket))
+  ).getRouter()
+);
+
+app.use(
+  routePrefix + "/productsbaskets",
+  new GenericRouter(
+    new GenericController(new GenericService(ProductBasket))
   ).getRouter()
 );
 

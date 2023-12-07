@@ -1,3 +1,4 @@
+const { getTotalStock } = require("../../Helper/Utils");
 const ProductMongo = require("../../Mongo/Product");
 module.exports = async (
   modelId,
@@ -5,7 +6,8 @@ module.exports = async (
   Product,
   Brand,
   Category,
-  event = "update"
+  event = "update",
+  Stock
 ) => {
   const products = await Product.findAll({
     where: {
@@ -35,38 +37,43 @@ module.exports = async (
     }
   }
 
-  const productMongoInstances = products.map(product => {
-    const productMongoData = {
-      _id: product.dataValues.id,
-      name: product.dataValues.name,
-      description: product.dataValues.description,
-      price: product.dataValues.price,
-      quantity: product.dataValues.quantity,
-      image: product.dataValues.image,
-      state: product.dataValues.state,
-      promotion: product.dataValues.promotion,
-      isPublished: event === "destroy" ? 0 : product.dataValues.isPublished,
-      resolution: product.dataValues.resolution,
-      size: product.dataValues.size,
-      storage: product.dataValues.storage,
-      loudspeaker: product.dataValues.loudspeaker,
-      frontcamera: product.dataValues.frontcamera,
-      backcamera: product.dataValues.backcamera,
-      weight: product.dataValues.weight,
-      width: product.dataValues.width,
-      height: product.dataValues.height,
-      battery: product.dataValues.battery,
-      code: product.dataValues.code,
-      accesories: product.dataValues.accesories,
-      operatingSystem: product.dataValues.operatingSystem,
-      cpu: product.dataValues.cpu,
-      gpu: product.dataValues.gpu,
-      Brand: product.dataValues.Brand?.dataValues,
-      Category: product.dataValues.Category?.dataValues,
-    };
+  const productMongoInstances = await Promise.all(
+    products.map(async product => {
+      const total = await getTotalStock(product, Stock);
+      console.log("PRODUCT BRNAD : ", product.dataValues?.Brand)
+      console.log("PRODUCT BRNAD : ", product.dataValues)
 
-    return new ProductMongo(productMongoData);
-  });
+      const productMongoData = {
+        _id: product.dataValues.id,
+        name: product.dataValues.name,
+        description: product.dataValues.description,
+        price: product.dataValues.price,
+        stock: total,
+        image: product.dataValues.image,
+        state: product.dataValues.state,
+        promotion: product.dataValues.promotion,
+        isPublished: event === "destroy" ? 0 : product.dataValues.isPublished,
+        resolution: product.dataValues.resolution,
+        size: product.dataValues.size,
+        storage: product.dataValues.storage,
+        loudspeaker: product.dataValues.loudspeaker,
+        frontcamera: product.dataValues.frontcamera,
+        weight: product.dataValues.weight,
+        width: product.dataValues.width,
+        height: product.dataValues.height,
+        battery: product.dataValues.battery,
+        code: product.dataValues.code,
+        accesories: product.dataValues.accesories,
+        operatingSystem: product.dataValues.operatingSystem,
+        cpu: product.dataValues.cpu,
+        gpu: product.dataValues.gpu,
+        Brand: product.dataValues?.Brand?.dataValues || null,
+        Category: product.dataValues.Category?.dataValues || null,
+      };
+
+      return new ProductMongo(productMongoData);
+    })
+  );
 
   const savePromises = productMongoInstances.map(productMongoInstance =>
     productMongoInstance.save()

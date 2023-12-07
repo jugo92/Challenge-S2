@@ -10,6 +10,7 @@ const OrderSchema = new connection.Schema({
   zip: String,
   phone: String,
   tracking_url: String,
+  createdAt: String,
   User: Object,
   Invoice:Object,
   Products: Array
