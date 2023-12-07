@@ -24,7 +24,10 @@ const store = createStore({
         Marque: [],
         Category: [],
       },
-      orders: [],
+      orders: JSON.parse(localStorage.getItem('orders')) || [],
+      reimburseProduct: [],
+      notifications: [],
+      usernotifications: [],
     };
   },
   getters: {
@@ -162,9 +165,33 @@ const store = createStore({
 
     setOrders(state, orders) {
       state.orders = orders;
+   },
+
+   updateOrders(state, orders) {
+    state.orders = orders;
+    localStorage.setItem('orders', JSON.stringify(orders));
+  },
+
+    setReimburdeProduct(state, reimburseProduct) {
+      state.reimburseProduct = reimburseProduct;
     },
 
+    setNotifications(state, notifications) {
+      state.notifications = notifications;
+      console.log("State updated with notifications:", state.notifications);
+    } ,
+
+    setNotificationUserRelation(state, { notificationId, isChecked, userId, newRelation }) {
+      const existingRelationIndex = state.usernotifications.findIndex(relation => relation.notificationId === notificationId && relation.userId === userId);
+  
+      if (existingRelationIndex !== -1) {
+        state.usernotifications[existingRelationIndex].isChecked = isChecked;
+      } else {
+        state.usernotifications.push({ notificationId, isChecked, userId, ...newRelation });
+      }
+    },
   },
+      
 
   actions: {
     async login({ commit }, credentials) {
@@ -176,24 +203,29 @@ const store = createStore({
           },
           body: JSON.stringify(credentials),
         });
-
+    
         if (!response.ok) {
+          const errorDetails = await response.json();
+          console.error("Login failed. Server response:", response);
+          console.error("Error details:", errorDetails);
           throw new Error("Login failed");
         }
-
+    
         const user = await response.json();
         commit("setToken", user.token);
         commit("setUser", user);
         commit("setIsloggedIn", true);
         localStorage.setItem("token", user.token);
+        localStorage.setItem("user", JSON.stringify(user));
         sessionStorage.setItem("token", user.token);
-
+    
         return user;
       } catch (error) {
         console.error(error);
         throw error;
       }
     },
+    
 
     async register({ commit }, userData) {
       try {
@@ -223,10 +255,11 @@ const store = createStore({
 
     logout({ commit }) {
       commit("clearToken");
-      commit("clearUser");
-      commit("setIsloggedIn", false);
-      localStorage.removeItem("token");
-      sessionStorage.removeItem("token");
+        commit("clearUser");
+        commit("setIsloggedIn", false);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        sessionStorage.removeItem("token");
     },
 
     async deleteUser({ commit }) {
@@ -297,35 +330,6 @@ const store = createStore({
       }
     },
 
-    async updateProductNotification(
-      { commit, rootState },
-      { productId, receiveNotifications }
-    ) {
-      if (rootState.isLoggedIn) {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/api/products/${productId}/notify`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${rootState.token}`,
-              },
-              body: JSON.stringify({ receiveNotifications }),
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error("Failed to update product notification");
-          }
-          commit("setProductNotification", { productId, receiveNotifications });
-        } catch (error) {
-          console.error("Error updating product notification:", error);
-        }
-      } else {
-        console.warn("User is not logged in");
-      }
-    },
 
     async fetchProducts({ commit }) {
       try {
@@ -345,20 +349,20 @@ const store = createStore({
     async fetchOrders({ commit, rootState }) {
       if (rootState.isLoggedIn) {
         try {
-          const response = await fetch("http://localhost:3000/api/orders", 
-          {
+          const response = await fetch("http://localhost:3000/api/orders", {
             method: "GET",
             headers: {
               Authorization: `Bearer ${rootState.token}`,
             },
           });
-
+  
           if (!response.ok) {
             throw new Error("Failed to fetch orders");
           }
-
+  
           const orders = await response.json();
           commit("setOrders", orders);
+          commit("updateOrders", orders);
         } catch (error) {
           console.error("Error fetching orders:", error);
         }
@@ -366,6 +370,93 @@ const store = createStore({
         console.warn("User is not logged in");
       }
     },
+
+    async reimburseProduct({ commit }, product) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/api/products/${product._id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ status: 'Refund' }), 
+          }
+        );
+    
+        if (!response.ok) {
+          throw new Error("Remboursement échoué");
+        }
+    
+        const reimbursedProduct = await response.json();
+        console.log("Produit remboursé avec succès", reimbursedProduct);
+    
+        commit("setReimburdeProduct", reimbursedProduct);
+    
+        return reimbursedProduct;
+      } catch (error) {
+        console.error("Erreur lors du remboursement du produit:", error);
+        throw error;
+      }
+    },
+    async fetchNotifications({ commit, rootState }) {
+      if (rootState.isLoggedIn) {
+        try {
+          const response = await fetch("http://localhost:3000/api/notifications", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${rootState.token}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error("Failed to fetch notifications");
+          }
+    
+          const notifications = await response.json();
+          console.log("Notifications:", notifications);
+          commit("setNotifications", notifications);
+        } catch (error) {
+          console.error("Error fetching notifications:", error);
+        }
+      } else {
+        console.warn("User is not logged in");
+      }
+    },
+
+    // ...
+
+async updateNotificationUserRelation({ commit, state }, { notificationId }) {
+  try {
+    const response = await fetch('http://localhost:3000/api/notificationsusers', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${state.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        UserId: state.user._id,
+        type_id: notificationId,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update/create notification-user relation');
+    }
+
+    const newRelation = await response.json();
+
+    commit('setNotificationUserRelation', { notificationId, userId: state.user._id, newRelation });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour/création de la relation notification-utilisateur :', error);
+  }
+},
+
+// ...
+
+    
+    
   },
 });
 

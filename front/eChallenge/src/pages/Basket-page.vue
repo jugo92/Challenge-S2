@@ -1,9 +1,10 @@
-// Basket.vue
 <script setup>
-import { ref, computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import Navbar from "../components/Navbar.vue";
+import { Icon } from '@iconify/vue';
+import LoaderPc from "../components/loader/LoaderPc.vue";
 
 const store = useStore();
 const router = useRouter();
@@ -11,21 +12,87 @@ const cart = computed(() => store.state.cart);
 const loading = ref(false);
 
 
-const decrementQuantity = (product) => {
-  if (product.quantity > 1) {
-    store.commit('updateQuantity', { id: product.id, quantity: product.quantity - 1 });
+onMounted(() => {
+  const storedCart = JSON.parse(localStorage.getItem('cart'));
+  if (storedCart) {
+    store.commit('setCart', storedCart);
+  }
+});
+
+const total = computed(() => {
+  return cart.value.reduce((acc, product) => acc + (product.total || 0), 0);
+});
+
+const updateQuantity = (product, increment) => {
+  if (increment) {
+    product.total = (product.total || 0) + product.price;
+  } else {
+    product.total = Math.max(0, (product.total || 0) - product.price);
+  }
+  if (product.total === 0) {
+    removeProduct(product);
+  }
+  updateProductExpiration(product);
+};
+
+const increaseQuantity = (product) => {
+  product.total = (product.total || 0) + product.price;
+  updateProductExpiration(product);
+};
+
+const decreaseQuantity = (product) => {
+  product.total = Math.max(1, (product.total || 1) - product.price);
+  if (product.total === 1) {
+    removeProduct(product);
+  }
+  updateProductExpiration(product);
+};
+
+const removeProduct = (product) => {
+  store.commit('removeFromCart', product);
+  saveCartToLocalStorage();
+};
+
+const saveCartToLocalStorage = () => {
+  localStorage.setItem('cart', JSON.stringify(cart.value));
+};
+
+const updateProductExpiration = (product) => {
+  const expirationTime = new Date().getTime() + 15 * 60 * 1000;
+  product.expirationTime = expirationTime;
+
+  localStorage.setItem(`product_${product.id}_expiration`, expirationTime.toString());
+};
+
+const checkProductExpiration = (product) => {
+  const currentTime = new Date().getTime();
+  const storedExpirationTime = localStorage.getItem(`product_${product.id}_expiration`);
+
+  if (storedExpirationTime && currentTime > parseInt(storedExpirationTime)) {
+    removeProduct(product);
+    localStorage.removeItem(`product_${product.id}_expiration`);
   }
 };
 
-const incrementQuantity = (product) => {
-  store.commit('updateQuantity', { id: product.id, quantity: product.quantity + 1 });
+
+const goToRecap = () => {
+  loading.value = true; 
+  console.log(cart.value);
+  
+  const recapData = {
+    cart: cart.value,
+    total: total.value,
+  };
+
+  setTimeout(() => {
+    store.commit('setRecapData', recapData);
+    router.push('/recap_order');
+    loading.value = false; 
+  }, 2000);
 };
 
-const total = computed(() => {
-  return cart.value.reduce((acc, product) => {
-    return acc + product.price * product.quantity;
-  }, 0).toFixed(2);
-});
+
+
 </script>
 
 
@@ -52,19 +119,25 @@ const total = computed(() => {
                             <tr v-for="(product, index) in cart" :key="index" class="space-y-4">
                                 <td class="py-4">
                                     <div class="flex items-center">
-                                        <img class="h-16 w-16 mr-4" src="https://via.placeholder.com/150" alt="Product image">
-                                        <span class="font-semibold"> {{ product.title }}</span>
+                                        <img class="h-16 w-16 mr-4" :src="product.image" alt="">
+                                        <span class="font-semibold"> {{ product.name }}</span>
+                            
                                     </div>
                                 </td>
-                                <td class="py-4">19.99€</td>
+                                <td class="py-4">{{product.price}}€</td>
                                 <td class="py-4">
-                                    <div class="flex items-center">
-                                        <button class="border rounded-md py-2 px-4 mr-2">-</button>
-                                        <span class="text-center w-8">1</span>
-                                        <button class="border rounded-md py-2 px-4 ml-2">+</button>
-                                    </div>
-                                </td>
-                                <td class="py-4">19.99€</td>
+                                <div class="flex items-center">
+
+                                    <button @click="() => decreaseQuantity(product)" class="border rounded-md py-2 px-4 mr-2">-</button>
+                                    <span class="text-center w-8">{{ (product.total || 0) / product.price }}</span>
+                                    <button @click="() => increaseQuantity(product)" class="border rounded-md py-2 px-4 ml-2">+</button>
+                                    <button @click="() => removeProduct(product)" class="border rounded-md py-2 px-4 ml-2 text-red-500">
+                                      <Icon icon="material-symbols:delete-outline" />
+                                    </button>
+
+                                </div>
+                                 </td>
+                                <td class="py-4">{{product.total}} €</td>
                             </tr>
                        
                         </tbody>
@@ -82,7 +155,7 @@ const total = computed(() => {
                     <hr class="my-2">
                     <div class="flex justify-between mb-2">
                         <span class="font-semibold">Total</span>
-                        <span class="font-semibold">21.98€</span>
+                        <span class="font-semibold">{{ total }}€</span>
                     </div>
                     <button @click="goToRecap" :disabled="loading" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full cursor-pointer">Paiement</button>
 

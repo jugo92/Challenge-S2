@@ -1,3 +1,57 @@
+<script setup>
+import { Icon } from '@iconify/vue';
+import { RouterLink } from 'vue-router';
+import { ref, watchEffect, onMounted } from 'vue';
+import { useStore } from 'vuex';
+
+
+const store = useStore();
+const cartQuantity = ref(0);
+const searchTerm = ref('')
+const user = ref(store.state.user || {});
+
+
+watchEffect(() => {
+  cartQuantity.value = store.state.cart.length;
+  searchTerm.value = store.state.searchTerm;
+});
+
+const handleSearch = ()=>{
+  updateSearchTerm();
+}
+
+const saarch = ()=>{
+  updateSearchTerm();
+}
+
+
+const updateSearchTerm = () => {
+  store.commit('setSearchTerm', searchTerm.value);
+};
+
+const showRecentSearches = () => {
+  console.log(store.state.searchHistory);
+};
+
+const searchOnCurrentPage = () => {
+};
+
+onMounted(() => {
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    store.commit('setToken', token);
+  } else {
+    console.error("Il y'a une de token")
+  }
+});
+
+</script>
+
+
+
+
+
 <template>
 <nav class=" bg-white w-full flex relative justify-between items-center mx-auto px-8 h-20 navig">
     <div class="inline-flex">
@@ -15,7 +69,15 @@
     <div class="inline-block">
         <div class="inline-flex items-center max-w-full">
             <div class="flex items-center flex-grow-0 flex-shrink pl-2 relative w-60 border rounded-full px-1 py-1">
-                <input type="text" placeholder="Rechercher" class="block flex-grow flex-shrink overflow-hidden outline-none px-2">
+              <input
+              type="text"
+              placeholder="Rechercher"
+              class="block flex-grow flex-shrink overflow-hidden outline-none px-2"
+              v-model="searchTerm"
+              @input="updateSearchTerm"
+              @focus="showRecentSearches"
+              @keyup.enter="search"
+            />
                 <div class="flex items-center justify-center relative h-8 w-8 rounded-full">
                     <svg
                         viewBox="0 0 32 32"
@@ -46,8 +108,6 @@
     </div>
 </div>
 
-    <!-- end search bar -->
-
     <!-- login -->
     <div class="flex-initial">
       <div class="flex justify-end items-center relative">
@@ -62,8 +122,8 @@
                     <Icon icon="simple-line-icons:basket" />
                   </div>
                 </div>
-                <div v-if="quantity > 0" class="absolute top-0 right-0 bg-red-500 rounded-full h-4 w-4 text-white text-xs flex items-center justify-center">
-                  {{ quantity }}
+                <div v-if="cartQuantity > 0" class="absolute top-0 right-0 bg-red-500 rounded-full h-4 w-4 text-white text-xs flex items-center justify-center">
+                  {{ cartQuantity }}
                 </div>
 
               </button>
@@ -80,7 +140,7 @@
                     <div class="pl-1">
                  
                     </div>
-                     <!-- <p  class="text-center">  {{ user.firstname }} {{ user.lastname }}</p> -->
+                     <p  class="text-center">  {{ user.firstname }} {{ user.lastname }}</p>
                   
 
                     <div class="block flex-grow-0 flex-shrink-0 h-10 w-12 pl-5">
@@ -150,15 +210,6 @@
 
 </template>
 
-<script setup lang="ts">
-import { Icon } from '@iconify/vue';
-import { RouterLink } from 'vue-router';
-import {ref} from "vue"
-
-const quantity = ref(1);
-</script>
-
-
 <style scoped>
 .navig {
   background-color: #fff;
@@ -190,5 +241,32 @@ const quantity = ref(1);
     
 
   }
+
+  .input_moile{
+   margin-left: auto;
+    margin-right: auto;
+  }
+
+  .nav_mobile{
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ffffff;
+    position: relative;
+    
+  }
+  .input_mobile{
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -3%;
+  }
+  .navig{
+
+
+  }
+
+
 }
 </style>
+
+
