@@ -1,4 +1,4 @@
-const GenericRouter = require("./GenericRouter");
+const GenericRouter = require("./genericRouter");
 const checkAuth = require("../Middlewares/checkAuth");
 const passwordMiddleware = require("../Middlewares/passwordMiddleware");
 
