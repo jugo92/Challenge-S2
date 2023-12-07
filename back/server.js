@@ -29,9 +29,9 @@ app.use(cors());
 const routePrefix = "/api";
 
 const stripeRoutes = require("./src/Routes/stripeRoutes");
-const GenericRouter = require("./src/Routes/genericRouter");
+const checkAuth = require("./src/Middlewares/checkAuth")
 const GenericController = require("./src/Controllers/genericController");
-const UserRouter = require("./src/Routes/userRouter")
+const  GenericRouter = require("./src/Routes/genericRouter");
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const orders = require("./src/Mongo/Order");
@@ -48,11 +48,8 @@ const { initCron } = require("./src/Cron/index");
 app.get('/download/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join("invoice", filename);
-
-  // Utiliser res.download pour envoyer le fichier au client en téléchargement
   res.download(filePath, (err) => {
     if (err) {
-      // Gérer les erreurs ici (par exemple, fichier non trouvé)
       res.status(404).send('Fichier non trouvé');
     }
   });
@@ -76,44 +73,82 @@ app.get('/api/getImage/:imageName', (req, res) => {
   }
 });
 
-
 const createMongoMethods = collection => {
   const ms = new MongoService(collection);
-
   return {
     getAll: ms.getAll.bind(ms),
     getById: ms.getById.bind(ms),
   };
 };
 
+const userRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericUserRouter = new GenericRouter(new GenericController(new GenericService(User)));
+  userRoutes.forEach(route => {
+    genericUserRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/users",
-  new UserRouter(new GenericController(new GenericService(User))).getRouter()
-);
+  genericUserRouter.getRouter()
+); 
 
+const brandRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericBrandRouter = new GenericRouter(new GenericController(new GenericService(Brand)));
+  brandRoutes.forEach(route => {
+    genericBrandRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/brands",
-  multerMiddleware,
-  new GenericRouter(
-    new GenericController(new GenericService(Brand))
-  ).getRouter()
-);
+  genericBrandRouter.getRouter()
+); 
 
+const notificationRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericNotificationRouter = new GenericRouter(new GenericController(new GenericService(Notification)));
+notificationRoutes.forEach(route => {
+  genericNotificationRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/notifications",
-  multerMiddleware,
-  new GenericRouter(
-    new GenericController(new GenericService(Notification))
-  ).getRouter()
-);
+  genericNotificationRouter.getRouter()
+); 
 
+
+const notificationUserRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericNotificationUserRouter = new GenericRouter(new GenericController(new GenericService(NotificationUser)));
+notificationUserRoutes.forEach(route => {
+  genericNotificationUserRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/notificationsusers",
-  multerMiddleware,
-  new GenericRouter(
-    new GenericController(new GenericService(NotificationUser))
-  ).getRouter()
-);
+  genericNotificationUserRouter.getRouter()
+); 
 
 const genericOrderService = new GenericService(Order);
 const serviceOrderProxy = new Proxy(genericOrderService, {
@@ -124,10 +159,24 @@ const serviceOrderProxy = new Proxy(genericOrderService, {
     return Reflect.get(target, prop, receiver);
   },
 });
+
+const orderRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericOrderRouter = new GenericRouter(new GenericController(serviceOrderProxy));
+orderRoutes.forEach(route => {
+  genericOrderRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/orders",
-  new GenericRouter(new GenericController(serviceOrderProxy)).getRouter()
-);
+  genericOrderRouter.getRouter()
+); 
+
 
 const genericPaymentService = new GenericService(Payment);
 const servicePaymentProxy = new Proxy(genericPaymentService, {
@@ -138,17 +187,40 @@ const servicePaymentProxy = new Proxy(genericPaymentService, {
     return Reflect.get(target, prop, receiver);
   },
 });
+
+const paymentRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericPaymentRouter = new GenericRouter(new GenericController(servicePaymentProxy));
+paymentRoutes.forEach(route => {
+  genericPaymentRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/payments",
-  new GenericRouter(new GenericController(servicePaymentProxy)).getRouter()
-);
+  genericPaymentRouter.getRouter()
+); 
 
+const categorieRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericCategoryRouter = new GenericRouter(new GenericController(new GenericService(Category)));
+categorieRoutes.forEach(route => {
+  genericCategoryRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/categories",
-  new GenericRouter(
-    new GenericController(new GenericService(Category))
-  ).getRouter()
-);
+  genericCategoryRouter.getRouter()
+); 
 
 const genericProductService = new GenericService(Product);
 const serviceProductProxy = new Proxy(genericProductService, {
@@ -159,39 +231,90 @@ const serviceProductProxy = new Proxy(genericProductService, {
     return Reflect.get(target, prop, receiver);
   },
 });
+const productRoute = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth(), multerMiddleware] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericProductRouter = new GenericRouter(new GenericController(serviceProductProxy));
+productRoute.forEach(route => {
+    genericProductRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/products",
-  multerMiddleware,
-  new GenericRouter(new GenericController(serviceProductProxy)).getRouter()
+  genericProductRouter.getRouter()
 );
 
+const stockRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericStockRouter = new GenericRouter(new GenericController(new GenericService(Stock)));
+stockRoutes.forEach(route => {
+  genericStockRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/stocks",
-  new GenericRouter(
-    new GenericController(new GenericService(Stock))
-  ).getRouter()
-);
+  genericStockRouter.getRouter()
+); 
 
+const basketRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericBasketRouter = new GenericRouter(new GenericController(new GenericService(Basket)));
+basketRoutes.forEach(route => {
+  genericBasketRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/baskets",
-  new GenericRouter(
-    new GenericController(new GenericService(Basket))
-  ).getRouter()
-);
+  genericBasketRouter.getRouter()
+); 
 
+const productBasketRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericProductBasketRouter = new GenericRouter(new GenericController(new GenericService(ProductBasket)));
+productBasketRoutes.forEach(route => {
+  genericProductBasketRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/productsbaskets",
-  new GenericRouter(
-    new GenericController(new GenericService(ProductBasket))
-  ).getRouter()
-);
+  genericProductBasketRouter.getRouter()
+); 
 
+const refundRoutes = [
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+];  
+const genericRefundRouter = new GenericRouter(new GenericController(new GenericService(Refund)));
+refundRoutes.forEach(route => {
+  genericRefundRouter.addRoute(route, route.middlewares);
+});
 app.use(
   routePrefix + "/refunds",
-  new GenericRouter(
-    new GenericController(new GenericService(Refund))
-  ).getRouter()
-);
+  genericRefundRouter.getRouter()
+); 
 
 app.use(function (err, req, res, next) {
   if (err instanceof ValidationError) {

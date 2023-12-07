@@ -24,13 +24,11 @@ module.exports = async (
   });
 
   if (key === "id") {
-    //Dans le cas ou on supprime/modifie UN produit
     await ProductMongo.deleteOne({ _id: modelId });
   } else {
     if (event === "destroy") {
       await Product.update({ isPublished: 0 }, { where: { [key]: modelId } });
     }
-    //Dans le cas ou on supprime/modifie marque/catagory
     for (const product of products) {
       const productId = product.dataValues.id;
       await ProductMongo.deleteOne({ _id: productId });
@@ -40,9 +38,6 @@ module.exports = async (
   const productMongoInstances = await Promise.all(
     products.map(async product => {
       const total = await getTotalStock(product, Stock);
-      console.log("PRODUCT BRNAD : ", product.dataValues?.Brand)
-      console.log("PRODUCT BRNAD : ", product.dataValues)
-
       const productMongoData = {
         _id: product.dataValues.id,
         name: product.dataValues.name,
