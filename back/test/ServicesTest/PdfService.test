@@ -1,0 +1,46 @@
+const fs = require('fs');
+const easyinvoice = require('easyinvoice');
+const PdfService = require('../../src/Services/pdfService');
+const { base64_encode } = require("../../src/Helper/Utils");
+
+jest.mock('fs');
+jest.mock('easyinvoice');
+jest.mock('../../src/Helper/Utils');
+
+describe('PdfService', () => {
+  beforeEach(() => {
+    fs.writeFileSync.mockClear();
+    easyinvoice.createInvoice.mockClear();
+    base64_encode.mockClear();
+  });
+
+  xit('should initialize pdfData correctly in constructor', () => {
+    const pdfData = { foo: 'bar' };
+    const service = new PdfService(pdfData);
+
+    expect(service.pdfData).toEqual(expect.objectContaining(pdfData));
+    expect(service.pdfData).toEqual(expect.objectContaining({
+      images: expect.any(Object),
+      sender: expect.any(Object),
+      settings: expect.any(Object),
+    }));
+  });
+
+  xit('should call easyinvoice.createInvoice and fs.writeFileSync in invoicePdf', async () => {
+    const pdfData = { information: { number: '123' } };
+    const service = new PdfService(pdfData);
+    const mockResult = { pdf: 'mockPdf' };
+
+    easyinvoice.createInvoice.mockResolvedValue(mockResult);
+
+    await service.invoicePdf();
+
+    expect(easyinvoice.createInvoice).toHaveBeenCalledWith(service.pdfData);
+    expect(fs.writeFileSync).toHaveBeenCalledWith(`invoice/invoice_${pdfData.information.number}.pdf`, mockResult.pdf, 'base64');
+  });
+
+//je ferme la connexion à la base de données pour netoyer le cache
+afterEach(() => {
+    jest.resetAllMocks();
+  });
+});

@@ -1,6 +1,6 @@
-const { models: { Notification } } = require("../src/Models/Notification");
+const { models: { Notification } } = require("../../src/Models/Notification");
 
-jest.mock("../src/Models/Notification", () => {
+jest.mock("../../src/Models/Notification", () => {
   const originalSequelize = jest.requireActual('sequelize');
 
   return {
