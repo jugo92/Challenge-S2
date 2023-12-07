@@ -19,6 +19,8 @@ const {
   Refund,
   Category,
   StockHistory,
+  Notification,
+  NotificationUser,
 } = require("./src/Models");
 
 app.use(cors());
@@ -33,6 +35,8 @@ const orders = require("./src/Mongo/Order");
 const payments = require("./src/Mongo/Payment");
 const products = require("./src/Mongo/Product");
 const multerMiddleware = require("./src/Middlewares/upload");
+
+
 const cron = require("node-cron");
 const { initCron } = require("./src/Cron/index");
 
@@ -145,6 +149,20 @@ app.use(function (err, req, res, next) {
     res.status(500).send(err.message);
   }
 });
+app.use(
+  routePrefix + "/notifications",
+  multerMiddleware,
+  new GenericRouter(
+    new GenericController(new GenericService(Notification))
+  ).getRouter()
+);
+app.use(
+  routePrefix + "/notificationsusers",
+  multerMiddleware,
+  new GenericRouter(
+    new GenericController(new GenericService(NotificationUser))
+  ).getRouter()
+);
 
 app.get("/failed", async (req, res) => {
   console.log("FAILED");
