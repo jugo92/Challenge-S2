@@ -31,6 +31,7 @@ const routePrefix = "/api";
 const stripeRoutes = require("./src/Routes/stripeRoutes");
 const GenericRouter = require("./src/Routes/genericRouter");
 const GenericController = require("./src/Controllers/genericController");
+const UserRouter = require("./src/Routes/userRouter")
 const GenericService = require("./src/Services/genericService");
 const MongoService = require("./src/Services/mongoService");
 const orders = require("./src/Mongo/Order");
@@ -43,6 +44,19 @@ const { initCron } = require("./src/Cron/index");
 // cron.schedule("*/5 * * * * *", async () => {
 //   initCron();
 // });
+
+app.get('/download/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join("invoice", filename);
+
+  // Utiliser res.download pour envoyer le fichier au client en téléchargement
+  res.download(filePath, (err) => {
+    if (err) {
+      // Gérer les erreurs ici (par exemple, fichier non trouvé)
+      res.status(404).send('Fichier non trouvé');
+    }
+  });
+});
 
 app.use(cookieParser());
 app.use(routePrefix + "/stripe", stripeRoutes);
@@ -74,7 +88,7 @@ const createMongoMethods = collection => {
 
 app.use(
   routePrefix + "/users",
-  new GenericRouter(new GenericController(new GenericService(User))).getRouter()
+  new UserRouter(new GenericController(new GenericService(User))).getRouter()
 );
 
 app.use(

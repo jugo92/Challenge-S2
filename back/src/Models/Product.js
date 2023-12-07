@@ -26,24 +26,6 @@ module.exports = function (connection) {
         const productBeforeUpdate = await Product.findByPk(product.id);
 
         if (product.isPublished) {
-          if (
-            productBeforeUpdate.quantity < product.quantity &&
-            product.isPublished
-          ) {
-            let content = await fs.readFile(
-              `mails/restockProductNotification.txt`,
-              "utf8"
-            );
-            await sendNotification(
-              content,
-              "Restock de produit",
-              product.id,
-              null,
-              1,
-              db.User,
-              db.NotificationUser
-            );
-          }
           if (product.price != productBeforeUpdate.price) {
             let content = await fs.readFile(
               `mails/variousPriceProductNotification.txt`,
@@ -138,23 +120,6 @@ module.exports = function (connection) {
           max: {
             args: [1000000],
             msg: "Le prix ne peut pas dépasser 1 000 000.",
-          },
-        },
-      },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            msg: "La quantité doit être un nombre entier.",
-          },
-          min: {
-            args: [0],
-            msg: "La quantité ne peut pas être négative.",
-          },
-          max: {
-            args: [1000],
-            msg: "La quantité ne peut pas dépasser 1000.",
           },
         },
       },

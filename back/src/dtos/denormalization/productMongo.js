@@ -40,13 +40,15 @@ module.exports = async (
   const productMongoInstances = await Promise.all(
     products.map(async product => {
       const total = await getTotalStock(product, Stock);
+      console.log("PRODUCT BRNAD : ", product.dataValues?.Brand)
+      console.log("PRODUCT BRNAD : ", product.dataValues)
+
       const productMongoData = {
         _id: product.dataValues.id,
         name: product.dataValues.name,
         description: product.dataValues.description,
         price: product.dataValues.price,
         stock: total,
-        quantity: product.dataValues.quantity,
         image: product.dataValues.image,
         state: product.dataValues.state,
         promotion: product.dataValues.promotion,
@@ -56,7 +58,6 @@ module.exports = async (
         storage: product.dataValues.storage,
         loudspeaker: product.dataValues.loudspeaker,
         frontcamera: product.dataValues.frontcamera,
-        backcamera: product.dataValues.backcamera,
         weight: product.dataValues.weight,
         width: product.dataValues.width,
         height: product.dataValues.height,
@@ -66,8 +67,8 @@ module.exports = async (
         operatingSystem: product.dataValues.operatingSystem,
         cpu: product.dataValues.cpu,
         gpu: product.dataValues.gpu,
-        Brand: product.dataValues.Brand?.dataValues,
-        Category: product.dataValues.Category?.dataValues,
+        Brand: product.dataValues?.Brand?.dataValues || null,
+        Category: product.dataValues.Category?.dataValues || null,
       };
 
       return new ProductMongo(productMongoData);
