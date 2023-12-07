@@ -158,6 +158,7 @@
 <script setup lang="ts">
 
 import {useForm} from "./formHelper.ts";
+import {useModal} from "./../Modal/useModal.ts";
 
 const {openModal} = useModal();
 const deleteImage = (formField) => {

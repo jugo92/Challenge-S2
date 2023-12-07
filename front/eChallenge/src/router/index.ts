@@ -35,7 +35,7 @@ const router = createRouter({
         },
 
         {
-            path: "/reset_password",
+            path: "/test",
             name: "ResetPassword",
             component: ResetPasswordVue,
         },
@@ -60,7 +60,7 @@ const router = createRouter({
         {
             path: "/recap",
             name: "Recap",
-            component: RecapPageVue,
+            component: Recap,
         },
         {
             path: "/products",
@@ -81,7 +81,7 @@ const router = createRouter({
         },
         {
             path: '/new_password',
-            name: 'ResetPassword',
+            name: 'NewPassword',
             component: VerifyPassword,
         },
         {
