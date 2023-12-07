@@ -34,19 +34,19 @@ const onSubmit = async (data) => {
 
     const elements = stripe.elements();
 
-    const response = await fetch('http://localhost:3000/api/checkout', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            items: recapData.value.cart,
-            address: data.address,
-            zipcode: data.zipcode,
-            city: data.city,
-            address2: data.address2,
-        }),
-    });
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/checkout`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        items: recapData.value.cart,
+        address: data.address,
+        zipcode: data.zipcode,
+        city: data.city,
+        address2: data.address2,
+    }),
+});
 
     console.log('Réponse de l\'API :', response);
 

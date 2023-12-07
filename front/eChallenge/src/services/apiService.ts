@@ -1,4 +1,4 @@
-const API_URL_BASE = 'http://localhost:3000/api/';
+const API_URL_BASE = import.meta.env.VITE_API_URL;
 
 export const apiService = {
     getAll(instance, params) {
@@ -13,14 +13,14 @@ export const apiService = {
     },
 
     getOne(instance, id) {
-        return fetch(API_URL_BASE + instance + '/' + id)
+        return fetch(API_URL_BASE + "/" + instance + '/' + id)
             .then(response => response.json());
     },
 
     create(instance, item) {
         var myInit = {
             method: 'POST', 
-          };
+          } as any;
         if(item instanceof FormData){
             myInit.body = item
         }else {
@@ -29,7 +29,7 @@ export const apiService = {
               'Content-Type': 'application/json'
             });
           }
-        return fetch(API_URL_BASE + instance, myInit).then(response => response.json())
+        return fetch(API_URL_BASE + "/" + instance, myInit).then(response => response.json())
     },
 
     update(instance, item, id) {
@@ -44,11 +44,11 @@ export const apiService = {
               'Content-Type': 'application/json'
             });
           }
-        return fetch(API_URL_BASE + instance + '/' + id, myInit).then(response => response.json())
+        return fetch(API_URL_BASE + "/" + instance + '/' + id, myInit).then(response => response.json())
     },
 
     delete(instance, id) {
-        return fetch(API_URL_BASE + instance + '/' + id, {
+        return fetch(API_URL_BASE + "/" + instance + '/' + id, {
             method: 'DELETE'
         })
     },

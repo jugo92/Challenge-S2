@@ -5,41 +5,18 @@ import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import { ref, onMounted, watch } from 'vue';
 import Navbar from '../components/Navbar.vue';
-
+import {apiService} from "../services/apiService"
 const route = useRoute();
-const posts = ref([]);
-const post = ref(null);
+const product = ref(null);
 const error = ref(null);
-
-
-
-function getPostById(id) {
-    return posts.value.find(post => post._id === id);
-}
-
-watch(() => {
-  const postId = route.params.id;
-  if(postId !== undefined && postId !== null && postId !== "" ){
-    post.value= getPostById(postId);
-  }else{
-    console.error('InvalidpostId', postId);
-  }
-});
-
+const imageUrl = `${import.meta.env.VITE_API_URL}/getImage/`
 
 const loadData = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/products');
-        if (!response.ok) {
-            throw new Error('Failed to fetch data');
-        }
-        posts.value = await response.json();
-        const postIdNumber = parseInt(route.params.id, 10);
-        if (!isNaN(postIdNumber)) {
-            post.value = getPostById(postIdNumber);
-        } else {
-            console.error('Invalid postId:', route.params.id);
-        }
+      await apiService.getOne("products", route.params.id).then(res => {
+        product.value = res
+      })
+        
     } catch (err) {
         console.error('Error fetching data:', err);
         error.value = err.message;
@@ -57,17 +34,8 @@ const updateProductNotification = async (product) => {
   }
 };
 
-
-
-
-
-
 onMounted(loadData);
-
-
-
 const store = useStore(); 
-
 const addToCart = (product) => {
     if(store.state.isLoggedIn){
         store.commit('addToCart', product);
@@ -91,7 +59,7 @@ const addToCart = (product) => {
 </path>
 </svg>
 </a>
-<img v-if="post" class="object-contain w-full lg:h-full" :src="post.image" alt="">
+<img v-if="product" class="object-contain w-full lg:h-full" :src="`${imageUrl}${product.image}`" alt="">
 <a class="absolute right-0 transform lg:mr-2 top-1/2 translate-1/2" href="#">
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-5 h-5 text-blue-500 bi bi-chevron-right dark:text-blue-200" viewBox="0 0 16 16">
 <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z">
@@ -109,27 +77,27 @@ const addToCart = (product) => {
 <div class="mb-6 ">
     <div class="mb-6">
 
-<p v-if="post" class="mt-2 text-sm text-gray-500 font-bold dark:text-gray-400">Quantité disponible en stock: {{ post.quantity }}</p>
-<div v-if="post && post.quantity === 0">
-    <input type="checkbox" v-model="post.notifyWhenAvailable" class="mr-2"> Avertissez-moi lorsque le produit est disponible
+<p v-if="product" class="mt-2 text-sm text-gray-500 font-bold dark:text-gray-400">Quantité disponible en stock: {{ product.quantity }}</p>
+<div v-if="product && product.quantity === 0">
+    <input type="checkbox" v-model="product.notifyWhenAvailable" class="mr-2"> Avertissez-moi lorsque le produit est disponible
 </div>
-<div v-if="post">
-  <input type="checkbox" v-model="post.receiveNotifications" @change="updateProductNotification(post)">
+<div v-if="product">
+  <input type="checkbox" v-model="product.receiveNotifications" @change="updateProductNotification(product)">
   Recevoir des notifications si le prix change
 </div>
 
 </div>
-<span v-if="post" class="px-2.5 py-0.5 text-xs text-blue-600 bg-blue-100 dark:bg-gray-700 rounded-xl dark:text-gray-200">{{ post.state }}</span>
-<h2 v-if="post" class="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-black md:text-2xl dark:text-black">
-            {{ post.name }}
+<span v-if="product" class="px-2.5 py-0.5 text-xs text-blue-600 bg-blue-100 dark:bg-gray-700 rounded-xl dark:text-gray-200">{{ product.state }}</span>
+<h2 v-if="product" class="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-black md:text-2xl dark:text-black">
+            {{ product.name }}
         </h2>
 <div class="flex flex-wrap items-center mb-6">
-<a v-if="post" class="mb-4 text-xs underline hover:text-blue-600 dark:text-black dark:hover:text-black lg:mb-0" href="#">
-   {{ post.description }}
+<a v-if="product" class="mb-4 text-xs underline hover:text-blue-600 dark:text-black dark:hover:text-black lg:mb-0" href="#">
+   {{ product.description }}
 </a>
 </div>
 <p class="inline-block text-2xl font-semibold text-black dark:text-black ">
-<span v-if="post">{{ post.price }} €</span>
+<span v-if="product">{{ product.price }} €</span>
 <!-- <span class="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">€ 00</span> -->
 </p>
 </div>
@@ -221,7 +189,7 @@ Frequency
 </div>
 <div class="mb-4 lg:mb-0">
 </div>
-<button @click="addToCart(post)" class="flex items-center justify-center w-full px-6 py-3 text-base font-medium text-white transition duration-150 ease-in-out bg-blue-500 border border-transparent rounded-md shadow hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue md:py-4 md:text-lg md:px-10">
+<button @click="addToCart(product)" class="flex items-center justify-center w-full px-6 py-3 text-base font-medium text-white transition duration-150 ease-in-out bg-blue-500 border border-transparent rounded-md shadow hover:bg-blue-600 focus:outline-none focus:border-blue-700 focus:shadow-outline-blue md:py-4 md:text-lg md:px-10">
 Ajouter au panier
 </button>
 

@@ -1,8 +1,7 @@
 const { Model, DataTypes } = require("sequelize");
 const productMongo = require("../dtos/denormalization/productMongo");
 const fs = require("fs").promises;
-const { sendMail, sendNotification } = require("../Controllers/mailController");
-const { uuidv7 } = require("uuidv7");
+const { sendNotification } = require("../Controllers/mailController");
 module.exports = function (connection) {
   class Product extends Model {
     static associate(db) {
@@ -13,57 +12,20 @@ module.exports = function (connection) {
     }
     static addHooks(db) {
       Product.addHook("afterCreate", product =>
-        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
       );
       Product.addHook("beforeUpdate", async product => {
         const productBeforeUpdate = await Product.findByPk(product.id);
-        if (product.quantity != productBeforeUpdate.quantity) {
-          await db.StockHistory.create({
-            id: uuidv7(),
-            ProductId: product.id,
-            quantity: product.quantity,
-            movement:
-              product.quantity > productBeforeUpdate.quantity ? "enter" : "out",
-          });
-        }
-        if (product.quantity < productBeforeUpdate.quantity_alert) {
-          const admins = await db.User.findAll({
-            where: {
-              role: "admin",
-            },
-          });
-          let content = await fs.readFile(`mails/quantityAlert.txt`, "utf8");
-          content = content.replace("{{product_name}}", product.name);
-          admins.forEach(async admin => {
-            let contentWithName = content.replace("{{name}}", admin.firstname);
-            await sendMail(
-              admin.email,
-              "Quantité alerte",
-              null,
-              contentWithName
-            );
-          });
-        }
 
         if (product.isPublished) {
-          if (
-            productBeforeUpdate.quantity < product.quantity &&
-            product.isPublished
-          ) {
-            let content = await fs.readFile(
-              `mails/restockProductNotification.txt`,
-              "utf8"
-            );
-            await sendNotification(
-              content,
-              "Restock de produit",
-              product.id,
-              null,
-              1,
-              db.User,
-              db.NotificationUser
-            );
-          }
           if (product.price != productBeforeUpdate.price) {
             let content = await fs.readFile(
               `mails/variousPriceProductNotification.txt`,
@@ -101,10 +63,26 @@ module.exports = function (connection) {
         }
       });
       Product.addHook("afterUpdate", product =>
-        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
       );
       Product.addHook("afterDestroy", product =>
-        productMongo(product.id, "id", db.Product, db.Brand, db.Category)
+        productMongo(
+          product.id,
+          "id",
+          db.Product,
+          db.Brand,
+          db.Category,
+          "update",
+          db.Stock
+        )
       );
     }
   }
@@ -142,23 +120,6 @@ module.exports = function (connection) {
           max: {
             args: [1000000],
             msg: "Le prix ne peut pas dépasser 1 000 000.",
-          },
-        },
-      },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          isInt: {
-            msg: "La quantité doit être un nombre entier.",
-          },
-          min: {
-            args: [0],
-            msg: "La quantité ne peut pas être négative.",
-          },
-          max: {
-            args: [1000],
-            msg: "La quantité ne peut pas dépasser 1000.",
           },
         },
       },

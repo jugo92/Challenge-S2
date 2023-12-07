@@ -31,8 +31,9 @@
   },
   "devDependencies": {
     "@iconify/vue": "^4.1.1",
-    "@vitejs/plugin-vue": "^4.2.3",
+    "@vitejs/plugin-vue": "^4.5.1",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^16.3.1",
     "postcss": "^8.4.31",
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",

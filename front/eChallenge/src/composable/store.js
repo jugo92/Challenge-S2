@@ -176,7 +176,7 @@ const store = createStore({
   actions: {
     async login({ commit }, credentials) {
       try {
-        const response = await fetch("http://localhost:3000/api/login", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -204,13 +204,16 @@ const store = createStore({
 
     async register({ commit }, userData) {
       try {
-        const response = await fetch("http://localhost:3000/api/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Registration failed");
@@ -239,7 +242,7 @@ const store = createStore({
     async deleteUser({ commit }) {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/users/${user._id}",
+          `${import.meta.env.VITE_API_URL}/users/${user._id}`,
           {
             method: "DELETE",
             headers: {
@@ -265,7 +268,7 @@ const store = createStore({
       try {
         console.log("userData:", JSON.stringify(userData));
         const response = await fetch(
-          "http://localhost:3000/api/users/"+ userData.id,
+          `${import.meta.env.VITE_API_URL}/users/${user + id}`,
           {
             method: "PATCH",
             headers: {
@@ -296,7 +299,7 @@ const store = createStore({
     async fetchProductDetails({ commit }, productId) {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/products/${productId}`
+          `${import.meta.env.VITE_API_URL}/products/${productId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch product details");
@@ -316,7 +319,7 @@ const store = createStore({
       if (rootState.isLoggedIn) {
         try {
           const response = await fetch(
-            `http://localhost:3000/api/products/${productId}/notify`,
+            `${import.meta.env.VITE_API_URL}/products/${productId}/notify`,
             {
               method: "POST",
               headers: {
@@ -341,7 +344,9 @@ const store = createStore({
 
     async fetchProducts({ commit }) {
       try {
-        const response = await fetch("http://localhost:3000/api/products");
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/products`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
@@ -356,7 +361,7 @@ const store = createStore({
     async fetchUserOrders({ commit, state }) {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/users/${user._id}`,
+          `${import.meta.env.VITE_API_URL}/users/${user._id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

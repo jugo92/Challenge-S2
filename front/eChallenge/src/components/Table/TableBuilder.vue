@@ -158,12 +158,12 @@ const sortedData = computed(() => {
     }
 });
 
-const selectedItems = ref([]);
+const selectedItems:any = ref([]);
 
 const getSelectedInstances = () => {
     selectedItems.value = [];
     const checkboxes = document.querySelectorAll('.table-input-checkbox');
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach((checkbox:any) => {
         if (checkbox.checked) {
             selectedItems.value.push(checkbox.id);
         }

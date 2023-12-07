@@ -5,8 +5,6 @@ import ToastPlugin from 'vue-toast-notification';
 import "./assets/styles.css";
 import store from './composable/store';
 
-
-
 const app = createApp(App);
 app.use(ToastPlugin);
 app.use(router);

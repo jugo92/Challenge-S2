@@ -26,7 +26,7 @@ const { validateField } = useForm();
 
 const splitUrl = window.location.pathname.split("/");
 const instance = splitUrl[splitUrl.length - 1];
-let isUpdateItem = ref(null);
+let isUpdateItem:any = ref(null);
 
 import {apiService} from "../services/apiService.ts";
 import {forEach} from "lodash";

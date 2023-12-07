@@ -42,11 +42,11 @@ export function useForm(formConfig: FormField[]) {
 
         formConfig.value
             .filter(field => field.type !== 'button' && field.validationError != null)
-            .forEach(field => {
-                this.$nextTick(() => {
-                    field.validationError = '';
-                });
-            });
+            // .forEach(field => {
+                // this.$nextTick(() => {
+                //     field.validationError = '';
+                // });
+            // });
 
         fieldsToReset.forEach(fieldName => {
             const field = formConfig.value.find(field => field.name === fieldName);
@@ -128,7 +128,7 @@ export function useForm(formConfig: FormField[]) {
     };
 
     const getFileUrl = (file) => {
-        return "http://localhost:3000/getImage/" + file
+        return `${import.meta.env.VITE_API_URL}/getImage/` + file
     };
 
     const getRequestBody = (formConfig) => {

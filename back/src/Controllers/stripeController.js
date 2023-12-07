@@ -8,18 +8,42 @@ const {
   Payment,
   Invoice,
   User,
+  Basket,
+  ProductBasket,
 } = require("../Models/");
 const { uuidv7 } = require("uuidv7");
 const PdfService = require("../Services/pdfService");
 const { sendMail } = require("../Controllers/mailController");
 const ValidationError = require("../errors/ValidationError");
 const fs = require("fs").promises;
+const { Op } = require("sequelize");
 module.exports.initPayment = async (req, res, next) => {
   try {
     const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
-    const storeItems = new Map([]);
+    const storeItems = [];
+    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
 
+    //on récupère le panier du user avec la liste des produits.
+    const basket = await Basket.findByPk(req.body.BasketId, {
+      where: {
+        createdAt: {
+          [Op.lt]: fifteenMinutesAgo,
+        },
+      },
+    });
+    if (!basket) {
+      return next(
+        new ValidationError({
+          basket: "Panier expire.",
+        })
+      );
+    }
+    const productsBaskets = await ProductBasket.findAll({
+      where:{
+        BasketId: req.body.BasketId
+      }
+    })
     const order = await Order.create({
       id: uuidv7(),
       TTC: req.body.TTC,
@@ -30,11 +54,13 @@ module.exports.initPayment = async (req, res, next) => {
       UserId: req.user.id,
       email: req.user.email,
     });
+    let idItem = []
 
     await Promise.all(
-      req.body.items.map(async item => {
-        const product = await Product.findByPk(item.id, {});
-        if (!product.dataValues.isPublished) {
+      productsBaskets.map(async item => {
+        console.log("ITEM : ", item)
+        const product = await Product.findByPk(item.ProductId, {});
+        if (!product.isPublished) {
           return next(
             new ValidationError({
               accountLocked: "Produit non publie.",
@@ -44,30 +70,30 @@ module.exports.initPayment = async (req, res, next) => {
         await ProductOrder.create({
           id: uuidv7(),
           quantity: item.quantity,
-          ProductId: item.id,
+          ProductId: product.id,
           OrderId: order.id,
         });
 
-        storeItems.set(product.dataValues.id, {
+        storeItems.push( {
           priceInCents:
-            product.dataValues.price * 100 +
-            product.dataValues.price * 100 * 0.2,
-          name: product.dataValues.name,
+            product.price * 100 +
+            product.price * 100 * 0.2,
+          name: product.name,
+          quantity: item.quantity
         });
       })
     );
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      line_items: req.body.items.map(item => {
-        const storeItem = storeItems.get(item.id);
+      line_items: storeItems.map(item => {
         return {
           price_data: {
             currency: "eur",
             product_data: {
-              name: storeItem.name,
+              name: item.name,
             },
-            unit_amount: storeItem.priceInCents,
+            unit_amount: item.priceInCents,
           },
           quantity: item.quantity,
         };
@@ -83,7 +109,7 @@ module.exports.initPayment = async (req, res, next) => {
       currency: "EUR",
       OrderId: order.id,
       UserId: req.user.id,
-      amount: req.body.TTC
+      amount: req.body.TTC,
     });
 
     await Order.update(
@@ -111,13 +137,6 @@ module.exports.getEventPayment = async (req, res) => {
   } catch (error) {
     res.status(400).json({ success: false });
     return;
-  }
-  console.log("EVENT RECUE : ", event.type)
-  if(event.type === "charge.failed"){
-    console.log("FAILED CHARGE : ", event.data.object);
-  }
-  if(event.type === "payment_intent.payment_failed"){
-    console.log("PAYMENT INTENTE FAILED : ", event.data.object)
   }
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;

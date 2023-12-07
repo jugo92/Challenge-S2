@@ -139,7 +139,7 @@
             </div>
 
             <!-- Buttons -->
-            <template v-for="(button, buttonIndex) in formFields" :key="buttonIndex" class="w-full">
+            <template v-for="(button) in formFields"  class="w-full">
                 <button
                     v-if="button.type === 'button' && showField(button)"
                     :type="button.buttonType"
@@ -158,7 +158,6 @@
 <script setup lang="ts">
 
 import {useForm} from "./formHelper.ts";
-import {useModal} from "../Modal/useModal.ts";
 
 const {openModal} = useModal();
 const deleteImage = (formField) => {

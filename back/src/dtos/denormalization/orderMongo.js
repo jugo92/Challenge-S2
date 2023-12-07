@@ -5,6 +5,9 @@ module.exports = async function (orderId, Order, User, Invoice, ProductOrder, Pr
     include: [
       {
         model: User,
+        attributes: {
+          exclude: ['password']
+        }
       },
       {
         model : Payment
