@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-
+import { apiService } from './apiService';
 const BASKET_STORAGE_KEY = 'basket';
 
 const basket:any = ref({
@@ -12,37 +12,44 @@ const saveBasketToLocalStorage = () => {
   };
 
 const checkAndAddToBasket = async (product, quantity = 1) => {
-    try {
-      const basketData = localStorage.getItem(BASKET_STORAGE_KEY);
+  console.log(product)
+ const res = await apiService.getOne("products", product._id)
+ console.log(res)
+ return res;
+  console.log("la")
+    // try {
+      //check first quantity if no qty return err
+      //to check qty just get by id product and check qty
+      //if ok continue process else return err and display modal
+    //   const basketData = localStorage.getItem(BASKET_STORAGE_KEY);
 
-      if (basketData !== null) {
-         basket.value = JSON.parse(basketData);
-      } else {
-        basket.value = {basketId: null, products:[]}
-     }
-      if (basket.value && basket.value.basketId) {
-        await addToBasketBackend(product, quantity, basket.value.basketId);
-      } else {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/baskets`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data.id)
-          basket.value.basketId = data.id;
-          await addToBasketBackend(product, quantity, data.id);
-        } else {
-          console.error('Failed to initialize basket on the backend');
-        }
-      }
-      saveBasketToLocalStorage();
-    } catch (error) {
-      console.error('Error checking and adding to basket:', error);
-    }
+    //   if (basketData !== null) {
+    //      basket.value = JSON.parse(basketData);
+    //   } else {
+    //     basket.value = {basketId: null, products:[]}
+    //  }
+    //   if (basket.value && basket.value.basketId) {
+    //     await addToBasketBackend(product, quantity, basket.value.basketId);
+    //   } else {
+    //     const response = await fetch(`${import.meta.env.VITE_API_URL}/baskets`, {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //     });
+    //     if (response.ok) {
+    //       const data = await response.json();
+    //       console.log(data.id)
+    //       basket.value.basketId = data.id;
+    //       await addToBasketBackend(product, quantity, data.id);
+    //     } else {
+    //       console.error('Failed to initialize basket on the backend');
+    //     }
+    //   }
+    //   saveBasketToLocalStorage();
+    // } catch (error) {
+    //   console.error('Error checking and adding to basket:', error);
+    // }
   };
   
   const addToBasketBackend = async (productData, quantity, basketId) => {

@@ -118,22 +118,10 @@
  
      <label for="promotions" class="block text-sm font-medium text-gray-700">Promotions</label>
  
-     <select @change="updateFilter" v-model="promotions" id="promotions" name="promotions" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
- 
-       <option value="">Toutes</option>
- 
-       <option value="true">Seulement les promos</option>
- 
-       <option value="false">Seulement les non-promos</option>
- 
-     </select>
- 
+     <input type="checkbox" @change="updateFilter" v-model="promotions" id="promotions" name="promotions" class="mt-1 block  py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
   </div>
- 
      </form>
- 
   </div>
- 
  </template>
 
 <script setup lang="ts">
@@ -148,7 +136,7 @@ const maxPrice = ref("");
 const description = ref("");
 const selectedMarques = ref([]);
 const selectedCategories = ref([]);
-const promotions = ref(null);
+const promotions = ref(false);
 
 const updateFilter = () => {
   emit('onFilterChange', {
@@ -158,7 +146,7 @@ const updateFilter = () => {
     description: description.value,
     marque: selectedMarques.value,
     category: selectedCategories.value,
-    promotions: !promotions.value
+    promotions: promotions.value
   });
 };
 </script>

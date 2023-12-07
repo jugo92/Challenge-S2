@@ -34,9 +34,10 @@
       </div>
       <div v-else>
         <div>
-        <span class="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
-          Rupture de Stock
-        </span>
+          <span class="flex items-center justify-center rounded-md bg-red-500 px-5 py-2.5 text-center text-sm font-medium text-white  focus:outline-none focus:ring-4 focus:ring-red-300">
+Victime de son succès
+</span>
+
       </div>
       </div>
     </div>
@@ -49,7 +50,10 @@ import {checkAndAddToBasket} from "../services/basketService"
 const { product } = defineProps(['product']);
 const imageUrl = `${import.meta.env.VITE_API_URL}/getImage/${product.image}`
 const addToCart = () => {
-  checkAndAddToBasket(product, 1)
+  //Check availability quantities
+  checkAndAddToBasket(product, 1).then(res => {
+    console.log("RES : ", res)
+  })
   console.log(`Produit ajouté au panier : ${product.name}`);
 };
 </script>

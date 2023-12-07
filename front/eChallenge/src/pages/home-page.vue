@@ -5,7 +5,10 @@
     <div class="top">
       <SliderImage />
     </div>
-    <div class="m-5 w-full flex">
+    <!-- <div class="modal-container">
+    <ModalDialogVue title="test" content="fsdifjsdflksjdflkj" :show="true" />
+  </div> -->
+      <div class="m-5 w-full flex">
       <section class="w-1/4 bg-gray-200 p-4 h-full col-span-1">
         <Filters @onFilterChange="applyFilters" :marquesList="marquesList" :categoriesList="categoryList" />
       </section>
@@ -35,7 +38,7 @@ const filters = ref({
   description: '',
   marque: [],
   category: [] ,
-  promotions: null
+  promotions: false
 });
 
 const applyFilters = (newFilters) => {
@@ -45,9 +48,8 @@ const applyFilters = (newFilters) => {
 
 const loadFilteredProducts = async () => {
   try {
-    console.log("FILTRE : ", filters.value.promotions)
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/products?page=1&limit=10&name=${filters.value.productName}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`
+      `${import.meta.env.VITE_API_URL}/products?page=1&limit=100&name=${filters.value.productName}&promotions=${filters.value.promotions}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`
     );
 
     if (!response.ok) {
@@ -83,6 +85,19 @@ loadMarqueAndCategory();
 
 <style scoped>
 
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000; /* Ajustez la valeur si nécessaire */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+}
 
 .container {
  margin-left: auto;

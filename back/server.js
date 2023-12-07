@@ -82,12 +82,12 @@ const createMongoMethods = collection => {
 };
 
 const userRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericUserRouter = new GenericRouter(new GenericController(new GenericService(User)));
   userRoutes.forEach(route => {
@@ -99,12 +99,12 @@ app.use(
 ); 
 
 const brandRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericBrandRouter = new GenericRouter(new GenericController(new GenericService(Brand)));
   brandRoutes.forEach(route => {
@@ -116,12 +116,12 @@ app.use(
 ); 
 
 const notificationRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericNotificationRouter = new GenericRouter(new GenericController(new GenericService(Notification)));
 notificationRoutes.forEach(route => {
@@ -134,12 +134,12 @@ app.use(
 
 
 const notificationUserRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericNotificationUserRouter = new GenericRouter(new GenericController(new GenericService(NotificationUser)));
 notificationUserRoutes.forEach(route => {
@@ -161,12 +161,12 @@ const serviceOrderProxy = new Proxy(genericOrderService, {
 });
 
 const orderRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericOrderRouter = new GenericRouter(new GenericController(serviceOrderProxy));
 orderRoutes.forEach(route => {
@@ -189,12 +189,12 @@ const servicePaymentProxy = new Proxy(genericPaymentService, {
 });
 
 const paymentRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericPaymentRouter = new GenericRouter(new GenericController(servicePaymentProxy));
 paymentRoutes.forEach(route => {
@@ -206,12 +206,12 @@ app.use(
 ); 
 
 const categorieRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericCategoryRouter = new GenericRouter(new GenericController(new GenericService(Category)));
 categorieRoutes.forEach(route => {
@@ -233,11 +233,11 @@ const serviceProductProxy = new Proxy(genericProductService, {
 });
 const productRoute = [
   { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth(), multerMiddleware] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [multerMiddleware] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericProductRouter = new GenericRouter(new GenericController(serviceProductProxy));
 productRoute.forEach(route => {
@@ -249,12 +249,12 @@ app.use(
 );
 
 const stockRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericStockRouter = new GenericRouter(new GenericController(new GenericService(Stock)));
 stockRoutes.forEach(route => {
@@ -266,12 +266,12 @@ app.use(
 ); 
 
 const basketRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericBasketRouter = new GenericRouter(new GenericController(new GenericService(Basket)));
 basketRoutes.forEach(route => {
@@ -283,12 +283,12 @@ app.use(
 ); 
 
 const productBasketRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericProductBasketRouter = new GenericRouter(new GenericController(new GenericService(ProductBasket)));
 productBasketRoutes.forEach(route => {
@@ -300,12 +300,12 @@ app.use(
 ); 
 
 const refundRoutes = [
-  { method: 'GET', path: '/', handler: 'getAll', middlewares: [checkAuth()] },
-  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [checkAuth()] },
-  { method: 'POST', path: '/', handler: 'create', middlewares: [checkAuth()] },
-  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [checkAuth()] },
-  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [checkAuth()] },
-  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [checkAuth()] },
+  { method: 'GET', path: '/', handler: 'getAll', middlewares: [] },
+  { method: 'GET', path: '/:id', handler: 'getById', middlewares: [] },
+  { method: 'POST', path: '/', handler: 'create', middlewares: [] },
+  { method: 'PUT', path: '/:id', handler: 'update', middlewares: [] },
+  { method: 'PATCH', path: '/:id', handler: 'patch', middlewares: [] },
+  { method: 'DELETE', path: '/:id', handler: 'delete', middlewares: [] },
 ];  
 const genericRefundRouter = new GenericRouter(new GenericController(new GenericService(Refund)));
 refundRoutes.forEach(route => {
