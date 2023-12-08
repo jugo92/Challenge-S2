@@ -21,6 +21,7 @@ module.exports = function (connection) {
       id: { type: DataTypes.UUID, primaryKey: true },
       accepted: {
         type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
       motif: {
         type: DataTypes.STRING,

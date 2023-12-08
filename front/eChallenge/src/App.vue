@@ -16,7 +16,7 @@ onMounted(() => {
 
 <template>
     <Navbar/>
-    <div id="app" class="mb-28">
+    <div id="app" class="pb-28">
             <router-view></router-view>
     <Footer class="fixed bottom-0 left-0"/>
     </div>

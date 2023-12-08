@@ -96,7 +96,7 @@
         <header class="bg-white shadow" v-if="$route.path.includes('admin')">
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900" v-if="instance == 'dashboard'"> Tableau de bord </h1>
-                <!--                    <h1 class="text-3xl font-bold tracking-tight text-gray-900" v-else-if="!$route.path.split('/').includes('usercard')"> Gestion des {{ navigation.find((item) => item.key == instance).name.toLowerCase() }} </h1>-->
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900" v-else-if="!$route.path.split('/').includes('usercard')"> Gestion des {{ navigation.find((item) => item.key == instance).name.toLowerCase() || '' }} </h1>
             </div>
         </header>
     </div>
@@ -127,7 +127,8 @@ const navigation = ref(
                     { key: "users", name: 'Utilisateurs', href: 'http://localhost:5173/admin/users', current: false },
                     { key: "categories", name: 'Catégories', href: 'http://localhost:5173/admin/categories', current: false },
                     { key: "brands", name: 'Marques', href: 'http://localhost:5173/admin/brands', current: false },
-                    { key: "products", name: 'Produits', href: 'http://localhost:5173/admin/products', current: false }
+                    { key: "products", name: 'Produits', href: 'http://localhost:5173/admin/products', current: false },
+                    { key: "refunds", name: 'Remboursements', href: 'http://localhost:5173/admin/refunds', current: false }
                 ];
         //     case false:
         //         return [

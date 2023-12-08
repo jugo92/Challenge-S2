@@ -34,7 +34,7 @@ export const apiService = {
 
     update(instance, item, id) {
         var myInit = {
-            method: instance === 'users' ? 'PATCH' : 'PUT',
+            method: 'PATCH',
           };
         if(item instanceof FormData){
             myInit.body = item

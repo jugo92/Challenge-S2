@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2 mx-auto w-5/6">
     <Modal
         content="formBuilder"
         :show="isModalVisible"
@@ -17,12 +17,13 @@ import {onMounted,  reactive, ref, watch} from 'vue';
 import { z } from "zod";
 import {useModal} from "./Modal/useModal.ts";
 import {useForm} from "./Form/formHelper.ts";
+import {useTable} from "./Table/tableHelper.ts";
 import TabBuilder from "./Table/TableBuilder.vue";
-import { unselectAllItems } from './Table/tableHelper.ts';
 import Modal from "./Modal/Modal.vue";
 
 const { isModalVisible, openModal, closeModal } = useModal();
 const { validateField } = useForm();
+const { unselectAllItems, getTableColumns, fetchListOfItems, tableData } = useTable();
 
 const splitUrl = window.location.pathname.split("/");
 const instance = splitUrl[splitUrl.length - 1];
@@ -35,61 +36,60 @@ import {forEach} from "lodash";
 //////////////////////////////////
 ///   DEFINITION DES DONNEES  ///
 ////////////////////////////////
-const getTableColumns = (instance) => {
-  switch (instance){
-    case 'products':
-      return [
-        { key: 'name', label: 'Nom', filter: true, style: 'font-bold underline', link: 'products'},
-        { key: 'Category.name', label: 'Catégorie', filter: true },
-        { key: 'Marque.name', label: 'Marque', filter: true },
-        { key: 'price', label: 'Prix', filter: true },
-        { key: 'quantity', label: 'Quantité', filter: true },
-        { key: 'state', label: 'État', filter: true },
-        { key: 'promotion', label: 'Promotion', filter: true },
-        { key: 'isPublished', label: 'Est Publié', filter: true },
-      ];
-    case 'brands':
-      return [
-        { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
-        { key: 'description', label: 'Description', filter: true, },
-        { key: 'image', label: 'Image', filter: true },
-      ];
-    case 'categories':
-      return [
-        { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
-        { key: 'description', label: 'Description', filter: true },
-      ];
-    case 'users':
-      return [
-        { key: 'firstname+lastname', label: 'Nom Prénom', filter: true, style: 'font-bold underline', link: 'users' },
-        { key: 'email', label: 'Email', filter: true },
-        { key: 'role', label: 'Rôle', filter: true },
-        { key: 'isVerified', label: 'Est vérifié', filter: true },
-        { key: 'isActive', label: 'Est actif', filter: true },
-        { key: 'createdAt', label: 'Créé le', filter: true },
-        { key: 'updatedAt', label: 'Mis à jour le', filter: true },
-      ];
-    default:
-      return;
-  }
-}
+// const getTableColumns = (instance) => {
+//   switch (instance){
+//     case 'products':
+//       return [
+//         { key: 'name', label: 'Nom', filter: true, style: 'font-bold underline', link: 'products'},
+//         { key: 'Category.name', label: 'Catégorie', filter: true },
+//         { key: 'Marque.name', label: 'Marque', filter: true },
+//         { key: 'price', label: 'Prix', filter: true },
+//         { key: 'quantity', label: 'Quantité', filter: true },
+//         { key: 'state', label: 'État', filter: true },
+//         { key: 'promotion', label: 'Promotion', filter: true },
+//         { key: 'isPublished', label: 'Est Publié', filter: true },
+//       ];
+//     case 'brands':
+//       return [
+//         { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
+//         { key: 'description', label: 'Description', filter: true, },
+//         { key: 'image', label: 'Image', filter: true },
+//       ];
+//     case 'categories':
+//       return [
+//         { key: 'name', label: 'Nom', filter: true, style: 'font-bold' },
+//         { key: 'description', label: 'Description', filter: true },
+//       ];
+//     case 'users':
+//       return [
+//         { key: 'firstname+lastname', label: 'Nom Prénom', filter: true, style: 'font-bold underline', link: 'users' },
+//         { key: 'email', label: 'Email', filter: true },
+//         { key: 'role', label: 'Rôle', filter: true },
+//         { key: 'isVerified', label: 'Est vérifié', filter: true },
+//         { key: 'isActive', label: 'Est actif', filter: true },
+//         { key: 'createdAt', label: 'Créé le', filter: true },
+//         { key: 'updatedAt', label: 'Mis à jour le', filter: true },
+//       ];
+//     default:
+//       return;
+//   }
+// }
 const tableColumns = getTableColumns(instance);
-const tableData = ref([])
 
-const getIncludedProperties = (instance) => {
-  switch (instance) {
-    case 'products':
-      return ['_id', 'name', 'Category.name', 'Marque.name', 'price', 'quantity', 'state', 'promotion', 'isPublished', 'quantity_alert'];
-    case 'brands':
-      return ['id', 'name', 'description', 'image'];
-    case 'categories':
-      return ['id', 'name', 'description'];
-    case 'users':
-      return ['id', 'firstname+lastname', 'email', 'role', 'isVerified', 'isActive', 'createdAt', 'updatedAt'];
-    default:
-      return;
-  }
-};
+// const getIncludedProperties = (instance) => {
+//   switch (instance) {
+//     case 'products':
+//       return ['_id', 'name', 'Category.name', 'Marque.name', 'price', 'quantity', 'state', 'promotion', 'isPublished', 'quantity_alert'];
+//     case 'brands':
+//       return ['id', 'name', 'description', 'image'];
+//     case 'categories':
+//       return ['id', 'name', 'description'];
+//     case 'users':
+//       return ['id', 'firstname+lastname', 'email', 'role', 'isVerified', 'isActive', 'createdAt', 'updatedAt'];
+//     default:
+//       return;
+//   }
+// };
 
 const getRequestBody = (formConfig) => {
   switch (instance) {
@@ -157,6 +157,12 @@ const getRequestBody = (formConfig) => {
         isActive: formConfig.find(field => field.name === 'isActive').value,
         // password: formConfig.find(field => field.name === 'password').value,
       }
+    case 'refunds':
+        return {
+          OrderId: refundConfig.value.find(field => field.name === "orderId").value,
+          UserId: refundConfig.value.find(field => field.name === "userId").value,
+          motif: refundConfig.value.find(field => field.name === "motif").value,
+        }
     default:
       return;
   }
@@ -237,7 +243,12 @@ const getInstanceForm = (instance, formConfig, data) => {
       formConfig.value.find(field => field.name === 'isVerified').value = data ? data.isVerified : '';
       formConfig.value.find(field => field.name === 'isActive').value = data ? data.isActive : '';
       // formConfig.value.find(field => field.name === 'password').value = data ? data.password : '';
-      console.log("formconfig users", formConfig)
+      break;
+    case 'refunds':
+      formConfig.value.find(field => field.name === 'id').value = data ? data.id : null;
+      formConfig.value.find(field => field.name === 'orderId').value = data ? data.OrderId : '';
+      formConfig.value.find(field => field.name === 'userId').value = data ? data.UserId : '';
+      formConfig.value.find(field => field.name === 'motif').value = data ? data.motif : '';
       break;
     default:
       break;
@@ -844,6 +855,39 @@ const getInstanceFormConfig = (instance) => {
           name: "id",
         },
       ]
+    case 'refunds':
+      return [
+        {
+          name: 'orderId',
+          value: '',
+          showCondition: () => false
+        },
+        {
+          name: 'userId',
+          value: '',
+          showCondition: () => false
+        },
+        {
+          type: "textarea",
+          name: "motif",
+          label: "Motif de retour",
+          placeholder: "Saisissez le motif de votre retour",
+          required: true,
+          value: "",
+          validationError: "",
+          validationSchema: z.string()
+              .min(10, "Le motif doit contenir au moins 10 caractères")
+              .max(500, "Limites de caractères atteinte")
+        },
+        {
+          type: "button",
+          name: "submit",
+          label: "Envoyer",
+          buttonClass: 'bg-blue-500 mt-4 text-white',
+          required: true,
+          buttonClick: createInstance,
+        },
+      ]
     default:
       return;
   }
@@ -851,40 +895,11 @@ const getInstanceFormConfig = (instance) => {
 /////////////////////////////
 ///   FONCTIONS OUTILS   ///
 ////////////////////////////
-let currentPage = 1;
-let limit = 2;
-const fetchListOfItems = async () => {
-  const includedProperties = getIncludedProperties(instance);
-  try {
-    const response = await fetch('http://localhost:3000/api/' + instance + "?page=" + pageIndex.currentPage + "&limit=" + pageIndex.limit);
-    const data = await response.json();
-    tableData.value = data.map((item) => {
-      const filteredItem = {};
-      for (const property of includedProperties) {
-        if(property.includes('.')){
-          if(item.hasOwnProperty(property.split('.')[0])){
-            filteredItem[property] = item[property.split('.')[0]][property.split('.')[1]]
-          }
-        }else if(property.includes('+')) {
-          if (item.hasOwnProperty(property.split('+')[0])) {
-            filteredItem[property] = item[property.split('+')[0]] + ' ' + item[property.split('+')[1]]
-          }
-        }
-        else  {
-          filteredItem[property] = item[property] || '';
-        }
-      }
-      return filteredItem;
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des produits depuis l\'API', error);
-  }
-};
 
 const afterInstanceSave = () => {
   isModalVisible.value = false;
   setTimeout(() => {
-    fetchListOfItems();
+    fetchListOfItems(instance);
   }, 500);
 }
 
@@ -1035,7 +1050,7 @@ onMounted(async () => {
       categoriesField.options = data;
     });
   }
-  await fetchListOfItems();
+  await fetchListOfItems(instance);
   for (const field of formConfig.value) {
     if (field.validationSchema) {
       watch(() => field.value, async () => {

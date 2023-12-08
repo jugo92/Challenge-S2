@@ -124,6 +124,12 @@ const router = createRouter({
             props: (route) => ({ instance: route.path.substring(1) })
         },
         {
+            path: "/admin/refunds/",
+            name: "ShowAllRefunds",
+            component: ShowAll,
+            props: (route) => ({ instance: route.path.substring(1) })
+        },
+        {
             path: "/unauthorized",
             name: "Unauthorized",
             component: unauthorized,
