@@ -60,6 +60,7 @@ router.post("/login", async (req, res, next) => {
       await user.increment("loginAttempts");
       return next(
         new ValidationError({
+          email: "Mauvais Identifiants.",
           password: "Mauvais Identifiants.",
         })
       );

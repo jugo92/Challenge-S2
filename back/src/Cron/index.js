@@ -5,7 +5,6 @@ const { Op } = require("sequelize");
 const { sendMail } = require("../Controllers/mailController");
 module.exports.initCron = () => {
   remindChangePassword();
-  invalidOrer();
 };
 
 const remindChangePassword = async () => {
@@ -26,10 +25,7 @@ const remindChangePassword = async () => {
         },
       },
     });
-    console.log(users);
-
     const content = await fs.readFile(`mails/remindPasswordChange.txt`, "utf8");
-
     for (const user of users) {
       const contentWithName = content.replace(
         "{{name}}",
@@ -42,11 +38,3 @@ const remindChangePassword = async () => {
   }
 };
 
-const invalidOrer = async () => {
-  await Order.update(
-    { status: "Canceled" },
-    { where: { status: "Pending" }, individualHooks: true }
-  );
-};
-
-const cryptUseInformation = async () => {};

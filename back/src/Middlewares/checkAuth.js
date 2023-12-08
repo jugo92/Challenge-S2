@@ -1,6 +1,6 @@
 const { verifyToken } = require("../Services/token");
 
-module.exports = function ({ excludePaths = [] } = {}) {
+module.exports = function () {
   return function (req, res, next) {
     const token = req.signedCookies['jwt']
     if (!token) return res.sendStatus(401);

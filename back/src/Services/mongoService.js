@@ -13,14 +13,16 @@ class MongoService {
       maxPrice,
       categories,
       marques,
-      promotions
+      promotions,
     } = req.query;
     const page = parseInt(reqPage) || 1;
     const limit = parseInt(reqLimit) || 10;
     let filterObject = {}
-    filterObject = buildFilterObject(name, description, minPrice, maxPrice, categories,marques, promotions);
-    console.log("FILTER OBJECT : ", filterObject)
-    const query = this.Model.find(filterObject)
+    const UserId = req.query['User.id']
+    filterObject = buildFilterObject(name, description, minPrice, maxPrice, categories,marques, promotions, UserId);
+    const query = this.Model.find({
+      "User.id": UserId
+    })
       .skip((page - 1) * limit)
       .limit(limit);
     const models = await query.exec();
@@ -45,10 +47,8 @@ class MongoService {
   }
 }
 
-const buildFilterObject = (name, description, minPrice, maxPrice, categories, marques, promotions) => {
+const buildFilterObject = (name, description, minPrice, maxPrice, categories, marques, promotions, UserId) => {
   let filterObject = {};
-  console.log("LES MARQUES : ", marques)
-  console.log("LA PROMOTION  : ", promotions)
   if (name) {
     filterObject.name = new RegExp(name, "i");
   }
@@ -75,10 +75,14 @@ const buildFilterObject = (name, description, minPrice, maxPrice, categories, ma
     const brandArray = marques.split(',').map(marque => marque.trim());
     filterObject['Brand.name'] = { $in: brandArray };
   }
-  console.log("PROMOTIONS : ", promotions)
 
   if (promotions === "true") {
     filterObject.promotion = { $gt: 0 }; 
+  }
+
+  console.log("FILTRE : ", UserId)
+  if(UserId){
+    filterObject['User.id'] = UserId
   }
 
   return filterObject;
