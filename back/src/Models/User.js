@@ -164,6 +164,26 @@ module.exports = function (connection) {
         type: DataTypes.BOOLEAN,
         allowNull: false,
         defaultValue: true
+      },
+      hasNewsletter:{
+        type:DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      hasCategory:{
+        type:DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      hasRestock:{
+        type:DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      hasChangePrice:{
+        type:DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
       }
     },
     {
