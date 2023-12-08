@@ -905,22 +905,23 @@ const afterInstanceSave = () => {
 
 const createInstance = async (data) => {
   for (const field of formConfig.value) {
-    // if (!field.value && field.required) {
-    //     field.validationError = { message: 'Ce champ est obligatoire' };
-    //     continue;
-    // }
-    // if (!field.value && field.type === 'select') {
-    //     field.value = 0;
-    //     continue;
-    // }
-    //TODO : vérifier si l'instance existe déjà
+    if (!field.value && field.required) {
+      field.validationError = { message: 'Ce champ est obligatoire' };
+      continue;
+    }
+    if (!field.value && field.type === 'select') {
+      field.value = 0;
+      continue;
+    }
   }
-  // isExist();
+  if(isExist()){
+      formConfig.value.find(field => field.name === 'name').validationError = { message: 'Ce nom existe déjà' };
+      return;
+  }
 
-
-  // if (formConfig.value.some(field => field.validationError)) {
-  //     return;
-  // }
+  if (formConfig.value.some(field => field.validationError)) {
+      return;
+  }
 
   const requestBody = getRequestBody(formConfig.value);
   if(requestBody instanceof FormData){
@@ -1001,7 +1002,7 @@ const openModalInstance = async (instance, isUpdate, data) => {
 
 const isExist = () => {
   const nameField = formConfig.value.find(field => field.name === 'name');
-  apiService.getAll(instance, `name=${nameField.value}`)
+  apiService.getAll('/'+instance, `?name=${nameField.value}`)
       .then(res =>
       {
         if(res.length > 0) {
