@@ -101,8 +101,15 @@ export function useForm(formConfig: FormField[]) {
     };
 
     const validateField = (field: FormField) => {
-        const value = field.type === 'number' ? Number(field.value) : field.value;
-        const result = field.validationSchema?.safeParse(value);
+        console.log('FIELD');
+        let value:any;
+        if (field.type === 'number') {
+            value = Number(field.value);
+          } else if (field.type === 'date') {
+            value = new Date(field.value);
+          } else {
+            value = field.value;
+          }        const result = field.validationSchema?.safeParse(value);
 
         if (result?.success) {
             // Validation succeeds

@@ -70,8 +70,94 @@ router.post("/login", async (req, res, next) => {
 
     res.cookie("jwt", token, {
       httpOnly: true,
+      signed: true
     });
 
+    return res.json(user);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/verify/:token", async (req, res, next) => {
+  try {
+    if (!req.params.token) {
+      return next(
+        new ValidationError({
+          token: "Pas de token.",
+        })
+      );
+    }
+    const user = await User.findOne({
+      where: {
+        token: req.params.token,
+      },
+    });
+    if (!user) {
+      return next(
+        new ValidationError({
+          token: "Token invalide.",
+        })
+      );
+    }
+    if (user.isVerified) {
+      return next(
+        new ValidationError({
+          user: "Votre compte a deja ete verifie",
+        })
+      );
+    }
+    const token = crypto.randomBytes(30).toString("hex");
+    await user.update({ isVerified: 1 , token: token});
+    return res.json(user);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.post("/updatePassword/:token", async (req, res, next) => {
+  try {
+    if (!req.params.token) {
+      return next(
+        new ValidationError({
+          token: "Pas de token.",
+        })
+      );
+    }
+    const user = await User.findOne({
+      where: {
+        token: req.params.token,
+      },
+    });
+    const token = crypto.randomBytes(30).toString("hex");
+    await user.update({password:req.body.password, token: token})
+    return res.json(user);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/checkToken/:token", async (req, res, next) => {
+  try {
+    if (!req.params.token) {
+      return next(
+        new ValidationError({
+          token: "Pas de token.",
+        })
+      );
+    }
+    const user = await User.findOne({
+      where: {
+        token: req.params.token,
+      },
+    });
+    if (!user) {
+      return next(
+        new ValidationError({
+          token: "Token invalide.",
+        })
+      );
+    }
     return res.json(user);
   } catch (e) {
     next(e);
@@ -103,6 +189,13 @@ router.post("/register", async (req, res, next) => {
 
 router.post("/forget-password", async (req, res, next) => {
   try {
+    if (!req.body.email) {
+      return next(
+        new ValidationError({
+          email: "Veuillez fournir un email.",
+        })
+      );
+    }
     const user = await User.findOne({
       where: {
         email: req.body.email,
@@ -111,7 +204,8 @@ router.post("/forget-password", async (req, res, next) => {
     if (user !== null) {
       let content = await fs.readFile(`mails/forgetPassword.txt`, "utf8");
       const token = crypto.randomBytes(30).toString("hex");
-      content = content.replace("{{your_token}}", token);
+      content = content.replace(`{{url_forget}}`, `${process.env.CLIENT_URL}/new_password?token=${token}`);
+      await user.update({token:token})
       sendMail(user.email, "Reinitialiser votre mot de passe", null, content);
       res.status(200).send();
     } else {

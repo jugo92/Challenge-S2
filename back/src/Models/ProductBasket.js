@@ -1,24 +1,26 @@
 const { Model, DataTypes } = require("sequelize");
-const {uuidv7} = require("uuidv7")
+const { uuidv7 } = require("uuidv7");
+const productMongo = require("../dtos/denormalization/productMongo");
 
 module.exports = function (connection) {
   class ProductBasket extends Model {
     static associate(db) {
       ProductBasket.belongsTo(db.Product);
-      ProductBasket.belongsTo(db.Basket)
+      ProductBasket.belongsTo(db.Basket);
     }
     static addHooks(db) {
-      ProductBasket.addHook("afterCreate", async (productBasket) => {
+      ProductBasket.addHook("afterCreate", async productBasket => {
         await db.Stock.create({
           id: uuidv7(),
           movement: "reservation",
           quantity: productBasket.quantity,
-          ProductId : productBasket.ProductId
-        })
-      }
-      );
+          ProductId: productBasket.ProductId,
+        },
+        {  individualHooks: true }
+        );
+      });
+    }
   }
-}
 
   ProductBasket.init(
     {

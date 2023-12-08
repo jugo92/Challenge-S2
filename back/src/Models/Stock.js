@@ -21,6 +21,7 @@ module.exports = function (connection) {
           "update",
           db.Stock
         )
+        console.log('STOCK ------------- : ', stock)
         const total = await getTotalStock(product, db.Stock);
         console.log("TOTAL : ", total)
         if (total < product.quantity_alert) {

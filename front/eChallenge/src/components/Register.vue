@@ -154,9 +154,7 @@ const registerForm = reactive([
         placeholder: "Saisissez le code postal de l'utilisateur...",
         required: true,
         validationError: "",
-        validationSchema: z.number()
-            .min(3, { message: "Le code postal doit contenir au moins 3 caractères" })
-            .max(255, { message: "Le code postal doit contenir au maximum 255 caractères" }),
+        validationSchema: z.string()
     },
     {
         label: "Ville",

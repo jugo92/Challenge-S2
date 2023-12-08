@@ -15,8 +15,10 @@ import ResetPasswordVue from "../pages/ResetPassword-page.vue"
 import Dashboard from "../components/Dashboard.vue";
 import UserDetails from "../components/Admin/User.vue";
 import {useModal} from "./../components/Modal/useModal.ts";
-import Recap from "../pages/Recap.vue";
+import Recap from "../pages/Recap-page.vue";
 import VerifyPassword from "../pages/VerifyPassword.vue";
+import VerifyAccount from "../pages/Verify-page.vue";
+
 const { isModalVisible, openModal, closeModal } = useModal();
 
 const router = createRouter({
@@ -56,6 +58,11 @@ const router = createRouter({
             path: "/cart",
             name: "Basket",
             component: BasketPageVue,
+        },
+        {
+            path: "/verify",
+            name: "Verify",
+            component: VerifyAccount,
         },
         {
             path: "/recap",

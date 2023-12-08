@@ -6,11 +6,12 @@ exports.createToken = function (user) {
       id: user.id,
       firstname: user.firstname,
       lastname: user.lastname,
-      email: user.email
+      email: user.email,
+      role: user.role
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "2h",
+      expiresIn: "30d",
     }
   );
 };

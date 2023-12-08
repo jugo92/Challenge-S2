@@ -6,10 +6,20 @@ import {z} from "zod";
 
 const store = useStore();
 const submitButtonText = 'Réinitialiser le mot de passe';
+const email = ref('');
 
-const onSubmit = async (data) => {
-    try {
-        await store.dispatch('resetPassword', data);
+const onSubmit = async () => {
+  try {
+    const email = resetPasswordForm.value.find(field => field.type === 'email').value;
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/forget-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email
+          }),
+        });       
         router.push('/login');
     } catch (e) {
         console.error(e);
@@ -21,7 +31,7 @@ const resetPasswordForm = ref([
         label: "Email",
         type: "email",
         name: "email",
-        value: "",
+        value: email.value,
         placeholder: "Saisissez l'email de l'utilisateur...",
         required: true,
         validationError: "",

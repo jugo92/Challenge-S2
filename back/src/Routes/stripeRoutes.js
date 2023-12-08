@@ -1,18 +1,20 @@
 const router = require("express").Router();
 const bodyParser = require("body-parser");
 
-const stripeController = require("../Controllers/stripeController");
+const stripeController = require("../Controllers/stripeController"),
+  initPayment = require("../Controllers/initPayment");
 const checkAuth = require("../Middlewares/checkAuth");
 
 router.post(
   "/create-checkout-session",
   bodyParser.json(),
   checkAuth(),
-  stripeController.initPayment
+  initPayment.initPayment
 );
 router.post(
   "/refund",
   bodyParser.json(),
+  checkAuth(),
   stripeController.refundPayment
 );
 
@@ -21,6 +23,5 @@ router.post(
   bodyParser.raw({ type: "application/json" }),
   stripeController.getEventPayment
 );
-
 
 module.exports = router;

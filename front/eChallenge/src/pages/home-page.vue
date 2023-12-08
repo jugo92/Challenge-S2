@@ -6,15 +6,12 @@
     <div class="top ">
       <SliderImage />
     </div>
-    <!-- <div class="modal-container">
-    <ModalDialogVue title="test" content="fsdifjsdflksjdflkj" :show="true" />
-  </div> -->
       <div class="m-5 w-full flex">
       <section class="w-1/4 bg-gray-200 p-4 h-full col-span-1">
         <Filters @onFilterChange="applyFilters" :marquesList="marquesList" :categoriesList="categoryList" />
       </section>
       <section class="flex w-3/4 p-4">
-        <ProductList :products="filteredProducts" />
+        <ProductList :products="filteredProducts" @addCart="addCart" />
       </section>
     </div>
   </div>
@@ -42,6 +39,11 @@ const filters = ref({
   promotions: false
 });
 
+const addCart = (test) => {
+  console.log(test)
+  console.log("event remotne")
+}
+
 const applyFilters = (newFilters) => {
   filters.value = { ...newFilters };
   loadAndSetFilteredProducts();
@@ -50,8 +52,9 @@ const applyFilters = (newFilters) => {
 const loadFilteredProducts = async () => {
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/products?page=1&limit=100&name=${filters.value.productName}&promotions=${filters.value.promotions}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`
-    );
+  `${import.meta.env.VITE_API_URL}/products?page=1&limit=100&name=${filters.value.productName}&promotions=${filters.value.promotions}&minPrice=${filters.value.minPrice}&maxPrice=${filters.value.maxPrice}&description=${filters.value.description}&categories=${filters.value.category.join(",")}&marques=${filters.value.marque.join(",")}`,
+);
+
 
     if (!response.ok) {
       throw new Error("Failed to fetch product details");
