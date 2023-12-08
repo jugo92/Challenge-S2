@@ -943,13 +943,14 @@ const createInstance = async (data) => {
 };
 
 const fetchOptions = async (field, callback) => {
-  const url = `http://localhost:3000/api/${field}`;
   try {
-    const response = await fetch(url);
-    const data = await response.json();
-    callback(data);
+    apiService.getAll('/'+field)
+        .then(data => {
+          console.log("data", data)
+          callback(data);
+        });
   } catch (error) {
-    console.error(`Erreur lors de la récupération des options depuis l'API ${url}`, error);
+    console.error(`Erreur lors de la récupération des options depuis l'API ${field}`, error);
   }
 };
 
