@@ -15,7 +15,7 @@ const base64_encode = imgPath => {
   return new Buffer.from(png).toString("base64");
 };
 
-const generateDataFacture = async OrderId => {
+const generateDataFacture = async (Order, OrderId) => {
   const orderData = await Order.findByPk(OrderId, {
     include: [
       {
@@ -55,7 +55,6 @@ const generateDataFacture = async OrderId => {
 
 const getTotalStock = async (product,Stock) => {
       const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-
         const totalCountIncrement = await Stock.sum("quantity", {
           where: {
             ProductId: product.id,

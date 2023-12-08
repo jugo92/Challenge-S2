@@ -7,14 +7,13 @@ module.exports = function (connection) {
   class User extends Model {
     static addHooks(db) {
       User.addHook("afterCreate", async user => {
-        const verifyRoute = "http://localhost:3000/api/verify/";
         let content = await fs.readFile(
           `mails/validateUserAccount.txt`,
           "utf8"
         );
         content = content
           .replace("{{name}}", user.lastname.toUpperCase())
-          .replace("{{confirmLink}}", verifyRoute + user.token);
+          .replace("{{confirmLink}}", `${process.env.CLIENT_URL}/verify?token=${user.token}`);
         await sendMail(user.email, "Vérifiez votre compte", null, content);
       });
       // User.addHook("afterUpdate", user => 

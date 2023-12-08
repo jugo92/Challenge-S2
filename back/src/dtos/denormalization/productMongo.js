@@ -27,14 +27,11 @@ console.log("test mongo cate", modelId, key)
   if (key === "id") {
     await ProductMongo.deleteOne({ _id: modelId });
   } else {
-    if (event === "destroy") {
-      await Product.update({ isPublished: 0 }, { where: { [key]: modelId } });
-    }
-    //Dans le cas ou on supprime/modifie marque/catagory
+
     const deletePromises = products.map(async product => {
       const productId = product.id;
       return ProductMongo.deleteOne({ _id: productId });
-    });
+    })
 
     await Promise.all(deletePromises);
   }

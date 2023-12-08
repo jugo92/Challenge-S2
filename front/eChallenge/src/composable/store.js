@@ -181,14 +181,22 @@ const store = createStore({
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: 'include',
           body: JSON.stringify(credentials),
         });
 
         if (!response.ok) {
           throw new Error("Login failed");
         }
+        const jwtCookie = document.cookie.split('; ').find(row => row.startsWith('jwt='));
+    
+        console.log(response.headers.getSetCookie());
+        console.log('JWT Cookie from response:', jwtCookie);
 
         const user = await response.json();
+        console.log("USER : ", user)
+        const jwtToken = response.headers.get('jwt');
+    console.log('JWT Token:', jwtToken);
         commit("setToken", user.token);
         commit("setUser", user);
         commit("setIsloggedIn", true);

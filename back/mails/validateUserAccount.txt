@@ -128,7 +128,7 @@
                 </p>
               </span>
               <span class='span1'>
-                <p class='par1'>Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter à {{emailSupport}}.</p>
+                <p class='par1'>Si vous avez des questions ou avez besoin d'assistance, n'hésitez pas à nous contacter à esgiproject@gmail.com</p>
               </span>
             </td>
           </tr>

@@ -25,11 +25,13 @@ const {
   NotificationUser
 } = require("./src/Models");
 
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: ['http://localhost:5173', 'your-production-domain'],
+}));
 const routePrefix = "/api";
 
 const stripeRoutes = require("./src/Routes/stripeRoutes");
-const checkAuth = require("./src/Middlewares/checkAuth")
 const GenericController = require("./src/Controllers/genericController");
 const  GenericRouter = require("./src/Routes/genericRouter");
 const GenericService = require("./src/Services/genericService");
@@ -55,7 +57,7 @@ app.get('/download/:filename', (req, res) => {
   });
 });
 
-app.use(cookieParser());
+app.use(cookieParser("test"));
 app.use(routePrefix + "/stripe", stripeRoutes);
 
 app.use(bodyParser.json());

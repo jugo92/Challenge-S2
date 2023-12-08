@@ -4,7 +4,6 @@ import { useStore } from 'vuex';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 import Navbar from "../components/Navbar.vue";
 import {removeFromBasket, checkAndAddToBasket, basket} from "../services/basketService"
-
 const store = useStore();
 const router = useRouter();
 const cart = computed(() => basket.value.products);
@@ -12,6 +11,24 @@ const loading = ref(false);
 
 const imageUrl = `${import.meta.env.VITE_API_URL}/getImage/`
 
+const pay = async() => {
+  const response = await fetch(`${import.meta.env.VITE_API_URL}/stripe/create-checkout-session`,{
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        TTC: total.value,
+        BasketId: basket.value.basketId
+      }),
+      credentials: 'include'
+  })
+  const data = await response.json();
+  if(data.basket){
+    
+  }
+  console.log(data)
+}
 const decrementQuantity = (product) => {
   removeFromBasket(product);
 };
@@ -81,7 +98,7 @@ const total = computed(() => {
                         <span class="font-semibold">Total</span>
                         <span class="font-semibold">{{ total }}</span>
                     </div>
-                    <button @click="goToRecap" :disabled="loading" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full cursor-pointer">Paiement</button>
+                    <button @click="pay" :disabled="loading" class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full cursor-pointer">Paiement</button>
 
                 </div>
             </div>

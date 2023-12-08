@@ -6,7 +6,7 @@ import FormBuilder from '../components/Form/FormBuilder.vue';
 import { loadStripe } from '@stripe/stripe-js';
 import {useRouter} from 'vue-router';
 import {z} from "zod";
-
+import {basket} from "../services/basketService"
 
 const store = useStore();
 const recapData = ref(null);
@@ -14,9 +14,10 @@ const router = useRouter();
 
 
 
-onMounted(() => {
-    recapData.value = store.state.recapData;
-});
+// onMounted(() => {
+//     recapData.value = basket.value;
+//     console.log(recapData.value)
+// });
 
 const submitButtonText = 'Payer';
 
@@ -127,7 +128,7 @@ const recapForm = ref([
         placeholder: "Saisissez le code postal de l'utilisateur...",
         required: true,
         validationError: "",
-        validationSchema: z.number()
+        validationSchema: z.string()
             .min(3, { message: "Le code postal doit contenir au moins 3 caractères" })
             .max(255, { message: "Le code postal doit contenir au maximum 255 caractères" }),
     },
@@ -179,11 +180,11 @@ const recapForm = ref([
         <div class="min-h-screen flex items-center justify-center">
             <div class="w-full max-w-md p-4 md:p-8">
                 <h1 class="text-2xl text-center mb-8 font-bold underline decoration-sky-500">Récapitulatif de votre commande</h1>
-                <div class="bg-white overflow-hidden md:max-w-2xl mt-8 p-6 recap">
+                <!-- <div class="bg-white overflow-hidden md:max-w-2xl mt-8 p-6 recap">
 
-                    <div v-if="recapData" class="recap_li">
+                    <div v-if="recapData.value" class="recap_li">
                         <ul>
-                            <li v-for="(item, index) in recapData.cart" :key="index" class="mb-4 border-b pb-4">
+                            <li v-for="(item, index) in recapData.value.products" :key="index" class="mb-4 border-b pb-4">
                                 <p class="text-lg font-semibold">{{ item.Nom }}</p>
 
                                 <p class="text-gray-600 font-bold">État: {{ item.Etat }}</p>
@@ -195,7 +196,7 @@ const recapForm = ref([
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
                 <h2 class="text-2xl font-semibold mb-4 underline decoration-sky-500 text-center">Adresse de livraison</h2>
                 <div class="form mt-4 card">
                     <FormBuilder :formFields="recapForm" />

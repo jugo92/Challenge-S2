@@ -1,6 +1,5 @@
 const OrderStatus = require("../Enum/orderStatus");
 const PaymentStatus = require("../Enum/paymentStatus");
-const { generateDataFacture } = require("../Helper/Utils");
 const {
   Order,
   Product,
@@ -16,49 +15,40 @@ const PdfService = require("../Services/pdfService");
 const { sendMail } = require("../Controllers/mailController");
 const ValidationError = require("../errors/ValidationError");
 const fs = require("fs").promises;
-const { Op } = require("sequelize");
 module.exports.initPayment = async (req, res, next) => {
   try {
     const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
     const storeItems = [];
-    const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-
-    //on récupère le panier du user avec la liste des produits.
-    const basket = await Basket.findByPk(req.body.BasketId, {
+    // const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
+    const user = await User.findOne({ where: { id: req.user.id } });
+    console.log(user);
+    const basket = await Basket.findByPk(req.body.BasketId);
+    // if (!basket || basket.createdAt < fifteenMinutesAgo) {
+    //   return next(
+    //     new ValidationError({
+    //       basket: "Panier expire.",
+    //     })
+    //   );
+    // }
+    const productsBaskets = await ProductBasket.findAll({
       where: {
-        createdAt: {
-          [Op.lt]: fifteenMinutesAgo,
-        },
+        BasketId: req.body.BasketId,
       },
     });
-    if (!basket) {
-      return next(
-        new ValidationError({
-          basket: "Panier expire.",
-        })
-      );
-    }
-    const productsBaskets = await ProductBasket.findAll({
-      where:{
-        BasketId: req.body.BasketId
-      }
-    })
     const order = await Order.create({
       id: uuidv7(),
       TTC: req.body.TTC,
-      city: req.body.city,
-      zip: req.body.zip,
-      phone: req.body.phone,
-      address: req.body.address,
+      city: user.city,
+      zip: user.zip,
+      phone: user.phone,
+      address: user.address,
       UserId: req.user.id,
-      email: req.user.email,
+      email: user.email,
     });
-    let idItem = []
 
     await Promise.all(
       productsBaskets.map(async item => {
-        console.log("ITEM : ", item)
         const product = await Product.findByPk(item.ProductId, {});
         if (!product.isPublished) {
           return next(
@@ -74,12 +64,10 @@ module.exports.initPayment = async (req, res, next) => {
           OrderId: order.id,
         });
 
-        storeItems.push( {
-          priceInCents:
-            product.price * 100 +
-            product.price * 100 * 0.2,
+        storeItems.push({
+          priceInCents: product.price * 100 + product.price * 100 * 0.2,
           name: product.name,
-          quantity: item.quantity
+          quantity: item.quantity,
         });
       })
     );
@@ -141,6 +129,7 @@ module.exports.getEventPayment = async (req, res) => {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const orderId = session.client_reference_id;
+    console.log("ORDER id : ", orderId)
     const order = await Order.findByPk(orderId);
 
     const user = await User.findOne({
@@ -239,4 +228,42 @@ module.exports.refundPayment = async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+};
+
+const generateDataFacture = async (OrderId) => {
+  const orderData = await Order.findByPk(OrderId, {
+    include: [
+      {
+        model: User,
+      },
+      {
+        model: ProductOrder,
+        include: [
+          {
+            model: Product,
+          },
+        ],
+      },
+    ],
+  });
+  return {
+    client: {
+      address: orderData.dataValues.User.dataValues.adress,
+      zip: orderData.dataValues.User.dataValues.zip,
+      city: orderData.dataValues.User.dataValues.city,
+      country: orderData.dataValues.User.dataValues.country,
+    },
+    information: {
+      number: orderData.dataValues.id,
+      date: new Date().toString(),
+    },
+    products: orderData.dataValues.ProductOrders.map(productOrder => {
+      return {
+        quantity: productOrder.dataValues.quantity,
+        description: productOrder.dataValues.Product.dataValues.name,
+        price: productOrder.dataValues.Product.dataValues.price,
+        "tax-rate": 20,
+      };
+    }),
+  };
 };
